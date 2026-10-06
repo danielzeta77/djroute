@@ -3,62 +3,90 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>djRoutePlanner - Roadbook & Live Weather</title>
+  <title>djRoutePlanner</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="djRoute">
   <meta name="theme-color" content="#0d1117">
-  <!-- Tailwind CSS & FontAwesome -->
+  <!-- CSS & Icone FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SheetJS per lettura Excel -->
+  <!-- Lettore Excel SheetJS -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
-    body { background-color: #0d1117; color: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+    body { background-color: #0d1117; color: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     .card { background: #161b22; border: 1px solid #30363d; }
     .scroll-hide::-webkit-scrollbar { display: none; }
     .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    /* Pulsanti circolari calibrati */
+    .btn-round-green {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background-color: #10b981;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #0d1117;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .btn-round-yellow {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background-color: #f59e0b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: #0d1117;
+      font-size: 17px;
+      font-weight: bold;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
   </style>
 </head>
 <body class="pb-28">
 
-  <!-- Header Pulito con Icona Moto Originale e Tasti Circolari -->
-  <header class="sticky top-0 z-30 bg-[#161b22]/95 backdrop-blur border-b border-gray-800 px-4 py-3 flex items-center justify-between">
-    <div class="flex items-center space-x-3 overflow-hidden">
-      <!-- Icona Moto Originale -->
-      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
-        <i class="fa-solid fa-motorcycle text-amber-500 text-xl"></i>
-      </div>
+  <!-- Header Originale Pulito -->
+  <header class="sticky top-0 z-30 bg-[#161b22]/95 backdrop-blur border-b border-gray-800 px-3.5 py-2.5 flex items-center justify-between">
+    <!-- Icona e Titolo Originali -->
+    <div class="flex items-center space-x-2.5 overflow-hidden">
+      <i class="fa-solid fa-motorcycle text-amber-500 text-xl flex-shrink-0"></i>
       <div class="truncate">
-        <h1 class="font-bold text-base text-white leading-tight">djRoutePlanner</h1>
-        <p class="text-[11px] text-gray-400">Roadbook & Live Weather</p>
+        <h1 class="font-bold text-sm sm:text-base leading-tight text-white truncate">djRoutePlanner</h1>
+        <p class="text-[11px] text-gray-400 truncate">Roadbook & Live Weather</p>
       </div>
     </div>
 
-    <!-- Tasti Circolari Identici (Verde per Excel, Giallo per Tappa) -->
-    <div class="flex items-center space-x-2.5 flex-shrink-0">
-      <!-- Tasto Rotondo VERDE Importa Excel -->
-      <label title="Importa Excel" class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 flex items-center justify-center text-lg cursor-pointer shadow-md active:scale-95 transition-transform flex-shrink-0">
+    <!-- Tasti Circolari Ottimizzati (Verde Excel, Giallo Tappa) -->
+    <div class="flex items-center space-x-2 flex-shrink-0 pl-2">
+      <!-- Tasto Verde: Importa Excel -->
+      <label class="btn-round-green hover:bg-emerald-400 active:scale-95 transition-transform" title="Importa Excel">
         <i class="fa-solid fa-file-excel"></i>
         <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaQualsiasiExcel(event)">
       </label>
 
-      <!-- Tasto Rotondo GIALLO Nuova Tappa -->
-      <button onclick="apriModalTappa()" title="Aggiungi Tappa" class="w-10 h-10 rounded-full bg-amber-400 hover:bg-amber-300 text-gray-950 flex items-center justify-center text-lg shadow-md active:scale-95 transition-transform flex-shrink-0">
-        <i class="fa-solid fa-plus font-bold"></i>
+      <!-- Tasto Giallo: Aggiungi Tappa -->
+      <button onclick="apriModalTappa()" class="btn-round-yellow hover:bg-amber-400 active:scale-95 transition-transform" title="Aggiungi Tappa">
+        <i class="fa-solid fa-plus"></i>
       </button>
     </div>
   </header>
 
   <!-- GPS Live Bar -->
-  <section class="m-3 p-2.5 rounded-xl bg-gray-900 border border-gray-800 shadow">
+  <section class="m-3 p-2.5 rounded-xl bg-gray-900 border border-gray-800">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="relative flex h-2.5 w-2.5">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
         </span>
-        <span id="gpsStatus" class="text-xs text-gray-300 font-medium">GPS: Pronto</span>
+        <span id="gpsStatus" class="text-xs text-gray-300">GPS: Pronto</span>
       </div>
       <button onclick="attivaGps()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 text-xs px-2.5 py-1 rounded-md font-medium flex items-center gap-1">
         <i class="fa-solid fa-location-crosshairs text-amber-400"></i> Trova Posizione
@@ -71,63 +99,21 @@
   <main class="px-3 space-y-3.5" id="tappeContainer">
     <div id="emptyState" class="text-center py-16 px-4">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
-        <i class="fa-solid fa-motorcycle text-2xl text-amber-500"></i>
+        <i class="fa-solid fa-map-location-dot text-2xl text-amber-500"></i>
       </div>
-      <h2 class="text-base font-semibold text-white">Nessuna tappa in programma</h2>
+      <h2 class="text-base font-semibold text-white">Nessuna tappa inserita</h2>
       <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-        Tocca il pulsante <strong class="text-emerald-400">Verde</strong> per caricare il file Excel oppure il pulsante <strong class="text-amber-400">Giallo (+)</strong> per aggiungere una tappa.
+        Tocca il pulsante <strong class="text-emerald-400">Verde</strong> per importare il roadbook o il pulsante <strong class="text-amber-400">Giallo (+)</strong> per inserire una tappa.
       </p>
     </div>
   </main>
-
-  <!-- MODAL EXPORT PER NAVIGATORE (GARMIN, TOMTOM, GPX, KML) -->
-  <div id="exportModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
-    <div class="card w-full max-w-sm rounded-2xl p-5 space-y-4">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-        <h3 class="font-bold text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-satellite-dish text-amber-400"></i> Esporta per Navigatore
-        </h3>
-        <button onclick="chiudiExportModal()" class="text-gray-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <p class="text-xs text-gray-300" id="exportDesc">Seleziona il formato del file:</p>
-
-      <div class="grid grid-cols-1 gap-2 text-xs">
-        <button onclick="eseguiDownloadFormato('gpx')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
-          <div>
-            <span class="font-bold text-white block">Formato GPX (.gpx)</span>
-            <span class="text-[11px] text-gray-400">Garmin (Zūmo/Tread/BMW), OsmAnd, Rever</span>
-          </div>
-          <i class="fa-solid fa-download text-amber-400 text-sm"></i>
-        </button>
-
-        <button onclick="eseguiDownloadFormato('itn')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
-          <div>
-            <span class="font-bold text-white block">TomTom Itinerary (.itn)</span>
-            <span class="text-[11px] text-gray-400">TomTom Rider 400/500/550, TomTom GO</span>
-          </div>
-          <i class="fa-solid fa-download text-cyan-400 text-sm"></i>
-        </button>
-
-        <button onclick="eseguiDownloadFormato('kml')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
-          <div>
-            <span class="font-bold text-white block">Google Earth KML (.kml)</span>
-            <span class="text-[11px] text-gray-400">Google Earth, Maps.me</span>
-          </div>
-          <i class="fa-solid fa-download text-emerald-400 text-sm"></i>
-        </button>
-      </div>
-    </div>
-  </div>
 
   <!-- MODAL NUOVA / MODIFICA TAPPA -->
   <div id="tappaModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-5 max-h-[90vh] overflow-y-auto space-y-3">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-        <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
-          <i class="fa-solid fa-route text-amber-400"></i> Scheda Tappa
+        <h3 class="font-bold text-sm sm:text-base flex items-center gap-2 text-white">
+          <i class="fa-solid fa-route text-amber-500"></i> Scheda Tappa
         </h3>
         <button onclick="chiudiModalTappa()" class="text-gray-400 hover:text-white p-1">
           <i class="fa-solid fa-xmark text-lg"></i>
@@ -154,30 +140,30 @@
       <div class="space-y-2 text-xs">
         <div>
           <label class="block text-gray-300 font-medium mb-1">Luogo di Partenza</label>
-          <input type="text" id="m_partenza" placeholder="es. Bologna" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_partenza" placeholder="es. Ancona" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-gray-400 mb-1">Passi / Punti Intermedi (separati da virgola)</label>
-          <input type="text" id="m_intermedio" placeholder="es. Passo Futa, Passo Raticosa" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_intermedio" placeholder="es. Passo Katara" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-gray-300 font-medium mb-1">Destinazione Finale (Arrivo)</label>
-          <input type="text" id="m_arrivo" placeholder="es. Firenze" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_arrivo" placeholder="es. Kalambaka" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
       </div>
 
       <div class="grid grid-cols-3 gap-2 text-xs">
         <div>
           <label class="block text-gray-400 mb-1">Km Totali</label>
-          <input type="text" id="m_km" placeholder="120" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_km" placeholder="es. 250" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-gray-400 mb-1">Ore Guida</label>
-          <input type="text" id="m_ore" placeholder="02:30" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_ore" placeholder="es. 03:30" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Quota / Altitudine</label>
-          <input type="text" id="m_alt" placeholder="903 m" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <label class="block text-gray-400 mb-1">Quota Max / Alt.</label>
+          <input type="text" id="m_alt" placeholder="es. 1200 m" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
       </div>
 
@@ -211,37 +197,26 @@
         </div>
 
         <div>
-          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-shield-halved mr-1"></i> Indicazioni Parcheggio Moto</label>
+          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-square-parking mr-1"></i> Indicazioni Parcheggio Moto</label>
           <input type="text" id="m_parcheggio" placeholder="es. Cortile interno privato con cancello su asfalto" class="w-full bg-gray-800 border border-emerald-600/40 rounded-lg p-2 text-white">
         </div>
       </div>
 
-      <!-- CARICAMENTO TRACCIA -->
-      <div class="border-t border-gray-800 pt-2 space-y-2 text-xs">
-        <label class="block text-amber-400 font-semibold mb-1">
-          <i class="fa-solid fa-file-import mr-1"></i> File Traccia (GPX, ITN, KML)
-        </label>
-        <label class="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-2 rounded-lg cursor-pointer text-gray-300 w-full block text-center truncate">
-          <span id="labelFileTraccia">Scegli file...</span>
-          <input type="file" id="navFileInput" accept=".gpx, .itn, .kml, .kmz" class="hidden" onchange="gestisciCaricamentoFileTraccia(event)">
-        </label>
-
-        <div>
-          <label class="block text-orange-400 mb-1"><i class="fa-solid fa-route mr-1"></i> Oppure Link MyRoute-app</label>
-          <input type="url" id="m_myroute" placeholder="https://www.myrouteapp.com/..." class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
-        </div>
+      <!-- MYROUTE LINK -->
+      <div class="border-t border-gray-800 pt-2 text-xs">
+        <label class="block text-orange-400 mb-1"><i class="fa-solid fa-route mr-1"></i> Link MyRoute-app</label>
+        <input type="url" id="m_myroute" placeholder="https://www.myrouteapp.com/..." class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
       </div>
 
       <div class="pt-2 flex gap-2">
         <button onclick="chiudiModalTappa()" class="w-1/2 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs font-semibold text-gray-300">Annulla</button>
-        <button onclick="salvaTappa()" class="w-1/2 py-2.5 bg-amber-400 hover:bg-amber-300 rounded-lg text-xs font-bold text-gray-950 shadow-sm">Salva Tappa</button>
+        <button onclick="salvaTappa()" class="w-1/2 py-2.5 bg-amber-500 hover:bg-amber-400 rounded-lg text-xs font-bold text-gray-950">Salva Tappa</button>
       </div>
     </div>
   </div>
 
   <script>
     let tappe = [];
-    let tappaCorrenteExport = null;
 
     function formattaInGiornoMeseAnno(val) {
       if (!val) return "";
@@ -291,7 +266,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_tappe_v8');
+      const saved = localStorage.getItem('djroute_app_tappe');
       if (saved) {
         try {
           tappe = JSON.parse(saved);
@@ -303,7 +278,7 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_tappe_v8', JSON.stringify(tappe));
+      localStorage.setItem('djroute_app_tappe', JSON.stringify(tappe));
     }
 
     function generaTimelineOre(oraPartenza, oreGuidaTot) {
@@ -348,11 +323,11 @@
         container.innerHTML = `
           <div id="emptyState" class="text-center py-16 px-4">
             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
-              <i class="fa-solid fa-motorcycle text-2xl text-amber-500"></i>
+              <i class="fa-solid fa-map-location-dot text-2xl text-amber-500"></i>
             </div>
-            <h2 class="text-base font-semibold text-white">Nessuna tappa in programma</h2>
+            <h2 class="text-base font-semibold text-white">Nessuna tappa inserita</h2>
             <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-              Tocca il pulsante <strong class="text-emerald-400">Verde</strong> per caricare il file Excel oppure il pulsante <strong class="text-amber-400">Giallo (+)</strong> per aggiungere una tappa.
+              Tocca il pulsante <strong class="text-emerald-400">Verde</strong> per importare il roadbook o il pulsante <strong class="text-amber-400">Giallo (+)</strong> per inserire una tappa.
             </p>
           </div>
         `;
@@ -382,7 +357,6 @@
                 ${t.arrivo || '<span class="text-gray-500 italic">Arrivo non impostato</span>'}
               </h2>
               ${t.intermedio ? `<p class="text-xs text-gray-400 mt-0.5"><i class="fa-solid fa-signs-post text-amber-400 mr-1"></i>Passi / Waypoint: ${t.intermedio}</p>` : ''}
-              ${t.fileTracciaNome ? `<p class="text-[11px] text-emerald-400 mt-0.5"><i class="fa-solid fa-file-circle-check mr-1"></i>Traccia: ${t.fileTracciaNome}</p>` : ''}
             </div>
 
             <div class="text-right flex flex-col items-end">
@@ -483,10 +457,10 @@
                 <span class="text-[10px] font-medium">MyRoute</span>
               </a>
 
-              <button onclick="apriExportModal(${idx})" 
+              <button onclick="scaricaTracciaGpx('${t.partenza}', '${t.intermedio}', '${t.arrivo}')" 
                  class="bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-300 rounded-xl p-2.5 flex flex-col items-center gap-1">
-                <i class="fa-solid fa-satellite-dish text-base text-emerald-400"></i>
-                <span class="text-[10px] font-semibold">GPS Track</span>
+                <i class="fa-solid fa-file-arrow-down text-base text-emerald-400"></i>
+                <span class="text-[10px] font-semibold">GPX</span>
               </button>
             </div>
           </div>
@@ -521,7 +495,6 @@
       document.getElementById('m_pagato').value = "Da pagare";
       document.getElementById('m_parcheggio').value = "";
       document.getElementById('m_myroute').value = "";
-      document.getElementById('labelFileTraccia').textContent = "Scegli file...";
       document.getElementById('tappaModal').classList.remove('hidden');
     }
 
@@ -547,7 +520,6 @@
       document.getElementById('m_pagato').value = t.pagato || 'Da pagare';
       document.getElementById('m_parcheggio').value = t.parcheggio || '';
       document.getElementById('m_myroute').value = t.myRouteUrl || '';
-      document.getElementById('labelFileTraccia').textContent = t.fileTracciaNome || "Scegli file...";
       document.getElementById('tappaModal').classList.remove('hidden');
     }
 
@@ -575,8 +547,7 @@
         prezzo: document.getElementById('m_prezzo').value.trim(),
         pagato: document.getElementById('m_pagato').value,
         parcheggio: document.getElementById('m_parcheggio').value.trim(),
-        myRouteUrl: document.getElementById('m_myroute').value.trim(),
-        fileTracciaNome: document.getElementById('labelFileTraccia').textContent !== "Scegli file..." ? document.getElementById('labelFileTraccia').textContent : ''
+        myRouteUrl: document.getElementById('m_myroute').value.trim()
       };
 
       if (idx === -1) {
@@ -596,6 +567,16 @@
         salvaSuMemoria();
         renderTappe();
       }
+    }
+
+    function scaricaTracciaGpx(p, i, a) {
+      const nome = `${p || 'Partenza'}_${a || 'Arrivo'}`.replace(/\s+/g, '_');
+      const gpx = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1" creator="djRoutePlanner"><metadata><name>${nome}</name></metadata><rte><name>${nome}</name><rtept lat="0.0" lon="0.0"><name>${p || 'Start'}</name></rtept>${i ? `<rtept lat="0.0" lon="0.0"><name>${i}</name></rtept>` : ''}<rtept lat="0.0" lon="0.0"><name>${a || 'Dest'}</name></rtept></rte></gpx>`;
+      const blob = new Blob([gpx], { type: 'application/gpx+xml' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${nome}.gpx`;
+      link.click();
     }
 
     function importaQualsiasiExcel(event) {
@@ -671,8 +652,7 @@
                 prezzo: prezzo ? (prezzo.includes('€') ? prezzo : prezzo + ' €') : "",
                 pagato: "Da pagare",
                 parcheggio: parcheggio,
-                myRouteUrl: "",
-                fileTracciaNome: ""
+                myRouteUrl: ""
               });
             }
           });
@@ -685,51 +665,6 @@
         }
       };
       reader.readAsArrayBuffer(file);
-    }
-
-    function gestisciCaricamentoFileTraccia(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      document.getElementById('labelFileTraccia').textContent = file.name;
-    }
-
-    function apriExportModal(idx) {
-      tappaCorrenteExport = tappe[idx];
-      document.getElementById('exportDesc').textContent = `Esporta "${tappaCorrenteExport.partenza || 'Partenza'} ➔ ${tappaCorrenteExport.arrivo || 'Arrivo'}"`;
-      document.getElementById('exportModal').classList.remove('hidden');
-    }
-    function chiudiExportModal() {
-      document.getElementById('exportModal').classList.add('hidden');
-      tappaCorrenteExport = null;
-    }
-
-    function eseguiDownloadFormato(formato) {
-      if (!tappaCorrenteExport) return;
-      const p = tappaCorrenteExport.partenza || 'Partenza';
-      const a = tappaCorrenteExport.arrivo || 'Arrivo';
-      const w = tappaCorrenteExport.intermedio || '';
-      const baseName = `${p}_${a}`.replace(/\s+/g, '_');
-
-      let mime = 'application/octet-stream';
-      let fileContent = '';
-
-      if (formato === 'gpx') {
-        mime = 'application/gpx+xml';
-        fileContent = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1"><rte><name>${p} - ${a}</name><rtept lat="0.0" lon="0.0"><name>${p}</name></rtept>${w ? `<rtept lat="0.0" lon="0.0"><name>${w}</name></rtept>` : ''}<rtept lat="0.0" lon="0.0"><name>${a}</name></rtept></rte></gpx>`;
-      } else if (formato === 'itn') {
-        mime = 'text/plain';
-        fileContent = `0|0|${p}|0|\n${w ? `0|0|${w}|1|\n` : ''}0|0|${a}|2|\n`;
-      } else if (formato === 'kml') {
-        mime = 'application/vnd.google-earth.kml+xml';
-        fileContent = `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${p} - ${a}</name><Placemark><name>${p}</name></Placemark><Placemark><name>${a}</name></Placemark></Document></kml>`;
-      }
-
-      const blob = new Blob([fileContent], { type: mime });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${baseName}.${formato}`;
-      link.click();
-      chiudiExportModal();
     }
 
     async function calcolaMeteoOrario(tappaIdx) {
