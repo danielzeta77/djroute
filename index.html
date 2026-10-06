@@ -22,38 +22,30 @@
 </head>
 <body class="pb-28">
 
-  <!-- Header con Icona Super Ténéré 1200 e Pulsanti Circolari -->
-  <header class="sticky top-0 z-30 bg-[#161b22]/95 backdrop-blur border-b border-gray-800 px-3.5 py-2.5 flex items-center justify-between">
-    <div class="flex items-center space-x-2.5 overflow-hidden">
-      <!-- Icona Maxi-Enduro / Super Ténéré XT1200Z Style -->
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-500/20 to-blue-500/10 border border-amber-500/30 flex items-center justify-center p-1.5 shadow-sm flex-shrink-0">
-        <svg viewBox="0 0 100 100" class="w-full h-full text-amber-400 fill-current" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 72a15 15 0 1 0 30 0 15 15 0 1 0-30 0zm15-11a11 11 0 1 1 0 22 11 11 0 0 1 0-22z" fill="#94a3b8"/>
-          <path d="M58 72a15 15 0 1 0 30 0 15 15 0 1 0-30 0zm15-11a11 11 0 1 1 0 22 11 11 0 0 1 0-22z" fill="#94a3b8"/>
-          <path d="M27 72l18-24 15 2 13 22H62L52 56l-9 8-16 8z" fill="#f59e0b"/>
-          <path d="M43 47l6-18 10 3 6 15-8 5z" fill="#fbbf24"/>
-          <path d="M48 24l5-12 7 2-3 10z" fill="#38bdf8"/>
-          <path d="M59 34l12-3 3 5-11 5z" fill="#f59e0b"/>
-          <path d="M44 26h12v3H44z" fill="#e2e8f0"/>
-          <circle cx="27" cy="72" r="4" fill="#f8fafc"/>
-          <circle cx="73" cy="72" r="4" fill="#f8fafc"/>
-        </svg>
+  <!-- Header Pulito con Icona Moto Originale e Tasti Circolari -->
+  <header class="sticky top-0 z-30 bg-[#161b22]/95 backdrop-blur border-b border-gray-800 px-4 py-3 flex items-center justify-between">
+    <div class="flex items-center space-x-3 overflow-hidden">
+      <!-- Icona Moto Originale -->
+      <div class="w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center flex-shrink-0">
+        <i class="fa-solid fa-motorcycle text-amber-500 text-xl"></i>
       </div>
       <div class="truncate">
-        <h1 class="font-black text-sm tracking-wide text-white leading-tight">djRoutePlanner</h1>
-        <p class="text-[10px] text-amber-400 font-medium">Roadbook & Live Weather</p>
+        <h1 class="font-bold text-base text-white leading-tight">djRoutePlanner</h1>
+        <p class="text-[11px] text-gray-400">Roadbook & Live Weather</p>
       </div>
     </div>
 
-    <!-- Tasti Circolari Fissi (Verde: Excel, Giallo: Tappa) -->
-    <div class="flex items-center space-x-2 flex-shrink-0">
-      <label title="Importa Excel" class="w-9 h-9 rounded-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 flex items-center justify-center font-bold text-sm cursor-pointer shadow-md active:scale-95 transition-transform flex-shrink-0">
+    <!-- Tasti Circolari Identici (Verde per Excel, Giallo per Tappa) -->
+    <div class="flex items-center space-x-2.5 flex-shrink-0">
+      <!-- Tasto Rotondo VERDE Importa Excel -->
+      <label title="Importa Excel" class="w-10 h-10 rounded-full bg-emerald-500 hover:bg-emerald-400 text-gray-950 flex items-center justify-center text-lg cursor-pointer shadow-md active:scale-95 transition-transform flex-shrink-0">
         <i class="fa-solid fa-file-excel"></i>
         <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaQualsiasiExcel(event)">
       </label>
 
-      <button onclick="apriModalTappa()" title="Aggiungi Tappa" class="w-9 h-9 rounded-full bg-amber-400 hover:bg-amber-300 text-gray-950 flex items-center justify-center font-bold text-sm shadow-md active:scale-95 transition-transform flex-shrink-0">
-        <i class="fa-solid fa-plus text-base"></i>
+      <!-- Tasto Rotondo GIALLO Nuova Tappa -->
+      <button onclick="apriModalTappa()" title="Aggiungi Tappa" class="w-10 h-10 rounded-full bg-amber-400 hover:bg-amber-300 text-gray-950 flex items-center justify-center text-lg shadow-md active:scale-95 transition-transform flex-shrink-0">
+        <i class="fa-solid fa-plus font-bold"></i>
       </button>
     </div>
   </header>
@@ -79,11 +71,11 @@
   <main class="px-3 space-y-3.5" id="tappeContainer">
     <div id="emptyState" class="text-center py-16 px-4">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
-        <i class="fa-solid fa-map-location-dot text-2xl text-amber-400"></i>
+        <i class="fa-solid fa-motorcycle text-2xl text-amber-500"></i>
       </div>
       <h2 class="text-base font-semibold text-white">Nessuna tappa in programma</h2>
       <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-        Tocca il tasto <strong class="text-emerald-400">Verde</strong> per importare un foglio Excel oppure il tasto <strong class="text-amber-400">Giallo (+)</strong> per aggiungere manualmente una tappa.
+        Tocca il pulsante <strong class="text-emerald-400">Verde</strong> per caricare il file Excel oppure il pulsante <strong class="text-amber-400">Giallo (+)</strong> per aggiungere una tappa.
       </p>
     </div>
   </main>
@@ -219,7 +211,7 @@
         </div>
 
         <div>
-          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-square-parking mr-1"></i> Indicazioni Parcheggio Moto</label>
+          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-shield-halved mr-1"></i> Indicazioni Parcheggio Moto</label>
           <input type="text" id="m_parcheggio" placeholder="es. Cortile interno privato con cancello su asfalto" class="w-full bg-gray-800 border border-emerald-600/40 rounded-lg p-2 text-white">
         </div>
       </div>
@@ -251,7 +243,6 @@
     let tappe = [];
     let tappaCorrenteExport = null;
 
-    // Converte qualsiasi stringa o Date in GG/MM/AAAA
     function formattaInGiornoMeseAnno(val) {
       if (!val) return "";
       if (val instanceof Date && !isNaN(val.getTime())) {
@@ -272,7 +263,6 @@
       return str;
     }
 
-    // Calcola il giorno della settimana da stringa GG/MM/AAAA o ISO
     function calcolaGiornoDaData(strData) {
       if (!strData) return "";
       let gg, mm, aaaa;
@@ -301,7 +291,7 @@
     }
 
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v6_tappe');
+      const saved = localStorage.getItem('djroute_tappe_v8');
       if (saved) {
         try {
           tappe = JSON.parse(saved);
@@ -313,13 +303,12 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_v6_tappe', JSON.stringify(tappe));
+      localStorage.setItem('djroute_tappe_v8', JSON.stringify(tappe));
     }
 
     function generaTimelineOre(oraPartenza, oreGuidaTot) {
       const ore = [];
       const [hPart, mPart] = (oraPartenza || "08:30").split(':').map(Number);
-      
       let durataOre = 3;
       if (oreGuidaTot) {
         if (typeof oreGuidaTot === 'string' && oreGuidaTot.includes(':')) {
@@ -329,7 +318,6 @@
           durataOre = Math.max(1, Math.round(parseFloat(oreGuidaTot)));
         }
       }
-
       for (let i = 0; i <= durataOre; i++) {
         const curH = (hPart + i) % 24;
         const curM = String(mPart).padStart(2, '0');
@@ -360,11 +348,11 @@
         container.innerHTML = `
           <div id="emptyState" class="text-center py-16 px-4">
             <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
-              <i class="fa-solid fa-map-location-dot text-2xl text-amber-400"></i>
+              <i class="fa-solid fa-motorcycle text-2xl text-amber-500"></i>
             </div>
             <h2 class="text-base font-semibold text-white">Nessuna tappa in programma</h2>
             <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-              Tocca il tasto <strong class="text-emerald-400">Verde</strong> per importare un foglio Excel oppure il tasto <strong class="text-amber-400">Giallo (+)</strong> per aggiungere manualmente una tappa.
+              Tocca il pulsante <strong class="text-emerald-400">Verde</strong> per caricare il file Excel oppure il pulsante <strong class="text-amber-400">Giallo (+)</strong> per aggiungere una tappa.
             </p>
           </div>
         `;
