@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>djRoutePlanner</title>
+  <title>djRoutePlanner - Roadbook & Live Weather</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="djRoute">
   <meta name="theme-color" content="#0d1117">
-  <!-- CSS & Icone -->
+  <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- SheetJS per lettura Excel universale -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <style>
     body { background-color: #0d1117; color: #f0f6fc; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     .card { background: #161b22; border: 1px solid #30363d; }
+    .scroll-hide::-webkit-scrollbar { display: none; }
+    .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 <body class="pb-28">
@@ -22,96 +25,143 @@
   <!-- Header -->
   <header class="sticky top-0 z-30 bg-[#161b22]/95 backdrop-blur border-b border-gray-800 px-4 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-2.5">
-      <i class="fa-solid fa-motorcycle text-amber-500 text-xl"></i>
+      <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
+        <i class="fa-solid fa-motorcycle text-amber-500 text-lg"></i>
+      </div>
       <div>
         <h1 class="font-bold text-sm sm:text-base leading-tight">djRoutePlanner</h1>
-        <p class="text-[11px] text-gray-400">Roadbook & Live Weather</p>
+        <p class="text-[10px] text-gray-400">Garmin • TomTom • GPX • Live Weather</p>
       </div>
     </div>
     <div class="flex items-center gap-2">
       <!-- Importa Excel -->
-      <label class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5">
+      <label class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 shadow-sm">
         <i class="fa-solid fa-file-excel text-emerald-400"></i> Importa Excel
-        <input type="file" id="excelInput" accept=".xlsx, .xls" class="hidden" onchange="importaExcel(event)">
+        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaQualsiasiExcel(event)">
       </label>
-      <!-- Aggiungi Tappa -->
-      <button onclick="apriModalTappa()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1">
+      <!-- Aggiungi Tappa a mano -->
+      <button onclick="apriModalTappa()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 shadow-sm">
         <i class="fa-solid fa-plus"></i> Tappa
       </button>
     </div>
   </header>
 
   <!-- GPS Live Bar -->
-  <section class="m-3 p-3 rounded-xl bg-gray-900 border border-gray-800">
+  <section class="m-3 p-3 rounded-xl bg-gray-900/90 border border-gray-800 shadow">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="relative flex h-2.5 w-2.5">
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
         </span>
-        <span id="gpsStatus" class="text-xs text-gray-300">GPS: In attesa</span>
+        <span id="gpsStatus" class="text-xs text-gray-300 font-medium">GPS: Pronto</span>
       </div>
-      <button onclick="attivaGps()" class="bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30 text-xs px-2.5 py-1 rounded font-medium flex items-center gap-1">
-        <i class="fa-solid fa-location-crosshairs"></i> Trova Posizione
+      <button onclick="attivaGps()" class="bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30 text-xs px-2.5 py-1 rounded-md font-medium flex items-center gap-1">
+        <i class="fa-solid fa-location-crosshairs"></i> Posizione Live
       </button>
     </div>
     <div id="liveWeatherBox" class="mt-2 text-xs text-gray-300 border-t border-gray-800 pt-2 hidden"></div>
   </section>
 
-  <!-- Contenitore Tappe -->
-  <main class="px-3 space-y-3" id="tappeContainer">
+  <!-- Container Tappe -->
+  <main class="px-3 space-y-3.5" id="tappeContainer">
     <div id="emptyState" class="text-center py-16 px-4">
       <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/80 flex items-center justify-center border border-gray-700">
         <i class="fa-solid fa-map-location-dot text-2xl text-amber-500"></i>
       </div>
-      <h2 class="text-base font-semibold text-white">Nessuna tappa inserita</h2>
+      <h2 class="text-base font-semibold text-white">Nessuna tappa presente</h2>
       <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-        Importa il tuo file Excel con il pulsante in alto oppure premi "+ Tappa" per iniziare.
+        Premi <strong>"Importa Excel"</strong> per caricare qualsiasi roadbook, oppure crea una tappa con <strong>"+ Tappa"</strong>.
       </p>
     </div>
   </main>
 
-  <!-- MODAL NUOVA TAPPA -->
-  <div id="tappaModal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <!-- MODAL EXPORT TRACCIA NAVIGATORI (GARMIN, TOMTOM, GPX, KML) -->
+  <div id="exportModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-4">
+    <div class="card w-full max-w-sm rounded-2xl p-5 space-y-4">
+      <div class="flex justify-between items-center border-b border-gray-800 pb-2">
+        <h3 class="font-bold text-sm text-white flex items-center gap-2">
+          <i class="fa-solid fa-satellite-dish text-amber-500"></i> Esporta per Navigatore
+        </h3>
+        <button onclick="chiudiExportModal()" class="text-gray-400 hover:text-white p-1">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <p class="text-xs text-gray-300" id="exportDesc">Seleziona il formato del tuo navigatore GPS:</p>
+
+      <div class="grid grid-cols-1 gap-2 text-xs">
+        <!-- Garmin / Universale (GPX) -->
+        <button onclick="eseguiDownloadFormato('gpx')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
+          <div>
+            <span class="font-bold text-white block">Formato GPX (.gpx)</span>
+            <span class="text-[11px] text-gray-400">Garmin (Zūmo/Tread/BMW), OsmAnd, Rever</span>
+          </div>
+          <i class="fa-solid fa-download text-amber-400 text-sm"></i>
+        </button>
+
+        <!-- TomTom (ITN) -->
+        <button onclick="eseguiDownloadFormato('itn')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
+          <div>
+            <span class="font-bold text-white block">TomTom Itinerary (.itn)</span>
+            <span class="text-[11px] text-gray-400">TomTom Rider serie 400/500/550, TomTom GO</span>
+          </div>
+          <i class="fa-solid fa-download text-cyan-400 text-sm"></i>
+        </button>
+
+        <!-- Google Earth / KML -->
+        <button onclick="eseguiDownloadFormato('kml')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
+          <div>
+            <span class="font-bold text-white block">Google Earth KML (.kml)</span>
+            <span class="text-[11px] text-gray-400">Google Earth, Mapsme, viewer 3D</span>
+          </div>
+          <i class="fa-solid fa-download text-emerald-400 text-sm"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL NUOVA / MODIFICA TAPPA -->
+  <div id="tappaModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-5 max-h-[90vh] overflow-y-auto space-y-3">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
         <h3 class="font-bold text-sm sm:text-base flex items-center gap-2">
-          <i class="fa-solid fa-route text-amber-500"></i> Nuova Tappa
+          <i class="fa-solid fa-route text-amber-500"></i> Scheda Tappa
         </h3>
         <button onclick="chiudiModalTappa()" class="text-gray-400 hover:text-white p-1">
           <i class="fa-solid fa-xmark text-lg"></i>
         </button>
       </div>
 
-      <div class="grid grid-cols-2 gap-2 text-xs">
+      <input type="hidden" id="editIndex" value="-1">
+
+      <div class="grid grid-cols-3 gap-2 text-xs">
         <div>
-          <label class="block text-gray-400 mb-1">Giorno (es. lun)</label>
-          <input type="text" id="m_giorno" placeholder="lun" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <label class="block text-gray-400 mb-1">Giorno</label>
+          <input type="text" id="m_giorno" placeholder="es. lun" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Data</label>
+          <label class="block text-gray-400 mb-1">Data Partenza</label>
           <input type="date" id="m_data" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-amber-400 font-semibold mb-1">Ora Partenza</label>
+          <input type="time" id="m_ora" value="08:30" class="w-full bg-gray-800 border border-amber-500/40 rounded-lg p-2 text-white font-bold">
         </div>
       </div>
 
       <div class="space-y-2 text-xs">
         <div>
-          <label class="block text-gray-400 mb-1">Luogo di Partenza *</label>
-          <input type="text" id="m_partenza" placeholder="es. Ancona" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white font-medium">
-        </div>
-        <div class="grid grid-cols-3 gap-2">
-          <div class="col-span-2">
-            <label class="block text-gray-400 mb-1">Punti Intermedi / Passi</label>
-            <input type="text" id="m_intermedio" placeholder="es. Passo Katara" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1">Nazione</label>
-            <input type="text" id="m_naz" placeholder="GR" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white uppercase">
-          </div>
+          <label class="block text-gray-300 font-medium mb-1">Luogo di Partenza *</label>
+          <input type="text" id="m_partenza" placeholder="es. Ancona" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Luogo di Arrivo *</label>
-          <input type="text" id="m_arrivo" placeholder="es. Kalambaka" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white font-medium">
+          <label class="block text-gray-400 mb-1">Passi / Punti Intermedi (separati da virgola)</label>
+          <input type="text" id="m_intermedio" placeholder="es. Igoumenitsa, Passo Katara" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-gray-300 font-medium mb-1">Destinazione Finale (Arrivo) *</label>
+          <input type="text" id="m_arrivo" placeholder="es. Kalambaka" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
       </div>
 
@@ -121,287 +171,68 @@
           <input type="number" id="m_km" placeholder="250" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Ore Guida</label>
+          <label class="block text-gray-400 mb-1">Ore di Guida</label>
           <input type="text" id="m_ore" placeholder="03:30" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Quota max</label>
-          <input type="text" id="m_alt" placeholder="1200 m" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <label class="block text-gray-400 mb-1">Quota Max (m)</label>
+          <input type="text" id="m_alt" placeholder="1690 m" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
       </div>
 
-      <!-- Hotel e Parcheggio Moto -->
-      <div class="border-t border-gray-800 pt-2 space-y-2 text-xs">
-        <div class="grid grid-cols-3 gap-2">
-          <div class="col-span-2">
-            <label class="block text-gray-400 mb-1">Alloggio / Hotel</label>
-            <input type="text" id="m_hotel" placeholder="Nome Hotel" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+      <!-- SEZIONE ALLOGGIO -->
+      <div class="border-t border-gray-800 pt-2.5 space-y-2 text-xs">
+        <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Dettagli Alloggio & Parcheggio</span>
+        
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-gray-400 mb-1">Nome Alloggio / Hotel</label>
+            <input type="text" id="m_hotel" placeholder="Nome Struttura" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">Costo €</label>
-            <input type="text" id="m_costo" placeholder="75 €" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+            <label class="block text-gray-400 mb-1">Piattaforma di Prenotazione</label>
+            <input type="text" id="m_piattaforma" placeholder="es. Booking, Airbnb, Diretto" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
           </div>
         </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-gray-400 mb-1">Prezzo Totale €</label>
+            <input type="text" id="m_prezzo" placeholder="es. 85 €" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Stato Pagamento</label>
+            <select id="m_pagato" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+              <option value="Da pagare">Da pagare</option>
+              <option value="Già pagato">Già pagato</option>
+            </select>
+          </div>
+        </div>
+
         <div>
-          <label class="block text-emerald-400 font-medium mb-1"><i class="fa-solid fa-square-parking mr-1"></i> Indicazioni Parcheggio Moto</label>
-          <input type="text" id="m_parcheggio" placeholder="es. Cortile interno chiuso su asfalto" class="w-full bg-gray-800 border border-emerald-700/50 rounded-lg p-2 text-white">
+          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-shield-halved mr-1"></i> Indicazioni Parcheggio Moto</label>
+          <input type="text" id="m_parcheggio" placeholder="es. Cortile interno privato con cancello su asfalto" class="w-full bg-gray-800 border border-emerald-600/40 rounded-lg p-2 text-white">
         </div>
       </div>
 
-      <!-- MyRoute URL -->
-      <div class="border-t border-gray-800 pt-2 text-xs">
-        <label class="block text-orange-400 mb-1"><i class="fa-solid fa-route mr-1"></i> Link MyRoute-app</label>
-        <input type="url" id="m_myroute" placeholder="https://www.myrouteapp.com/..." class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+      <!-- CARICAMENTO FILE ESTERNO DI NAVIGAZIONE (GARMIN, TOMTOM, GPX, ITN, KML, GEOJSON) -->
+      <div class="border-t border-gray-800 pt-2 space-y-2 text-xs">
+        <label class="block text-amber-400 font-semibold mb-1">
+          <i class="fa-solid fa-file-import mr-1"></i> Carica File Traccia (GPX, ITN, KML, FIT, GeoJSON)
+        </label>
+        <div class="flex items-center gap-2">
+          <label class="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-2 rounded-lg cursor-pointer text-gray-300 w-full text-center truncate">
+            <span id="labelFileTraccia">Scegli file dal telefono/PC...</span>
+            <input type="file" id="navFileInput" accept=".gpx, .itn, .kml, .kmz, .fit, .tcx, .json, .geojson" class="hidden" onchange="gestisciCaricamentoFileTraccia(event)">
+          </label>
+        </div>
+
+        <div>
+          <label class="block text-orange-400 mb-1"><i class="fa-solid fa-route mr-1"></i> Oppure Link MyRoute-app</label>
+          <input type="url" id="m_myroute" placeholder="https://www.myrouteapp.com/..." class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+        </div>
       </div>
 
       <div class="pt-2 flex gap-2">
         <button onclick="chiudiModalTappa()" class="w-1/2 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs font-semibold text-gray-300">Annulla</button>
-        <button onclick="salvaTappaManuale()" class="w-1/2 py-2.5 bg-amber-500 hover:bg-amber-400 rounded-lg text-xs font-bold text-gray-950">Salva Tappa</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    let tappe = [];
-
-    window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_tappe');
-      if (saved) {
-        try {
-          tappe = JSON.parse(saved);
-          renderTappe();
-        } catch (e) {}
-      }
-    });
-
-    function salvaSuMemoria() {
-      localStorage.setItem('djroute_tappe', JSON.stringify(tappe));
-    }
-
-    function renderTappe() {
-      const container = document.getElementById('tappeContainer');
-      if (tappe.length === 0) {
-        container.innerHTML = `
-          <div id="emptyState" class="text-center py-16 px-4">
-            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/80 flex items-center justify-center border border-gray-700">
-              <i class="fa-solid fa-map-location-dot text-2xl text-amber-500"></i>
-            </div>
-            <h2 class="text-base font-semibold text-white">Nessuna tappa inserita</h2>
-            <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-              Importa il tuo file Excel con il pulsante in alto oppure premi "+ Tappa" per iniziare.
-            </p>
-          </div>
-        `;
-        return;
-      }
-
-      container.innerHTML = tappe.map((t, idx) => `
-        <div class="card rounded-2xl p-4 shadow-lg space-y-3">
-          <div class="flex justify-between items-start border-b border-gray-800 pb-2.5">
-            <div>
-              <span class="text-[11px] font-semibold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 uppercase tracking-wide">
-                Tappa ${idx + 1} ${t.giorno ? '• ' + t.giorno : ''} ${t.data ? '• ' + t.data : ''}
-              </span>
-              <h2 class="text-base font-bold text-white mt-1">
-                ${t.partenza || 'Partenza'} <i class="fa-solid fa-arrow-right text-xs text-gray-500 mx-1"></i> ${t.arrivo || 'Arrivo'}
-              </h2>
-              ${t.intermedio ? `<p class="text-xs text-gray-400 mt-0.5"><i class="fa-solid fa-signs-post text-amber-400 mr-1"></i>Via: ${t.intermedio}${t.naz ? '('+t.naz+')' : ''}</p>` : ''}
-            </div>
-            <div class="text-right">
-              ${t.kmTot ? `<span class="text-sm font-bold text-amber-400">${t.kmTot} km</span>` : ''}
-              ${t.oreGuida ? `<p class="text-[11px] text-gray-400"><i class="fa-regular fa-clock mr-1"></i>${t.oreGuida}</p>` : ''}
-              <button onclick="rimuoviTappa(${idx})" class="text-gray-500 hover:text-red-400 text-xs mt-1 p-1">
-                <i class="fa-solid fa-trash-can"></i>
-              </button>
-            </div>
-          </div>
-
-          <!-- Quota & Meteo -->
-          <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="bg-gray-800/40 p-2 rounded-xl border border-gray-800 flex items-center justify-between">
-              <span class="text-gray-400"><i class="fa-solid fa-mountain text-gray-300 mr-1"></i>Quota:</span>
-              <span class="font-medium text-gray-200">${t.altitudine || '-'}</span>
-            </div>
-            <div class="bg-gray-800/40 p-2 rounded-xl border border-gray-800 flex items-center justify-between" id="weather-badge-${idx}">
-              <span class="text-gray-400"><i class="fa-solid fa-cloud-sun text-amber-400 mr-1"></i>Meteo:</span>
-              <button onclick="caricaMeteoCitta(${idx}, '${t.arrivo || t.partenza}')" class="text-sky-400 hover:underline text-[11px] font-medium">
-                Verifica
-              </button>
-            </div>
-          </div>
-
-          <!-- Hotel & Parcheggio -->
-          ${(t.hotel || t.parcheggio) ? `
-            <div class="bg-gray-900/70 p-3 rounded-xl border border-gray-800 space-y-1.5 text-xs">
-              ${t.hotel ? `
-                <div class="flex justify-between items-center text-gray-300">
-                  <span class="font-semibold text-white"><i class="fa-solid fa-bed text-amber-400 mr-1.5"></i>${t.hotel}</span>
-                  ${t.costo ? `<span class="text-amber-400 font-bold">${t.costo}</span>` : ''}
-                </div>
-              ` : ''}
-              ${t.parcheggio ? `
-                <div class="text-[11px] text-emerald-400 bg-emerald-950/20 p-2 rounded border border-emerald-900/30">
-                  <i class="fa-solid fa-shield-halved mr-1"></i><strong>Moto Parking:</strong> ${t.parcheggio}
-                </div>
-              ` : ''}
-            </div>
-          ` : ''}
-
-          <!-- Navigatore a scelta -->
-          <div class="pt-1">
-            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1.5">Avvia Navigazione:</label>
-            <div class="grid grid-cols-4 gap-1.5 text-center">
-              <a href="https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza || '')}&destination=${encodeURIComponent(t.arrivo || '')}&travelmode=driving" 
-                 target="_blank" class="bg-blue-600/15 hover:bg-blue-600/25 border border-blue-500/30 text-blue-300 rounded-lg p-2 flex flex-col items-center gap-1">
-                <i class="fa-solid fa-diamond-turn-right text-sm text-blue-400"></i>
-                <span class="text-[10px] font-semibold">G-Maps</span>
-              </a>
-              <a href="https://waze.com/ul?q=${encodeURIComponent(t.arrivo || '')}&navigate=yes" 
-                 target="_blank" class="bg-cyan-600/15 hover:bg-cyan-600/25 border border-cyan-500/30 text-cyan-300 rounded-lg p-2 flex flex-col items-center gap-1">
-                <i class="fa-brands fa-waze text-sm text-cyan-400"></i>
-                <span class="text-[10px] font-semibold">Waze</span>
-              </a>
-              <a href="${t.myRouteUrl || 'https://www.myrouteapp.com'}" target="_blank" 
-                 class="bg-orange-600/15 hover:bg-orange-600/25 border border-orange-500/30 text-orange-300 rounded-lg p-2 flex flex-col items-center gap-1">
-                <i class="fa-solid fa-route text-sm text-orange-400"></i>
-                <span class="text-[10px] font-semibold">MyRoute</span>
-              </a>
-              <button onclick="scaricaGpx('${t.partenza}', '${t.arrivo}')" 
-                 class="bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-300 rounded-lg p-2 flex flex-col items-center gap-1">
-                <i class="fa-solid fa-file-arrow-down text-sm text-emerald-400"></i>
-                <span class="text-[10px] font-semibold">GPX</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    function apriModalTappa() { document.getElementById('tappaModal').classList.remove('hidden'); }
-    function chiudiModalTappa() { document.getElementById('tappaModal').classList.add('hidden'); }
-
-    function salvaTappaManuale() {
-      const partenza = document.getElementById('m_partenza').value.trim();
-      const arrivo = document.getElementById('m_arrivo').value.trim();
-      if (!partenza && !arrivo) {
-        alert("Inserisci almeno partenza o arrivo");
-        return;
-      }
-      tappe.push({
-        giorno: document.getElementById('m_giorno').value.trim(),
-        data: document.getElementById('m_data').value,
-        partenza: partenza,
-        intermedio: document.getElementById('m_intermedio').value.trim(),
-        naz: document.getElementById('m_naz').value.trim(),
-        arrivo: arrivo,
-        kmTot: document.getElementById('m_km').value.trim(),
-        oreGuida: document.getElementById('m_ore').value.trim(),
-        altitudine: document.getElementById('m_alt').value.trim(),
-        hotel: document.getElementById('m_hotel').value.trim(),
-        costo: document.getElementById('m_costo').value.trim(),
-        parcheggio: document.getElementById('m_parcheggio').value.trim(),
-        myRouteUrl: document.getElementById('m_myroute').value.trim()
-      });
-      salvaSuMemoria();
-      renderTappe();
-      chiudiModalTappa();
-      document.querySelectorAll('#tappaModal input').forEach(i => i.value = '');
-    }
-
-    function rimuoviTappa(idx) {
-      if (confirm("Eliminare questa tappa?")) {
-        tappe.splice(idx, 1);
-        salvaSuMemoria();
-        renderTappe();
-      }
-    }
-
-    async function caricaMeteoCitta(idx, luogo) {
-      const badge = document.getElementById(`weather-badge-${idx}`);
-      if (!luogo || luogo === 'undefined') return;
-      badge.innerHTML = `<span class="text-sky-300 text-[11px]"><i class="fa-solid fa-spinner fa-spin"></i></span>`;
-      try {
-        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(luogo)}&count=1&language=it&format=json`);
-        const geoData = await geoRes.json();
-        if (!geoData.results || geoData.results.length === 0) {
-          badge.innerHTML = `<span class="text-amber-400 text-[11px]">Non trovato</span>`;
-          return;
-        }
-        const loc = geoData.results[0];
-        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${loc.latitude}&longitude=${loc.longitude}&current_weather=true&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
-        const w = await wRes.json();
-        badge.innerHTML = `<span class="text-sky-300 font-bold text-[11px]">${w.current_weather.temperature}°C</span> <span class="text-gray-400 text-[10px]">(${w.daily.temperature_2m_min[0]}°/${w.daily.temperature_2m_max[0]}°)</span>`;
-      } catch(e) {
-        badge.innerHTML = `<span class="text-red-400 text-[11px]">Errore meteo</span>`;
-      }
-    }
-
-    function attivaGps() {
-      const status = document.getElementById('gpsStatus');
-      const box = document.getElementById('liveWeatherBox');
-      if (!navigator.geolocation) return;
-      status.textContent = "Ricerca segnale...";
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const lat = pos.coords.latitude.toFixed(4);
-        const lon = pos.coords.longitude.toFixed(4);
-        status.innerHTML = `<span class="text-emerald-400">GPS: ${lat}, ${lon}</span>`;
-        try {
-          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-          const data = await res.json();
-          box.classList.remove('hidden');
-          box.innerHTML = `<div class="flex justify-between items-center text-xs"><span><i class="fa-solid fa-location-dot text-emerald-400 mr-1"></i> Posizione attuale: <strong>${data.current_weather.temperature}°C</strong></span><span><i class="fa-solid fa-wind mr-1"></i> ${data.current_weather.windspeed} km/h</span></div>`;
-        } catch(e) {}
-      });
-    }
-
-    function importaExcel(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const data = new Uint8Array(e.target.result);
-        const wb = XLSX.read(data, { type: 'array' });
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
-
-        tappe = [];
-        rows.forEach(r => {
-          const part = r['Partenza'] || r['partenza'] || '';
-          const arr = r['Arrivo'] || r['arrivo'] || '';
-          const dataVal = r['Data'] || r['data'] || '';
-          if (part || arr || dataVal) {
-            tappe.push({
-              giorno: r['GG.'] || r['GG'] || '',
-              data: dataVal ? String(dataVal).split('T')[0] : '',
-              partenza: part,
-              intermedio: r['Intermedio'] || r['intermedio'] || '',
-              naz: r['NAZ'] || r['NAZ.1'] || '',
-              arrivo: arr,
-              kmTot: r['KM TOT'] || r['Km'] || '',
-              oreGuida: r['Ore guida'] || '',
-              altitudine: r['Alt.'] || '',
-              hotel: r['Pernottamento'] || '',
-              costo: r['Costo camera'] || r['Prezzo €'] || '',
-              parcheggio: r['Indicazioni parcheggio'] || '',
-              myRouteUrl: r['Track'] && String(r['Track']).startsWith('http') ? r['Track'] : ''
-            });
-          }
-        });
-        salvaSuMemoria();
-        renderTappe();
-        alert(`Caricate ${tappe.length} tappe con successo!`);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-
-    function scaricaGpx(p, a) {
-      const nome = `${p || 'Partenza'}_${a || 'Arrivo'}`.replace(/\s+/g, '_');
-      const blob = new Blob([`<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1"><rte><name>${nome}</name></rte></gpx>`], { type: 'application/gpx+xml' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${nome}.gpx`;
-      link.click();
-    }
-  </script>
-</body>
-</html>
+        <button onclick="salvaTappa()" class="w-1/2 py-2.5 bg-amber-500 hover:bg
