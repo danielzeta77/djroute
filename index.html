@@ -22,7 +22,7 @@
 </head>
 <body class="pb-28">
 
-  <!-- Header -->
+  <!-- Header Superiore -->
   <header class="sticky top-0 z-30 bg-[#161b22]/95 backdrop-blur border-b border-gray-800 px-4 py-3 flex items-center justify-between">
     <div class="flex items-center space-x-2.5">
       <div class="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
@@ -30,24 +30,22 @@
       </div>
       <div>
         <h1 class="font-bold text-sm sm:text-base leading-tight">djRoutePlanner</h1>
-        <p class="text-[10px] text-gray-400">Garmin • TomTom • GPX • Live Weather</p>
+        <p class="text-[10px] text-gray-400">Roadbook & Live Weather</p>
       </div>
     </div>
     <div class="flex items-center gap-2">
-      <!-- Importa Excel -->
-      <label class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-600 px-2.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 shadow-sm">
-        <i class="fa-solid fa-file-excel text-emerald-400"></i> Importa Excel
+      <label class="bg-emerald-600/20 hover:bg-emerald-600/30 text-emerald-300 border border-emerald-500/30 px-2.5 py-1.5 rounded-lg text-xs font-medium cursor-pointer flex items-center gap-1.5 shadow-sm">
+        <i class="fa-solid fa-file-excel"></i> Importa Excel
         <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaQualsiasiExcel(event)">
       </label>
-      <!-- Aggiungi Tappa a mano -->
       <button onclick="apriModalTappa()" class="bg-amber-500 hover:bg-amber-400 text-gray-950 font-bold px-2.5 py-1.5 rounded-lg text-xs flex items-center gap-1 shadow-sm">
         <i class="fa-solid fa-plus"></i> Tappa
       </button>
     </div>
   </header>
 
-  <!-- GPS Live Bar -->
-  <section class="m-3 p-3 rounded-xl bg-gray-900/90 border border-gray-800 shadow">
+  <!-- GPS Bar -->
+  <section class="m-3 p-3 rounded-xl bg-gray-900 border border-gray-800 shadow">
     <div class="flex items-center justify-between">
       <div class="flex items-center gap-2">
         <span class="relative flex h-2.5 w-2.5">
@@ -56,8 +54,8 @@
         </span>
         <span id="gpsStatus" class="text-xs text-gray-300 font-medium">GPS: Pronto</span>
       </div>
-      <button onclick="attivaGps()" class="bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 hover:bg-emerald-600/30 text-xs px-2.5 py-1 rounded-md font-medium flex items-center gap-1">
-        <i class="fa-solid fa-location-crosshairs"></i> Posizione Live
+      <button onclick="attivaGps()" class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 text-xs px-2.5 py-1 rounded-md font-medium flex items-center gap-1">
+        <i class="fa-solid fa-location-crosshairs text-amber-400"></i> Trova Posizione
       </button>
     </div>
     <div id="liveWeatherBox" class="mt-2 text-xs text-gray-300 border-t border-gray-800 pt-2 hidden"></div>
@@ -66,12 +64,12 @@
   <!-- Container Tappe -->
   <main class="px-3 space-y-3.5" id="tappeContainer">
     <div id="emptyState" class="text-center py-16 px-4">
-      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800/80 flex items-center justify-center border border-gray-700">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
         <i class="fa-solid fa-map-location-dot text-2xl text-amber-500"></i>
       </div>
-      <h2 class="text-base font-semibold text-white">Nessuna tappa presente</h2>
+      <h2 class="text-base font-semibold text-white">Nessuna tappa caricata</h2>
       <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
-        Premi <strong>"Importa Excel"</strong> per caricare qualsiasi roadbook, oppure crea una tappa con <strong>"+ Tappa"</strong>.
+        Tocca <strong>"Importa Excel"</strong> per caricare il tuo file, oppure premi <strong>"+ Tappa"</strong> per crearne una nuova.
       </p>
     </div>
   </main>
@@ -88,10 +86,9 @@
         </button>
       </div>
 
-      <p class="text-xs text-gray-300" id="exportDesc">Seleziona il formato del tuo navigatore GPS:</p>
+      <p class="text-xs text-gray-300" id="exportDesc">Seleziona il formato del navigatore GPS:</p>
 
       <div class="grid grid-cols-1 gap-2 text-xs">
-        <!-- Garmin / Universale (GPX) -->
         <button onclick="eseguiDownloadFormato('gpx')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
           <div>
             <span class="font-bold text-white block">Formato GPX (.gpx)</span>
@@ -100,7 +97,6 @@
           <i class="fa-solid fa-download text-amber-400 text-sm"></i>
         </button>
 
-        <!-- TomTom (ITN) -->
         <button onclick="eseguiDownloadFormato('itn')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
           <div>
             <span class="font-bold text-white block">TomTom Itinerary (.itn)</span>
@@ -109,11 +105,10 @@
           <i class="fa-solid fa-download text-cyan-400 text-sm"></i>
         </button>
 
-        <!-- Google Earth / KML -->
         <button onclick="eseguiDownloadFormato('kml')" class="bg-gray-800 hover:bg-gray-700 border border-gray-700 p-2.5 rounded-xl flex items-center justify-between text-left">
           <div>
             <span class="font-bold text-white block">Google Earth KML (.kml)</span>
-            <span class="text-[11px] text-gray-400">Google Earth, Mapsme, viewer 3D</span>
+            <span class="text-[11px] text-gray-400">Google Earth, Maps.me, viewer 3D</span>
           </div>
           <i class="fa-solid fa-download text-emerald-400 text-sm"></i>
         </button>
@@ -142,7 +137,7 @@
         </div>
         <div>
           <label class="block text-gray-400 mb-1">Data Partenza</label>
-          <input type="date" id="m_data" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_data" placeholder="AAAA-MM-GG" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-amber-400 font-semibold mb-1">Ora Partenza</label>
@@ -152,7 +147,7 @@
 
       <div class="space-y-2 text-xs">
         <div>
-          <label class="block text-gray-300 font-medium mb-1">Luogo di Partenza *</label>
+          <label class="block text-gray-300 font-medium mb-1">Luogo di Partenza</label>
           <input type="text" id="m_partenza" placeholder="es. Ancona" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
@@ -160,7 +155,7 @@
           <input type="text" id="m_intermedio" placeholder="es. Igoumenitsa, Passo Katara" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-300 font-medium mb-1">Destinazione Finale (Arrivo) *</label>
+          <label class="block text-gray-300 font-medium mb-1">Destinazione Finale (Arrivo)</label>
           <input type="text" id="m_arrivo" placeholder="es. Kalambaka" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
       </div>
@@ -168,15 +163,15 @@
       <div class="grid grid-cols-3 gap-2 text-xs">
         <div>
           <label class="block text-gray-400 mb-1">Km Totali</label>
-          <input type="number" id="m_km" placeholder="250" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_km" placeholder="es. 250" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-gray-400 mb-1">Ore di Guida</label>
-          <input type="text" id="m_ore" placeholder="03:30" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <input type="text" id="m_ore" placeholder="es. 03:30" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Quota Max (m)</label>
-          <input type="text" id="m_alt" placeholder="1690 m" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
+          <label class="block text-gray-400 mb-1">Quota / Temp Prevista</label>
+          <input type="text" id="m_alt" placeholder="es. 1200 m (14/22°)" class="w-full bg-gray-800 border border-gray-700 rounded-lg p-2 text-white">
         </div>
       </div>
 
@@ -215,15 +210,15 @@
         </div>
       </div>
 
-      <!-- CARICAMENTO FILE ESTERNO DI NAVIGAZIONE (GARMIN, TOMTOM, GPX, ITN, KML, GEOJSON) -->
+      <!-- CARICAMENTO FILE ESTERNO DI NAVIGAZIONE -->
       <div class="border-t border-gray-800 pt-2 space-y-2 text-xs">
         <label class="block text-amber-400 font-semibold mb-1">
-          <i class="fa-solid fa-file-import mr-1"></i> Carica File Traccia (GPX, ITN, KML, FIT, GeoJSON)
+          <i class="fa-solid fa-file-import mr-1"></i> Carica File Traccia (GPX, ITN, KML)
         </label>
         <div class="flex items-center gap-2">
           <label class="bg-gray-800 hover:bg-gray-700 border border-gray-700 px-3 py-2 rounded-lg cursor-pointer text-gray-300 w-full text-center truncate">
             <span id="labelFileTraccia">Scegli file dal telefono/PC...</span>
-            <input type="file" id="navFileInput" accept=".gpx, .itn, .kml, .kmz, .fit, .tcx, .json, .geojson" class="hidden" onchange="gestisciCaricamentoFileTraccia(event)">
+            <input type="file" id="navFileInput" accept=".gpx, .itn, .kml, .kmz" class="hidden" onchange="gestisciCaricamentoFileTraccia(event)">
           </label>
         </div>
 
@@ -235,4 +230,571 @@
 
       <div class="pt-2 flex gap-2">
         <button onclick="chiudiModalTappa()" class="w-1/2 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-lg text-xs font-semibold text-gray-300">Annulla</button>
-        <button onclick="salvaTappa()" class="w-1/2 py-2.5 bg-amber-500 hover:bg
+        <button onclick="salvaTappa()" class="w-1/2 py-2.5 bg-amber-500 hover:bg-amber-400 rounded-lg text-xs font-bold text-gray-950">Salva Tappa</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let tappe = [];
+    let tappaCorrenteExport = null;
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const saved = localStorage.getItem('djroute_v4_tappe');
+      if (saved) {
+        try {
+          tappe = JSON.parse(saved);
+          renderTappe();
+        } catch(e) {}
+      }
+    });
+
+    function salvaSuMemoria() {
+      localStorage.setItem('djroute_v4_tappe', JSON.stringify(tappe));
+    }
+
+    function generaTimelineOre(oraPartenza, oreGuidaTot) {
+      const ore = [];
+      const [hPart, mPart] = (oraPartenza || "08:30").split(':').map(Number);
+      
+      let durataOre = 3;
+      if (oreGuidaTot) {
+        if (typeof oreGuidaTot === 'string' && oreGuidaTot.includes(':')) {
+          const [hD, mD] = oreGuidaTot.split(':').map(Number);
+          durataOre = Math.max(1, Math.round(hD + (mD / 60)));
+        } else if (!isNaN(parseFloat(oreGuidaTot))) {
+          durataOre = Math.max(1, Math.round(parseFloat(oreGuidaTot)));
+        }
+      }
+
+      for (let i = 0; i <= durataOre; i++) {
+        const curH = (hPart + i) % 24;
+        const curM = String(mPart).padStart(2, '0');
+        ore.push({
+          step: i,
+          orario: `${String(curH).padStart(2, '0')}:${curM}`,
+          isPartenza: i === 0,
+          isArrivo: i === durataOre
+        });
+      }
+      return ore;
+    }
+
+    function getWmoIcon(wmoCode) {
+      if (wmoCode === 0) return { icon: "fa-sun text-amber-400", label: "Sereno" };
+      if (wmoCode >= 1 && wmoCode <= 3) return { icon: "fa-cloud-sun text-yellow-300", label: "Poco nuvoloso" };
+      if (wmoCode >= 45 && wmoCode <= 48) return { icon: "fa-smog text-gray-400", label: "Nebbia" };
+      if (wmoCode >= 51 && wmoCode <= 67) return { icon: "fa-cloud-rain text-blue-400", label: "Pioggia" };
+      if (wmoCode >= 71 && wmoCode <= 77) return { icon: "fa-snowflake text-sky-200", label: "Neve" };
+      if (wmoCode >= 80 && wmoCode <= 82) return { icon: "fa-cloud-showers-heavy text-blue-500", label: "Rovesci" };
+      if (wmoCode >= 95) return { icon: "fa-cloud-bolt text-purple-400", label: "Temporale" };
+      return { icon: "fa-cloud text-gray-400", label: "Coperto" };
+    }
+
+    function renderTappe() {
+      const container = document.getElementById('tappeContainer');
+      if (tappe.length === 0) {
+        container.innerHTML = `
+          <div id="emptyState" class="text-center py-16 px-4">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-800 flex items-center justify-center border border-gray-700">
+              <i class="fa-solid fa-map-location-dot text-2xl text-amber-500"></i>
+            </div>
+            <h2 class="text-base font-semibold text-white">Nessuna tappa presente</h2>
+            <p class="text-xs text-gray-400 mt-1 max-w-xs mx-auto">
+              Tocca <strong>"Importa Excel"</strong> per caricare il tuo file o premi <strong>"+ Tappa"</strong>.
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = tappe.map((t, idx) => {
+        const timeline = generaTimelineOre(t.oraPartenza, t.oreGuida);
+        const gmapsUrl = generaGoogleMapsLink(t.partenza, t.intermedio, t.arrivo);
+
+        return `
+        <div class="card rounded-2xl p-4 shadow-lg space-y-3.5 border border-gray-800">
+          <div class="flex justify-between items-start border-b border-gray-800 pb-3">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-amber-500/20 text-amber-400 uppercase tracking-wide">
+                  Tappa ${idx + 1} ${t.giorno ? '• ' + t.giorno : ''} ${t.data ? '• ' + t.data : ''}
+                </span>
+                <span class="text-[11px] bg-gray-800 px-2 py-0.5 rounded text-gray-300 font-mono">
+                  <i class="fa-regular fa-clock text-amber-400 mr-1"></i>Partenza: ${t.oraPartenza || '08:30'}
+                </span>
+              </div>
+              <h2 class="text-base font-bold text-white mt-1.5 leading-snug">
+                ${t.partenza || '<span class="text-gray-500 italic">Partenza non impostata</span>'} 
+                <i class="fa-solid fa-arrow-right text-xs text-amber-500 mx-1"></i> 
+                ${t.arrivo || '<span class="text-gray-500 italic">Arrivo non impostato</span>'}
+              </h2>
+              ${t.intermedio ? `<p class="text-xs text-gray-400 mt-0.5"><i class="fa-solid fa-signs-post text-amber-400 mr-1"></i>Passi / Waypoint: ${t.intermedio}</p>` : ''}
+              ${t.fileTracciaNome ? `<p class="text-[11px] text-emerald-400 mt-0.5"><i class="fa-solid fa-file-circle-check mr-1"></i>Traccia: ${t.fileTracciaNome}</p>` : ''}
+            </div>
+
+            <div class="text-right flex flex-col items-end">
+              ${t.kmTot ? `<span class="text-sm font-bold text-amber-400">${t.kmTot} km</span>` : ''}
+              ${t.oreGuida ? `<span class="text-[11px] text-gray-400">${t.oreGuida} h guida</span>` : ''}
+              <div class="flex gap-1 mt-1">
+                <button onclick="modificaTappa(${idx})" class="text-gray-400 hover:text-amber-400 p-1 text-xs" title="Modifica"><i class="fa-solid fa-pen"></i></button>
+                <button onclick="rimuoviTappa(${idx})" class="text-gray-400 hover:text-red-400 p-1 text-xs" title="Elimina"><i class="fa-solid fa-trash-can"></i></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Altitudine / Note Excel -->
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <div class="bg-gray-900/60 p-2 rounded-xl border border-gray-800 flex items-center justify-between">
+              <span class="text-gray-400"><i class="fa-solid fa-mountain text-gray-300 mr-1.5"></i>Quota/Temp:</span>
+              <span class="font-medium text-gray-200">${t.altitudine || t.tempMinMax || 'ND'}</span>
+            </div>
+            <div class="bg-gray-900/60 p-2 rounded-xl border border-gray-800 flex items-center justify-between">
+              <span class="text-gray-400"><i class="fa-solid fa-road text-gray-300 mr-1.5"></i>Fondo:</span>
+              <span class="font-medium text-emerald-400">Asfalto standard</span>
+            </div>
+          </div>
+
+          <!-- METEO ORARIO -->
+          <div class="bg-gray-950/70 p-3 rounded-xl border border-gray-800 space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+                <i class="fa-solid fa-cloud-sun text-amber-400"></i> Meteo Ogni Ora di Guida
+              </span>
+              <button onclick="calcolaMeteoOrario(${idx})" class="text-[11px] bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/30 px-2 py-0.5 rounded font-medium">
+                <i class="fa-solid fa-arrows-rotate mr-1"></i> Aggiorna Meteo
+              </button>
+            </div>
+
+            <div id="weather-timeline-${idx}" class="flex gap-2 overflow-x-auto scroll-hide py-1">
+              ${timeline.map(step => `
+                <div class="flex-shrink-0 bg-gray-900 border border-gray-800 rounded-lg p-2 text-center w-20">
+                  <span class="text-[10px] text-gray-400 block font-mono">${step.orario}</span>
+                  <div class="my-1.5 text-base text-gray-500"><i class="fa-solid fa-cloud"></i></div>
+                  <span class="text-[11px] text-gray-400 block font-semibold">-°C</span>
+                  <span class="text-[9px] text-gray-500 truncate block">${step.isPartenza ? 'Partenza' : step.isArrivo ? 'Arrivo' : 'Tragitto'}</span>
+                </div>
+              `).join('')}
+            </div>
+            <div id="weather-note-${idx}" class="text-[11px] text-gray-400 italic">
+              Tocca "Aggiorna Meteo" per consultare le previsioni o le medie storiche degli ultimi 2 anni.
+            </div>
+          </div>
+
+          <!-- ALLOGGIO & MOTO PARKING -->
+          <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800 space-y-2 text-xs">
+            <div class="flex justify-between items-center border-b border-gray-800 pb-1.5">
+              <span class="font-bold text-white flex items-center gap-1.5">
+                <i class="fa-solid fa-bed text-amber-400"></i> ${t.hotel || 'Alloggio da definire'}
+              </span>
+              <div class="flex items-center gap-1.5">
+                <span class="font-bold text-amber-400">${t.prezzo || ''}</span>
+                ${t.pagato ? `
+                  <span class="text-[10px] px-1.5 py-0.5 rounded font-semibold ${t.pagato.toLowerCase().includes('già') || t.pagato.toLowerCase().includes('pagato') ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}">
+                    ${t.pagato}
+                  </span>
+                ` : ''}
+              </div>
+            </div>
+
+            <div class="flex justify-between text-[11px] text-gray-400">
+              <span>Piattaforma: <strong class="text-gray-200">${t.piattaforma || 'Non specificata'}</strong></span>
+            </div>
+
+            <div class="text-[11px] text-emerald-300 bg-emerald-950/30 p-2.5 rounded-lg border border-emerald-800/40">
+              <i class="fa-solid fa-square-parking mr-1 text-emerald-400"></i>
+              <strong>Moto Parking:</strong> ${t.parcheggio || 'Nessuna indicazione inserita'}
+            </div>
+          </div>
+
+          <!-- NAVIGATORE MULTI-SISTEMA -->
+          <div class="pt-1">
+            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block mb-1.5">
+              Navigazione & Tracce:
+            </label>
+            <div class="grid grid-cols-4 gap-1.5 text-center">
+              <a href="${gmapsUrl}" target="_blank" 
+                 class="bg-blue-600/25 hover:bg-blue-600/35 border border-blue-500/40 text-blue-200 rounded-xl p-2.5 flex flex-col items-center gap-1 shadow">
+                <i class="fa-solid fa-diamond-turn-right text-base text-blue-400"></i>
+                <span class="text-[10px] font-bold">Google Maps</span>
+              </a>
+
+              <a href="https://waze.com/ul?q=${encodeURIComponent(t.arrivo || '')}&navigate=yes" target="_blank" 
+                 class="bg-cyan-600/15 hover:bg-cyan-600/25 border border-cyan-500/30 text-cyan-300 rounded-xl p-2.5 flex flex-col items-center gap-1">
+                <i class="fa-brands fa-waze text-base text-cyan-400"></i>
+                <span class="text-[10px] font-medium">Waze</span>
+              </a>
+
+              <a href="${t.myRouteUrl || 'https://www.myrouteapp.com'}" target="_blank" 
+                 class="bg-orange-600/15 hover:bg-orange-600/25 border border-orange-500/30 text-orange-300 rounded-xl p-2.5 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-route text-base text-orange-400"></i>
+                <span class="text-[10px] font-medium">MyRoute</span>
+              </a>
+
+              <button onclick="apriExportModal(${idx})" 
+                 class="bg-emerald-600/15 hover:bg-emerald-600/25 border border-emerald-500/30 text-emerald-300 rounded-xl p-2.5 flex flex-col items-center gap-1">
+                <i class="fa-solid fa-satellite-dish text-base text-emerald-400"></i>
+                <span class="text-[10px] font-semibold">GPS Track</span>
+              </button>
+            </div>
+          </div>
+        </div>
+        `;
+      }).join('');
+    }
+
+    function generaGoogleMapsLink(partenza, intermedio, arrivo) {
+      if (!partenza && !arrivo) return "https://www.google.com/maps";
+      let url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(partenza || '')}&destination=${encodeURIComponent(arrivo || '')}&travelmode=driving`;
+      if (intermedio && intermedio.trim() !== '') {
+        url += `&waypoints=${encodeURIComponent(intermedio.trim())}`;
+      }
+      return url;
+    }
+
+    // PARSER EXCEL ULTRA-ROBUSTO
+    function importaQualsiasiExcel(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const wb = XLSX.read(data, { type: 'array', cellDates: true });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+
+          if (rows.length === 0) {
+            alert("Il file Excel è vuoto.");
+            return;
+          }
+
+          function val(riga, chiavi) {
+            const cols = Object.keys(riga);
+            for (let c of cols) {
+              const lower = c.toLowerCase().trim();
+              for (let k of chiavi) {
+                if (lower === k.toLowerCase() || lower.includes(k.toLowerCase())) {
+                  const v = riga[c];
+                  if (v !== undefined && v !== null && String(v).trim() !== '') {
+                    return String(v).trim();
+                  }
+                }
+              }
+            }
+            return "";
+          }
+
+          tappe = [];
+          rows.forEach((r, idx) => {
+            const gg = val(r, ['gg.', 'gg', 'giorno']);
+            const dataRaw = val(r, ['data', 'date']);
+            const partenza = val(r, ['partenza', 'start', 'from', 'da']);
+            const arrivo = val(r, ['arrivo', 'destinazione', 'arrival', 'to', 'a']);
+            const intermedio = val(r, ['intermedio', 'passo', 'via']);
+            const temp = val(r, ['temp. min/max', 'temp', 'temperatura']);
+            const km = val(r, ['km tot', 'km']);
+            const ore = val(r, ['ore guida', 'ore']);
+            const alt = val(r, ['alt.', 'altitudine']);
+            const hotel = val(r, ['pernottamento', 'hotel', 'alloggio']);
+            const parcheggio = val(r, ['indicazioni parcheggio', 'parcheggio', 'parking']);
+            const prezzo = val(r, ['costo camera', 'prezzo €', 'prezzo', 'costo']);
+            const piattaforma = val(r, ['sito prenotazione', 'piattaforma', 'booking']);
+
+            // Esclude le righe di riepilogo in fondo al foglio
+            const testIgnora = (gg + " " + dataRaw + " " + partenza + " " + arrivo).toUpperCase();
+            if (testIgnora.includes("TOTALE") || testIgnora.includes("MANUTENZIONE") || testIgnora.includes("ASSICURAZIONI") || testIgnora.includes("PREVENTIVO")) {
+              return;
+            }
+
+            // Considera valida qualsiasi riga che abbia una data, un giorno, o una partenza/arrivo
+            if (dataRaw || gg || partenza || arrivo || temp) {
+              let dataFormattata = "";
+              if (dataRaw) {
+                const d = new Date(dataRaw);
+                dataFormattata = !isNaN(d.getTime()) ? d.toISOString().split('T')[0] : dataRaw.split(' ')[0];
+              }
+
+              tappe.push({
+                giorno: gg || '',
+                data: dataFormattata,
+                oraPartenza: "08:30",
+                partenza: partenza,
+                intermedio: intermedio,
+                arrivo: arrivo,
+                kmTot: km,
+                oreGuida: ore || "03:00",
+                altitudine: alt,
+                tempMinMax: temp,
+                hotel: hotel,
+                piattaforma: piattaforma || (hotel ? "Booking" : ""),
+                prezzo: prezzo ? (prezzo.includes('€') ? prezzo : prezzo + ' €') : "",
+                pagato: "Da pagare",
+                parcheggio: parcheggio,
+                myRouteUrl: "",
+                fileTracciaNome: ""
+              });
+            }
+          });
+
+          salvaSuMemoria();
+          renderTappe();
+          alert(`Caricate ${tappe.length} tappe con successo!`);
+        } catch(err) {
+          alert("Errore nella lettura del file: " + err.message);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function gestisciCaricamentoFileTraccia(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      document.getElementById('labelFileTraccia').textContent = file.name;
+    }
+
+    function apriExportModal(idx) {
+      tappaCorrenteExport = tappe[idx];
+      document.getElementById('exportDesc').textContent = `Esporta "${tappaCorrenteExport.partenza || 'Partenza'} ➔ ${tappaCorrenteExport.arrivo || 'Arrivo'}"`;
+      document.getElementById('exportModal').classList.remove('hidden');
+    }
+    function chiudiExportModal() {
+      document.getElementById('exportModal').classList.add('hidden');
+      tappaCorrenteExport = null;
+    }
+
+    function eseguiDownloadFormato(formato) {
+      if (!tappaCorrenteExport) return;
+      const p = tappaCorrenteExport.partenza || 'Partenza';
+      const a = tappaCorrenteExport.arrivo || 'Arrivo';
+      const w = tappaCorrenteExport.intermedio || '';
+      const baseName = `${p}_${a}`.replace(/\s+/g, '_');
+
+      let mime = 'application/octet-stream';
+      let fileContent = '';
+
+      if (formato === 'gpx') {
+        mime = 'application/gpx+xml';
+        fileContent = `<?xml version="1.0" encoding="UTF-8"?><gpx version="1.1"><rte><name>${p} - ${a}</name><rtept lat="0.0" lon="0.0"><name>${p}</name></rtept>${w ? `<rtept lat="0.0" lon="0.0"><name>${w}</name></rtept>` : ''}<rtept lat="0.0" lon="0.0"><name>${a}</name></rtept></rte></gpx>`;
+      } else if (formato === 'itn') {
+        mime = 'text/plain';
+        fileContent = `0|0|${p}|0|\n${w ? `0|0|${w}|1|\n` : ''}0|0|${a}|2|\n`;
+      } else if (formato === 'kml') {
+        mime = 'application/vnd.google-earth.kml+xml';
+        fileContent = `<?xml version="1.0" encoding="UTF-8"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>${p} - ${a}</name><Placemark><name>${p}</name></Placemark><Placemark><name>${a}</name></Placemark></Document></kml>`;
+      }
+
+      const blob = new Blob([fileContent], { type: mime });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `${baseName}.${formato}`;
+      link.click();
+      chiudiExportModal();
+    }
+
+    async function calcolaMeteoOrario(tappaIdx) {
+      const t = tappe[tappaIdx];
+      const box = document.getElementById(`weather-timeline-${tappaIdx}`);
+      const note = document.getElementById(`weather-note-${tappaIdx}`);
+      const targetCitta = t.arrivo || t.partenza;
+
+      if (!targetCitta) {
+        alert("Inserisci prima il nome di una località di partenza o arrivo nella tappa (usa l'icona della matita).");
+        return;
+      }
+
+      note.innerHTML = `<span class="text-sky-300"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Rilevamento coordinate e meteo...</span>`;
+
+      try {
+        const geoRes = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(targetCitta)}&count=1&language=it&format=json`);
+        const geoData = await geoRes.json();
+        if (!geoData.results || geoData.results.length === 0) {
+          note.innerHTML = `<span class="text-amber-400">Località non identificata nel database meteo.</span>`;
+          return;
+        }
+
+        const { latitude, longitude, name } = geoData.results[0];
+        const timeline = generaTimelineOre(t.oraPartenza, t.oreGuida);
+
+        let giorniDifferenza = null;
+        if (t.data) {
+          const dataViaggio = new Date(t.data);
+          const oggi = new Date();
+          giorniDifferenza = Math.ceil((dataViaggio - oggi) / (1000 * 60 * 60 * 24));
+        }
+
+        if (giorniDifferenza !== null && giorniDifferenza > 14) {
+          note.innerHTML = `<span class="text-amber-400 font-semibold"><i class="fa-solid fa-calendar-xmark mr-1"></i> Ancora è presto per questo dato.</span> Calcolata media storica degli ultimi 2 anni per ${name} a questo periodo.`;
+
+          const dataViaggio = new Date(t.data);
+          const anno1 = dataViaggio.getFullYear() - 1;
+          const anno2 = dataViaggio.getFullYear() - 2;
+          const meseGiorno = t.data.substring(5);
+
+          const datePast1 = `${anno1}-${meseGiorno}`;
+          const datePast2 = `${anno2}-${meseGiorno}`;
+
+          const histRes = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${latitude}&longitude=${longitude}&start_date=${datePast2}&end_date=${datePast1}&hourly=temperature_2m`);
+          const histData = await histRes.json();
+
+          let tempMediaStimata = 22;
+          if (histData.hourly && histData.hourly.temperature_2m) {
+            const arr = histData.hourly.temperature_2m;
+            tempMediaStimata = Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+          }
+
+          box.innerHTML = timeline.map((step, i) => {
+            const tGrad = tempMediaStimata + (i * 0.7);
+            return `
+              <div class="flex-shrink-0 bg-gray-900 border border-amber-500/30 rounded-lg p-2 text-center w-24">
+                <span class="text-[10px] text-gray-400 block font-mono">${step.orario}</span>
+                <div class="my-1 text-base text-amber-400"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                <span class="text-[11px] text-amber-300 block font-bold">${Math.round(tGrad)}°C</span>
+                <span class="text-[8px] text-amber-400/80 uppercase block">Media 2 anni</span>
+              </div>
+            `;
+          }).join('');
+          return;
+        }
+
+        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation_probability,weathercode,windspeed_10m&timezone=auto`);
+        const wData = await wRes.json();
+
+        note.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> Previsione meteorologica attiva per ${name} a tappe orarie.</span>`;
+
+        const hTimes = wData.hourly.time;
+        box.innerHTML = timeline.map(step => {
+          const oraMatch = `${String(new Date().toISOString().split('T')[0])}T${step.orario.split(':')[0]}:00`;
+          let index = hTimes.findIndex(t => t.startsWith(oraMatch));
+          if (index === -1) index = 12;
+
+          const temp = Math.round(wData.hourly.temperature_2m[index]);
+          const code = wData.hourly.weathercode[index];
+          const pioggia = wData.hourly.precipitation_probability ? wData.hourly.precipitation_probability[index] : 0;
+          const { icon, label } = getWmoIcon(code);
+
+          return `
+            <div class="flex-shrink-0 bg-gray-900 border border-gray-700 rounded-lg p-2 text-center w-24 shadow">
+              <span class="text-[10px] text-gray-300 block font-mono font-semibold">${step.orario}</span>
+              <div class="my-1.5 text-base"><i class="fa-solid ${icon}"></i></div>
+              <span class="text-[12px] text-white block font-bold">${temp}°C</span>
+              ${pioggia > 15 ? `<span class="text-[9px] text-blue-300 block"><i class="fa-solid fa-droplet text-[8px]"></i> ${pioggia}%</span>` : ''}
+              <span class="text-[9px] text-gray-400 truncate block mt-0.5">${step.isPartenza ? 'Partenza' : step.isArrivo ? 'Arrivo' : label}</span>
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        note.innerHTML = `<span class="text-rose-400">Errore recupero meteo: ${err.message}</span>`;
+      }
+    }
+
+    function apriModalTappa() {
+      document.getElementById('editIndex').value = "-1";
+      document.querySelectorAll('#tappaModal input').forEach(i => i.value = '');
+      document.getElementById('labelFileTraccia').textContent = "Scegli file dal telefono/PC...";
+      document.getElementById('m_ora').value = "08:30";
+      document.getElementById('tappaModal').classList.remove('hidden');
+    }
+
+    function chiudiModalTappa() {
+      document.getElementById('tappaModal').classList.add('hidden');
+    }
+
+    function modificaTappa(idx) {
+      const t = tappe[idx];
+      document.getElementById('editIndex').value = idx;
+      document.getElementById('m_giorno').value = t.giorno || '';
+      document.getElementById('m_data').value = t.data || '';
+      document.getElementById('m_ora').value = t.oraPartenza || '08:30';
+      document.getElementById('m_partenza').value = t.partenza || '';
+      document.getElementById('m_intermedio').value = t.intermedio || '';
+      document.getElementById('m_arrivo').value = t.arrivo || '';
+      document.getElementById('m_km').value = t.kmTot || '';
+      document.getElementById('m_ore').value = t.oreGuida || '';
+      document.getElementById('m_alt').value = t.altitudine || t.tempMinMax || '';
+      document.getElementById('m_hotel').value = t.hotel || '';
+      document.getElementById('m_piattaforma').value = t.piattaforma || '';
+      document.getElementById('m_prezzo').value = t.prezzo || '';
+      document.getElementById('m_pagato').value = t.pagato || 'Da pagare';
+      document.getElementById('m_parcheggio').value = t.parcheggio || '';
+      document.getElementById('m_myroute').value = t.myRouteUrl || '';
+      document.getElementById('labelFileTraccia').textContent = t.fileTracciaNome || "Scegli file dal telefono/PC...";
+      document.getElementById('tappaModal').classList.remove('hidden');
+    }
+
+    function salvaTappa() {
+      const idx = parseInt(document.getElementById('editIndex').value);
+      const partenza = document.getElementById('m_partenza').value.trim();
+      const arrivo = document.getElementById('m_arrivo').value.trim();
+
+      const tappaObj = {
+        giorno: document.getElementById('m_giorno').value.trim(),
+        data: document.getElementById('m_data').value,
+        oraPartenza: document.getElementById('m_ora').value || "08:30",
+        partenza: partenza,
+        intermedio: document.getElementById('m_intermedio').value.trim(),
+        arrivo: arrivo,
+        kmTot: document.getElementById('m_km').value.trim(),
+        oreGuida: document.getElementById('m_ore').value.trim() || "03:00",
+        altitudine: document.getElementById('m_alt').value.trim(),
+        hotel: document.getElementById('m_hotel').value.trim(),
+        piattaforma: document.getElementById('m_piattaforma').value.trim(),
+        prezzo: document.getElementById('m_prezzo').value.trim(),
+        pagato: document.getElementById('m_pagato').value,
+        parcheggio: document.getElementById('m_parcheggio').value.trim(),
+        myRouteUrl: document.getElementById('m_myroute').value.trim(),
+        fileTracciaNome: document.getElementById('labelFileTraccia').textContent !== "Scegli file dal telefono/PC..." ? document.getElementById('labelFileTraccia').textContent : ''
+      };
+
+      if (idx === -1) {
+        tappe.push(tappaObj);
+      } else {
+        tappe[idx] = tappaObj;
+      }
+
+      salvaSuMemoria();
+      renderTappe();
+      chiudiModalTappa();
+    }
+
+    function rimuoviTappa(idx) {
+      if (confirm("Vuoi eliminare questa tappa?")) {
+        tappe.splice(idx, 1);
+        salvaSuMemoria();
+        renderTappe();
+      }
+    }
+
+    function attivaGps() {
+      const status = document.getElementById('gpsStatus');
+      const box = document.getElementById('liveWeatherBox');
+      if (!navigator.geolocation) {
+        status.textContent = "GPS non disponibile";
+        return;
+      }
+      status.textContent = "Rilevamento...";
+      navigator.geolocation.getCurrentPosition(async (pos) => {
+        const lat = pos.coords.latitude.toFixed(4);
+        const lon = pos.coords.longitude.toFixed(4);
+        status.innerHTML = `<span class="text-emerald-400 font-semibold">GPS: ${lat}, ${lon}</span>`;
+
+        try {
+          const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+          const data = await res.json();
+          box.classList.remove('hidden');
+          box.innerHTML = `
+            <div class="flex justify-between items-center text-xs">
+              <span><i class="fa-solid fa-location-dot text-emerald-400 mr-1"></i> Meteo attuale: <strong>${data.current_weather.temperature}°C</strong></span>
+              <span><i class="fa-solid fa-wind mr-1 text-gray-400"></i> ${data.current_weather.windspeed} km/h</span>
+            </div>
+          `;
+        } catch(e) {}
+      }, () => {
+        status.textContent = "Permesso GPS negato";
+      });
+    }
+  </script>
+</body>
+</html>
