@@ -23,6 +23,7 @@
       color: #f1f5f9; 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
       -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
     }
 
     /* Safe Area superiore per Dynamic Island / Notch iPhone */
@@ -101,6 +102,34 @@
       background: rgba(245, 158, 11, 0.16);
       color: #fbbf24;
     }
+
+    /* Stile per Swipe-to-Delete */
+    .swipe-container {
+      position: relative;
+      overflow: hidden;
+      touch-action: pan-y;
+      border-radius: 1rem;
+    }
+    .swipe-delete-bg {
+      position: absolute;
+      top: 0; bottom: 0; right: 0;
+      width: 100%;
+      background: #be123c;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 1.5rem;
+      color: white;
+      font-weight: bold;
+      border-radius: 1rem;
+      z-index: 1;
+    }
+    .swipe-content {
+      position: relative;
+      background: inherit;
+      z-index: 2;
+      transition: transform 0.15s ease-out;
+    }
   </style>
 </head>
 <body class="pb-24 min-h-screen relative select-none">
@@ -148,13 +177,19 @@
   <!-- VISTA 1: DASHBOARD PRINCIPALE STILE TFT -->
   <section id="vistaDashboard" class="p-3.5 space-y-3.5 max-w-xl mx-auto">
     
-    <!-- Hero Quadro Strumenti TFT -->
+    <!-- Hero Quadro Strumenti TFT con Tasto Reset Integrato -->
     <div class="tft-card rounded-2xl p-4 border border-amber-500/20 relative overflow-hidden">
       <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
         <span class="text-[11px] font-bold text-gray-400 uppercase tracking-widest flex items-center gap-1.5">
           <i class="fa-solid fa-compass text-amber-400"></i> Roadbook Live Cockpit
         </span>
-        <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">ONLINE</span>
+        <div class="flex items-center gap-2">
+          <!-- TASTO RESET TUTTE LE TAPPE -->
+          <button onclick="confermaResetTotale()" class="text-[10px] font-bold text-rose-400 bg-rose-950/40 hover:bg-rose-900/60 px-2 py-0.5 rounded border border-rose-500/40 flex items-center gap-1 transition-all active:scale-95" title="Resetta tutte le tappe">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+          <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/40 px-2 py-0.5 rounded border border-emerald-500/30">ONLINE</span>
+        </div>
       </div>
 
       <!-- Indicatori Digitali Gauge -->
@@ -176,7 +211,7 @@
 
     <!-- Tasti Switch Cockpit: +EXCL e + TAPPA -->
     <div class="grid grid-cols-2 gap-3">
-      <!-- Tasto +EXCL (Smeraldo Rally con Motore Semantico) -->
+      <!-- Tasto +EXCL -->
       <label class="tft-card hover:border-emerald-500/60 p-3.5 rounded-2xl flex items-center space-x-3 cursor-pointer shadow-xl active:scale-95 transition-all border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-gray-900/80">
         <div class="w-12 h-12 rounded-xl bg-emerald-500 text-gray-950 flex items-center justify-center font-black text-xl shadow-lg shadow-emerald-500/30 flex-shrink-0">
           <i class="fa-solid fa-file-arrow-up"></i>
@@ -185,10 +220,10 @@
           <span class="text-sm font-black text-emerald-300 block leading-tight tracking-wider">+EXCL</span>
           <span class="text-[10px] text-gray-400 font-medium truncate block">Carica Roadbook</span>
         </div>
-        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaConMotoreEuristico(event)">
+        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaExcelRigido(event)">
       </label>
 
-      <!-- Tasto + TAPPA (Ambra Racing) -->
+      <!-- Tasto + TAPPA -->
       <button onclick="apriModalNuovaTappa()" class="tft-card hover:border-amber-500/60 p-3.5 rounded-2xl flex items-center space-x-3 shadow-xl active:scale-95 transition-all text-left border border-amber-500/30 bg-gradient-to-br from-amber-950/40 to-gray-900/80">
         <div class="w-12 h-12 rounded-xl bg-amber-400 text-gray-950 flex items-center justify-center font-black text-xl shadow-lg shadow-amber-400/30 flex-shrink-0">
           <i class="fa-solid fa-plus font-black"></i>
@@ -200,7 +235,13 @@
       </button>
     </div>
 
-    <!-- Elenco Tappe Roadbook -->
+    <!-- Suggerimento Swipe -->
+    <div class="flex items-center justify-between text-[11px] text-gray-400 px-1 pt-1">
+      <span>Elenco Roadbook</span>
+      <span class="text-[10px] text-amber-400/80"><i class="fa-solid fa-hand-pointer mr-1"></i>Scorri a sinistra per eliminare</span>
+    </div>
+
+    <!-- Elenco Tappe Roadbook con Supporto Swipe -->
     <div id="listaTappeContainer" class="space-y-2.5"></div>
   </section>
 
@@ -265,7 +306,7 @@
       <div class="space-y-3 text-xs">
         <!-- Partenza -->
         <div class="relative">
-          <label class="block text-gray-300 font-medium mb-1">Partenza (Città, Via o Piazza esatta) *</label>
+          <label class="block text-gray-300 font-medium mb-1">Partenza (Città o Indirizzo) *</label>
           <input type="text" id="m_partenza" placeholder="es. Sant'Agata li Battiati Via Roma 12..." autocomplete="off" 
                  oninput="cercaCittaLive(this, 'sugg_partenza')" onblur="ritardoChiudiDropdown('sugg_partenza')"
                  class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-amber-400 outline-none">
@@ -287,7 +328,7 @@
 
         <!-- Arrivo -->
         <div class="relative">
-          <label class="block text-gray-300 font-medium mb-1">Arrivo (Città, Via o Destinazione esatta) *</label>
+          <label class="block text-gray-300 font-medium mb-1">Arrivo (Città o Destinazione) *</label>
           <input type="text" id="m_arrivo" placeholder="es. Taormina Piazza IX Aprile..." autocomplete="off" 
                  oninput="cercaCittaLive(this, 'sugg_arrivo')" onblur="ritardoChiudiDropdown('sugg_arrivo')"
                  class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-amber-400 outline-none">
@@ -404,7 +445,6 @@
         const aaaa = val.getFullYear();
         return `${gg}/${mm}/${aaaa}`;
       }
-      // Se è un numero seriale Excel (es. 45443)
       if (typeof val === 'number' || (!isNaN(val) && String(val).length === 5)) {
         const dateObj = new Date((val - (25567 + 2)) * 86400 * 1000);
         if (!isNaN(dateObj.getTime())) {
@@ -586,7 +626,7 @@
 
     // Memoria locale
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v16_tappe');
+      const saved = localStorage.getItem('djroute_v17_tappe');
       if (saved) {
         try { tappe = JSON.parse(saved); } catch(e) { tappe = []; }
       }
@@ -594,7 +634,7 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_v16_tappe', JSON.stringify(tappe));
+      localStorage.setItem('djroute_v17_tappe', JSON.stringify(tappe));
       aggiornaRiepilogo();
     }
 
@@ -618,6 +658,20 @@
       const ore = Math.floor(totMinuti / 60);
       const min = totMinuti % 60;
       document.getElementById('totOreVal').textContent = `${ore}h ${min}m`;
+    }
+
+    // RESET COMPLETO DI TUTTE LE TAPPE CON CONFERMA
+    function confermaResetTotale() {
+      if (tappe.length === 0) {
+        alert("Non ci sono tappe da cancellare.");
+        return;
+      }
+      if (confirm("ATTENZIONE: Sei sicuro di voler cancellare TUTTE le tappe del Roadbook? L'operazione non può essere annullata.")) {
+        tappe = [];
+        salvaSuMemoria();
+        vaiAllaHome();
+        alert("Roadbook azzerato con successo.");
+      }
     }
 
     // Navigazione
@@ -690,7 +744,7 @@
       aggiornaBottoniNavigazione();
     }
 
-    // Dashboard elenco tappe
+    // Dashboard elenco tappe con SWIPE-TO-DELETE da destra a sinistra
     function renderListaDashboard() {
       const cont = document.getElementById('listaTappeContainer');
       if (!tappe || tappe.length === 0) {
@@ -708,32 +762,104 @@
         const giorno = t.giorno || calcolaGiornoDaData(t.data);
         const intermediText = Array.isArray(t.intermedi) ? t.intermedi.join(', ') : (t.intermedio || '');
         return `
-          <div onclick="apriDettaglioTappa(${idx})" class="tft-card hover:border-amber-500/50 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer active:scale-[0.99] transition-all shadow-md">
-            <div class="flex items-center space-x-3 overflow-hidden">
-              <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black flex items-center justify-center text-xs flex-shrink-0">
-                ${idx + 1}
-              </div>
-              <div class="truncate">
-                <div class="flex items-center gap-1.5 text-[10px] text-gray-400">
-                  <span>${giorno}</span>
-                  ${t.data ? `• <span>${t.data}</span>` : ''}
-                  <span class="text-amber-400 font-mono">(${t.oraPartenza || '08:30'})</span>
-                </div>
-                <h4 class="font-bold text-sm text-white truncate mt-0.5">
-                  ${t.partenza || 'Partenza'} <i class="fa-solid fa-arrow-right text-[10px] text-amber-400 mx-1"></i> ${t.arrivo || 'Arrivo'}
-                </h4>
-                ${intermediText ? `<p class="text-[10px] text-gray-400 truncate"><i class="fa-solid fa-signs-post mr-1 text-amber-500"></i>${intermediText}</p>` : ''}
-              </div>
+          <div class="swipe-container" id="swipe-box-${idx}">
+            <!-- Fondo rosso che compare strisciando a sinistra -->
+            <div class="swipe-delete-bg">
+              <span class="flex items-center gap-2 text-xs uppercase tracking-wider font-bold">
+                Elimina <i class="fa-solid fa-trash-can text-sm"></i>
+              </span>
             </div>
 
-            <div class="text-right flex-shrink-0 pl-2">
-              <span class="text-xs font-bold text-amber-400 font-mono block">${t.kmTot ? t.kmTot + ' km' : 'Auto'}</span>
-              <span class="text-[10px] text-gray-400 block">${t.oreGuida || '3h'}</span>
-              ${t.tempMinMax ? `<span class="text-[9px] text-emerald-400 block font-mono">${t.tempMinMax}</span>` : ''}
+            <!-- Contenuto principale della card della tappa -->
+            <div class="swipe-content tft-card hover:border-amber-500/50 p-3.5 rounded-2xl flex items-center justify-between cursor-pointer shadow-md"
+                 id="card-content-${idx}"
+                 onclick="apriDettaglioTappa(${idx})">
+              
+              <div class="flex items-center space-x-3 overflow-hidden">
+                <div class="w-10 h-10 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-400 font-black flex items-center justify-center text-xs flex-shrink-0">
+                  ${idx + 1}
+                </div>
+                <div class="truncate">
+                  <div class="flex items-center gap-1.5 text-[10px] text-gray-400">
+                    <span>${giorno}</span>
+                    ${t.data ? `• <span>${t.data}</span>` : ''}
+                    <span class="text-amber-400 font-mono">(${t.oraPartenza || '08:30'})</span>
+                  </div>
+                  <h4 class="font-bold text-sm text-white truncate mt-0.5">
+                    ${t.partenza || 'Partenza'} <i class="fa-solid fa-arrow-right text-[10px] text-amber-400 mx-1"></i> ${t.arrivo || 'Arrivo'}
+                  </h4>
+                  ${intermediText ? `<p class="text-[10px] text-gray-400 truncate"><i class="fa-solid fa-signs-post mr-1 text-amber-500"></i>${intermediText}</p>` : ''}
+                </div>
+              </div>
+
+              <div class="text-right flex-shrink-0 pl-2">
+                <span class="text-xs font-bold text-amber-400 font-mono block">${t.kmTot ? t.kmTot + ' km' : 'Auto'}</span>
+                <span class="text-[10px] text-gray-400 block">${t.oreGuida || '3h'}</span>
+                ${t.tempMinMax ? `<span class="text-[9px] text-emerald-400 block font-mono">${t.tempMinMax}</span>` : ''}
+              </div>
             </div>
           </div>
         `;
       }).join('');
+
+      // Collega le gesture di swipe touch
+      attivaSwipeGesture();
+    }
+
+    // GESTORE SWIPE DA DESTRA VERSO SINISTRA SU SMARTPHONE
+    function attivaSwipeGesture() {
+      tappe.forEach((_, idx) => {
+        const card = document.getElementById(`card-content-${idx}`);
+        if (!card) return;
+
+        let startX = 0;
+        let startY = 0;
+        let currentTranslate = 0;
+        let isSwiping = false;
+
+        card.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+          isSwiping = false;
+        }, { passive: true });
+
+        card.addEventListener('touchmove', (e) => {
+          const deltaX = e.touches[0].clientX - startX;
+          const deltaY = e.touches[0].clientY - startY;
+
+          // Se lo swipe è orizzontale e verso sinistra (deltaX negativo)
+          if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0) {
+            isSwiping = true;
+            // Limita lo scorrimento
+            currentTranslate = Math.max(deltaX, -110);
+            card.style.transform = `translateX(${currentTranslate}px)`;
+          }
+        }, { passive: true });
+
+        card.addEventListener('touchend', () => {
+          if (isSwiping && currentTranslate < -70) {
+            // Se lo scorrimento supera 70px a sinistra, attiva la conferma
+            card.style.transform = 'translateX(-100px)';
+            setTimeout(() => {
+              card.style.transform = 'translateX(0px)';
+              confermaEliminazioneTappa(idx);
+            }, 50);
+          } else {
+            // Ritorna in posizione normale
+            card.style.transform = 'translateX(0px)';
+          }
+        });
+      });
+    }
+
+    function confermaEliminazioneTappa(idx) {
+      const t = tappe[idx];
+      const nome = `${t.partenza || 'Partenza'} -> ${t.arrivo || 'Arrivo'}`;
+      if (confirm(`Vuoi eliminare definitivamente questa tappa?\n\n"${nome}"`)) {
+        tappe.splice(idx, 1);
+        salvaSuMemoria();
+        renderListaDashboard();
+      }
     }
 
     // Scheda dettaglio con link navigazione
@@ -1249,8 +1375,8 @@
       link.click();
     }
 
-    // MOTORE EURISTICO / SEMANTICO OFFLINE PER QUALSIASI FOGLIO EXCEL
-    function importaConMotoreEuristico(event) {
+    // LETTURA EXCEL DI PRECISIONE
+    function importaExcelRigido(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -1258,153 +1384,133 @@
       reader.onload = function(e) {
         try {
           const data = new Uint8Array(e.target.result);
-          const wb = XLSX.read(data, { type: 'array', cellDates: false });
+          const wb = XLSX.read(data, { type: 'array', cellDates: true });
           const ws = wb.Sheets[wb.SheetNames[0]];
           
-          // Estrai matrice bidimensionale grezza (tutte le celle)
-          const matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
-
-          if (!matrix || matrix.length === 0) {
-            alert("Il foglio caricato è vuoto.");
+          // Estrai matrice grezza
+          const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
+          if (!raw || raw.length === 0) {
+            alert("Il file Excel è vuoto.");
             return;
           }
 
+          // 1. Trova la riga di intestazione cercando parole chiave essenziali
+          let headerRowIndex = -1;
+          for (let r = 0; r < Math.min(raw.length, 12); r++) {
+            const rigaStr = raw[r].map(c => String(c).toLowerCase().trim()).join(" ");
+            if ((rigaStr.includes("partenza") && rigaStr.includes("arrivo")) || 
+                (rigaStr.includes("data") && (rigaStr.includes("itinerario") || rigaStr.includes("tappa") || rigaStr.includes("km")))) {
+              headerRowIndex = r;
+              break;
+            }
+          }
+
+          if (headerRowIndex === -1) {
+            headerRowIndex = 0; // fallback alla prima riga
+          }
+
+          const headers = raw[headerRowIndex].map(h => String(h).toLowerCase().trim());
+
+          // Funzione di mapping della colonna in base alle parole chiave
+          function trovaColonna(parole) {
+            for (let p of parole) {
+              const idx = headers.findIndex(h => h.includes(p));
+              if (idx !== -1) return idx;
+            }
+            return -1;
+          }
+
+          const colData = trovaColonna(['data', 'date']);
+          const colPartenza = trovaColonna(['partenza', 'start', 'from', 'da']);
+          const colArrivo = trovaColonna(['arrivo', 'destinazione', 'arrival', 'to', 'a']);
+          const colIntermedio = trovaColonna(['intermedio', 'passo', 'passi', 'via', 'tappe']);
+          const colKm = trovaColonna(['km tot', 'km', 'distanza']);
+          const colOre = trovaColonna(['ore guida', 'ore', 'tempo']);
+          const colQuota = trovaColonna(['alt.', 'altitudine', 'quota']);
+          const colTemp = trovaColonna(['temp. min/max', 'temp', 'temperatura']);
+          const colHotel = trovaColonna(['pernottamento', 'hotel', 'alloggio', 'struttura']);
+          const colPrezzo = trovaColonna(['costo camera', 'prezzo', 'costo', '€']);
+          const colPiattaforma = trovaColonna(['sito prenotazione', 'piattaforma', 'booking']);
+          const colParcheggio = trovaColonna(['indicazioni parcheggio', 'parcheggio', 'parking']);
+          const colLink = trovaColonna(['myroute', 'link', 'traccia']);
+
           const nuoveTappe = [];
 
-          // Regex di riconoscimento semantico
-          const regexDataNumerica = /\b(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})\b/;
-          const regexFrecciaRotta = /\s*(?:->|➔|-->|—|-|>|verso|to)\s*/i;
-          const regexPrezzo = /(\d+[\.,]?\d*)\s*(?:€|euro|\$)/i;
-          const regexKm = /(\d+)\s*(?:km|chilometri)/i;
-          const regexOre = /(\d{1,2})[h:](\d{2})?/i;
+          // 2. Scansiona le righe dati successive all'intestazione
+          for (let r = headerRowIndex + 1; r < raw.length; r++) {
+            const row = raw[r];
+            if (!row || row.length === 0) continue;
 
-          // Scansione riga per riga
-          matrix.forEach((riga, rowIdx) => {
-            if (!Array.isArray(riga) || riga.length === 0) return;
-
-            // Unisci il testo della riga per verificare filtri di esclusione
-            const testoRiga = riga.map(c => String(c).trim()).join(" ");
-            const testUpper = testoRiga.toUpperCase();
-
-            // Filtro rumore
-            if (testUpper.includes("TOTALE") || testUpper.includes("TAGLIANDO") || testUpper.includes("ASSICURAZIONE") || testUpper.includes("PREVENTIVO")) {
-              return;
+            const testoCompleto = row.join(" ").toUpperCase();
+            if (testoCompleto.includes("TOTALE") || testoCompleto.includes("RIASSUNTO") || testoCompleto.includes("TAGLIANDO") || testoCompleto.includes("PREVENTIVO")) {
+              continue; // Salta righe di calcolo/totali
             }
 
-            let dataTappa = "";
-            let partenza = "";
-            let arrivo = "";
-            let intermedi = [];
-            let km = "";
-            let ore = "";
-            let hotel = "";
-            let prezzo = "";
+            const dataRaw = colData !== -1 ? row[colData] : "";
+            let partenza = colPartenza !== -1 ? String(row[colPartenza]).trim() : "";
+            let arrivo = colArrivo !== -1 ? String(row[colArrivo]).trim() : "";
+            const intermedio = colIntermedio !== -1 ? String(row[colIntermedio]).trim() : "";
+
+            // Se arrivo e partenza sono unificati con freccia in una cella (es: "Ancona -> Kalambaka")
+            if ((!partenza || !arrivo) && (partenza.includes("->") || partenza.includes("➔") || partenza.includes("-"))) {
+              const parti = partenza.split(/(?:->|➔|-)/).map(s => s.trim());
+              partenza = parti[0];
+              arrivo = parti[parti.length - 1];
+            }
+
+            if (!dataRaw && !partenza && !arrivo) continue;
+
+            const dataFormattata = formattaInGiornoMeseAnno(dataRaw);
+            const giornoCalcolato = calcolaGiornoDaData(dataFormattata);
+
+            let km = colKm !== -1 ? String(row[colKm]).replace(/km/i, '').trim() : "";
+            let ore = colOre !== -1 ? String(row[colOre]).trim() : "";
+            let hotel = colHotel !== -1 ? String(row[colHotel]).trim() : "";
+            let prezzo = colPrezzo !== -1 ? String(row[colPrezzo]).trim() : "";
+            if (prezzo && !prezzo.includes("€")) prezzo += " €";
+
             let piattaforma = "Booking";
-            let parcheggio = "";
+            if (colPiattaforma !== -1) {
+              const pStr = String(row[colPiattaforma]).toLowerCase();
+              if (pStr.includes("expedia")) piattaforma = "Expedia";
+              if (pStr.includes("dirett") || pStr.includes("privat")) piattaforma = "Pren. Diretta";
+            }
 
-            // Analizza ogni cella della riga con logica euristica
-            riga.forEach((cella) => {
-              const val = String(cella).trim();
-              if (!val) return;
+            const arrInt = intermedio ? intermedio.split(/[,;\/]/).map(s => s.trim()).filter(Boolean) : [];
 
-              // 1. Riconoscimento Date (Formato o Seriale Excel)
-              if (!dataTappa) {
-                if (regexDataNumerica.test(val)) {
-                  dataTappa = formattaInGiornoMeseAnno(val);
-                } else if (!isNaN(val) && val.length === 5 && parseInt(val) > 40000 && parseInt(val) < 60000) {
-                  dataTappa = formattaInGiornoMeseAnno(parseInt(val));
-                }
-              }
-
-              // 2. Riconoscimento Rotta Unificata con Frecce (es: "Ancona -> Kalambaka")
-              if (regexFrecciaRotta.test(val) && val.length > 5 && !partenza) {
-                const parti = val.split(regexFrecciaRotta).map(s => s.trim()).filter(Boolean);
-                if (parti.length >= 2) {
-                  partenza = parti[0];
-                  arrivo = parti[parti.length - 1];
-                  if (parti.length > 2) {
-                    intermedi = parti.slice(1, parti.length - 1);
-                  }
-                }
-              }
-
-              // 3. Riconoscimento Chilometri
-              if (!km && regexKm.test(val)) {
-                const match = val.match(regexKm);
-                km = match[1];
-              }
-
-              // 4. Riconoscimento Prezzi
-              if (!prezzo && regexPrezzo.test(val)) {
-                const match = val.match(regexPrezzo);
-                prezzo = `${match[1]} €`;
-              }
-
-              // 5. Riconoscimento Alloggi (parole chiave hotel, b&b, camping)
-              const valLower = val.toLowerCase();
-              if (!hotel && (valLower.includes("hotel") || valLower.includes("b&b") || valLower.includes("residence") || valLower.includes("camping") || valLower.includes("appartamento") || valLower.includes("albergo"))) {
-                hotel = val;
-              }
-
-              // 6. Riconoscimento Parcheggio
-              if (!parcheggio && (valLower.includes("garage") || valLower.includes("parcheggio") || valLower.includes("parking") || valLower.includes("posto moto"))) {
-                parcheggio = val;
-              }
-
-              // 7. Riconoscimento Piattaforma
-              if (valLower.includes("expedia")) piattaforma = "Expedia";
-              if (valLower.includes("dirett") || valLower.includes("privat")) piattaforma = "Pren. Diretta";
+            nuoveTappe.push({
+              giorno: giornoCalcolato,
+              data: dataFormattata,
+              oraPartenza: "08:30",
+              partenza: partenza || "Partenza",
+              intermedi: arrInt,
+              intermedio: arrInt.join(', '),
+              arrivo: arrivo || "Arrivo",
+              kmTot: km,
+              oreGuida: ore || (km ? `${Math.floor(parseFloat(km)/90)}h` : "03:00"),
+              altitudine: colQuota !== -1 ? String(row[colQuota]).trim() : "",
+              tempMinMax: colTemp !== -1 ? String(row[colTemp]).trim() : "",
+              hotel: hotel,
+              piattaforma: piattaforma,
+              prezzo: prezzo,
+              pagato: "Da pagare",
+              parcheggio: colParcheggio !== -1 ? String(row[colParcheggio]).trim() : "",
+              myRouteUrl: colLink !== -1 ? String(row[colLink]).trim() : ""
             });
-
-            // Se la rotta non era in una singola cella, cerca città in colonne distinte
-            if (!partenza || !arrivo) {
-              const celleTestuali = riga.map(c => String(c).trim()).filter(c => c.length > 2 && isNaN(c) && !regexDataNumerica.test(c) && !c.includes("€"));
-              if (celleTestuali.length >= 2) {
-                partenza = celleTestuali[0];
-                arrivo = celleTestuali[1];
-                if (celleTestuali.length > 2 && !hotel) {
-                  hotel = celleTestuali[2];
-                }
-              }
-            }
-
-            // Se abbiamo almeno una data o una coppia partenza/arrivo, registra la tappa
-            if ((partenza && arrivo) || dataTappa) {
-              const giornoCalcolato = calcolaGiornoDaData(dataTappa);
-              nuoveTappe.push({
-                giorno: giornoCalcolato,
-                data: dataTappa,
-                oraPartenza: "08:30",
-                partenza: partenza || "Partenza",
-                intermedi: intermedi,
-                intermedio: intermedi.join(", "),
-                arrivo: arrivo || "Arrivo",
-                kmTot: km,
-                oreGuida: ore || (km ? `${Math.floor(parseFloat(km)/90)}h` : "03:00"),
-                altitudine: "",
-                tempMinMax: "",
-                hotel: hotel,
-                piattaforma: piattaforma,
-                prezzo: prezzo,
-                pagato: "Da pagare",
-                parcheggio: parcheggio,
-                myRouteUrl: ""
-              });
-            }
-          });
+          }
 
           if (nuoveTappe.length === 0) {
-            alert("Nessuna tappa identificabile trovata nel file. Verifica che contenga date o città di rotta.");
+            alert("Nessuna riga valida trovata nel foglio Excel.");
             return;
           }
 
           tappe = nuoveTappe;
           salvaSuMemoria();
           vaiAllaHome();
-          alert(`Motore Euristico: ${tappe.length} tappe identificate e create con successo!`);
+          alert(`Caricate correttamente ${tappe.length} tappe con mappatura precisa!`);
 
         } catch(err) {
-          alert("Errore durante l'interpretazione del file: " + err.message);
+          alert("Errore nell'apertura del file Excel: " + err.message);
         }
       };
       reader.readAsArrayBuffer(file);
