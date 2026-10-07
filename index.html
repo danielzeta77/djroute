@@ -25,13 +25,13 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Margine di sicurezza per Dynamic Island su iPhone */
+    /* Margine di sicurezza superiore per Dynamic Island e Notch su iPhone */
     .header-dynamic-island {
       padding-top: max(env(safe-area-inset-top, 56px), 58px) !important;
       padding-bottom: 12px !important;
     }
 
-    /* Sfondo Cinematografico */
+    /* Sfondo Cinematografico Scuro con Moto */
     .bg-cinema-wrap {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
@@ -42,19 +42,19 @@
     .bg-cinema {
       position: absolute;
       top: -10%; left: -10%; width: 120%; height: 120%;
-      background: url('https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=1920&auto=format&fit=crop') center center / cover no-repeat;
+      background: url('https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=1920&auto=format&fit=crop') center center / cover no-repeat;
       animation: kenburns 35s ease-in-out infinite alternate;
-      filter: brightness(0.28) contrast(1.15) saturate(1.1);
+      filter: brightness(0.24) contrast(1.2) saturate(0.9);
     }
     @keyframes kenburns {
       0% { transform: scale(1) translate(0, 0); }
-      50% { transform: scale(1.08) translate(-1.5%, -1%); }
-      100% { transform: scale(1.15) translate(1.5%, 1.5%); }
+      50% { transform: scale(1.06) translate(-1.5%, -1%); }
+      100% { transform: scale(1.12) translate(1.5%, 1.5%); }
     }
     .cinema-overlay {
       position: fixed;
       top: 0; left: 0; width: 100vw; height: 100vh;
-      background: linear-gradient(180deg, rgba(11,15,23,0.85) 0%, rgba(11,15,23,0.92) 50%, rgba(11,15,23,0.98) 100%);
+      background: linear-gradient(180deg, rgba(11,15,23,0.88) 0%, rgba(11,15,23,0.93) 50%, rgba(11,15,23,0.98) 100%);
       z-index: -1;
       pointer-events: none;
     }
@@ -68,7 +68,7 @@
     .scroll-hide::-webkit-scrollbar { display: none; }
     .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* Tendina suggerimenti autocompletamento città */
+    /* Tendina autocompletamento città */
     .autocomplete-dropdown {
       position: absolute;
       left: 0; right: 0; top: 100%;
@@ -76,7 +76,7 @@
       background: #1c2128;
       border: 1px solid #444c56;
       border-radius: 0.75rem;
-      max-height: 190px;
+      max-height: 200px;
       overflow-y: auto;
       margin-top: 4px;
       box-shadow: 0 12px 28px rgba(0,0,0,0.7);
@@ -96,13 +96,13 @@
 </head>
 <body class="pb-24 min-h-screen relative select-none">
 
-  <!-- Sfondo Cinematografico -->
+  <!-- Sfondo Cinematografico Scuro -->
   <div class="bg-cinema-wrap">
     <div class="bg-cinema"></div>
   </div>
   <div class="cinema-overlay"></div>
 
-  <!-- Header posizionato fisicamente sotto la Dynamic Island -->
+  <!-- Header posizionato sotto la Dynamic Island -->
   <header class="sticky top-0 z-40 bg-[#0f141c]/95 backdrop-blur-md border-b border-gray-800/80 px-3 header-dynamic-island shadow-xl">
     <div class="flex items-center justify-between">
       <!-- Tasti Navigazione: Indietro, Home, Avanti -->
@@ -138,27 +138,28 @@
 
   <!-- VISTA 1: DASHBOARD PRINCIPALE -->
   <section id="vistaDashboard" class="p-3 space-y-3.5 max-w-xl mx-auto">
+    <!-- Tasti Grandi ed Evidenti: +EXCL e TAPPA -->
     <div class="grid grid-cols-2 gap-2.5">
-      <!-- Tasto Importa Excel -->
+      <!-- Tasto +EXCL -->
       <label class="glass-card hover:bg-emerald-950/40 border border-emerald-500/40 p-3 rounded-2xl flex items-center space-x-3 cursor-pointer shadow-lg active:scale-95 transition-all">
         <div class="w-11 h-11 rounded-xl bg-emerald-500 flex items-center justify-center text-gray-950 font-bold text-xl shadow-md shadow-emerald-950/50 flex-shrink-0">
-          <i class="fa-solid fa-file-excel"></i>
+          <i class="fa-solid fa-file-arrow-up"></i>
         </div>
         <div class="truncate">
-          <span class="text-xs font-bold text-white block leading-tight">Importa Excel</span>
-          <span class="text-[10px] text-emerald-400 truncate block">Carica file .xlsx</span>
+          <span class="text-sm font-black text-white block leading-tight tracking-wider">+EXCL</span>
+          <span class="text-[10px] text-emerald-400 truncate block">Importa foglio</span>
         </div>
         <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaQualsiasiExcel(event)">
       </label>
 
-      <!-- Tasto Nuova Tappa -->
+      <!-- Tasto TAPPA -->
       <button onclick="apriModalNuovaTappa()" class="glass-card hover:bg-amber-950/40 border border-amber-500/40 p-3 rounded-2xl flex items-center space-x-3 shadow-lg active:scale-95 transition-all text-left">
         <div class="w-11 h-11 rounded-xl bg-amber-400 flex items-center justify-center text-gray-950 font-bold text-xl shadow-md shadow-amber-950/50 flex-shrink-0">
-          <i class="fa-solid fa-plus"></i>
+          <i class="fa-solid fa-plus font-black"></i>
         </div>
         <div class="truncate">
-          <span class="text-xs font-bold text-white block leading-tight">Aggiungi Tappa</span>
-          <span class="text-[10px] text-amber-400 truncate block">Crea manuale</span>
+          <span class="text-sm font-black text-white block leading-tight tracking-wider">TAPPA</span>
+          <span class="text-[10px] text-amber-400 truncate block">Aggiungi nuova</span>
         </div>
       </button>
     </div>
@@ -188,12 +189,12 @@
     <div id="schedaDettaglioContainer"></div>
   </section>
 
-  <!-- MODAL GRAFICO PROFILO ALTIMETRICO -->
+  <!-- MODAL GRAFICO PROFILO ALTIMETRICO E TEMPERATURE -->
   <div id="modalGraficoQuote" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-3">
     <div class="glass-card w-full max-w-lg rounded-2xl p-4 space-y-3">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
         <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-mountain text-amber-400"></i> Profilo Altimetrico della Tratta
+          <i class="fa-solid fa-mountain text-amber-400"></i> Profilo Altimetrico & Temperature
         </h3>
         <button onclick="chiudiGraficoQuote()" class="text-gray-400 hover:text-white p-1">
           <i class="fa-solid fa-xmark text-base"></i>
@@ -221,7 +222,7 @@
 
       <input type="hidden" id="m_editIndex" value="-1">
 
-      <!-- RIGA 1: DATA (pulita e allineata), GIORNO (AUTO), ORA PARTENZA -->
+      <!-- RIGA 1: DATA (allineata), GIORNO (AUTO), ORA PARTENZA -->
       <div class="grid grid-cols-3 gap-2 text-xs items-end">
         <div>
           <label class="block text-gray-400 mb-1 font-medium">Data</label>
@@ -240,18 +241,18 @@
         </div>
       </div>
 
-      <!-- LOCALITÀ: PARTENZA, INTERMEDI MULTIPLI CON TASTO +, ARRIVO -->
+      <!-- LOCALITÀ CON AUTOCOMPLETAMENTO COMPLETO (CITTÀ, FRAZIONI, PASSI) -->
       <div class="space-y-3 text-xs">
         <!-- Partenza -->
         <div class="relative">
           <label class="block text-gray-300 font-medium mb-1">Luogo di Partenza *</label>
-          <input type="text" id="m_partenza" placeholder="Scrivi una città (es. ancona, bologna...)" autocomplete="off" 
+          <input type="text" id="m_partenza" placeholder="Città, frazione o passo..." autocomplete="off" 
                  oninput="cercaCittaLive(this, 'sugg_partenza')" onblur="ritardoChiudiDropdown('sugg_partenza')"
                  class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-amber-400 outline-none">
           <div id="sugg_partenza" class="autocomplete-dropdown hidden"></div>
         </div>
 
-        <!-- Punti Intermedi Dinamici con Tasto + -->
+        <!-- Punti Intermedi con Tasto + -->
         <div class="bg-gray-950/60 p-2.5 rounded-xl border border-gray-800 space-y-2">
           <div class="flex items-center justify-between">
             <span class="text-gray-300 font-bold flex items-center gap-1.5">
@@ -261,21 +262,20 @@
               <i class="fa-solid fa-plus font-bold"></i> Aggiungi Intermedio
             </button>
           </div>
-          
           <div id="containerIntermediDinamici" class="space-y-2 pt-1"></div>
         </div>
 
         <!-- Arrivo -->
         <div class="relative">
           <label class="block text-gray-300 font-medium mb-1">Destinazione Finale (Arrivo) *</label>
-          <input type="text" id="m_arrivo" placeholder="Scrivi una città (es. kalambaka, firenze...)" autocomplete="off" 
+          <input type="text" id="m_arrivo" placeholder="Città, frazione o destinazione..." autocomplete="off" 
                  oninput="cercaCittaLive(this, 'sugg_arrivo')" onblur="ritardoChiudiDropdown('sugg_arrivo')"
                  class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-amber-400 outline-none">
           <div id="sugg_arrivo" class="autocomplete-dropdown hidden"></div>
         </div>
       </div>
 
-      <!-- CALCOLI AUTOMATICI: KM TOTALI, ORE GUIDA, QUOTA MAX, TEMP MIN/MAX -->
+      <!-- METRICHE ALLINEATE E ARMONICHE: KM, ORE, QUOTA MAX, TEMP MIN/MAX -->
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
           <label class="block text-gray-400 mb-1">Km Totali (Auto)</label>
@@ -290,12 +290,12 @@
           <input type="text" id="m_alt" placeholder="Calcolato..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Temp. Min/Max Percorso</label>
+          <label class="block text-gray-400 mb-1">Temp. Min/Max (Auto)</label>
           <input type="text" id="m_tempMinMax" placeholder="Calcolato..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-emerald-400 font-bold text-xs">
         </div>
       </div>
 
-      <!-- SEZIONE ALLOGGIO -->
+      <!-- SEZIONE ALLOGGIO CON MENU A TENDINA PIATTAFORMA -->
       <div class="border-t border-gray-800 pt-2.5 space-y-2 text-xs">
         <span class="text-[11px] font-bold text-amber-400 uppercase tracking-wider block">Alloggio & Parcheggio</span>
         
@@ -306,7 +306,11 @@
           </div>
           <div>
             <label class="block text-gray-400 mb-1">Piattaforma</label>
-            <input type="text" id="m_piattaforma" placeholder="Booking, Airbnb, Diretto" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs">
+            <select id="m_piattaforma" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs outline-none">
+              <option value="Booking">Booking</option>
+              <option value="Expedia">Expedia</option>
+              <option value="Pren. Diretta">Pren. Diretta</option>
+            </select>
           </div>
         </div>
 
@@ -350,12 +354,12 @@
     let chartInstance = null;
     let debounceTimer = null;
 
-    // Normalizzazione testo per ricerca insensibile a maiuscole e accenti
+    // Normalizzazione testo per ricerca insensibile a maiuscole, minuscole e accenti
     function normalizzaTesto(t) {
       return (t || '').normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
     }
 
-    // FORMATTAZIONE DATA GG/MM/AAAA
+    // GESTIONE INPUT DATA CON SEPARAZIONE AUTOMATICA DELLE CIFRE
     function gestisciInputData(input) {
       let v = input.value.replace(/\D/g, '');
       if (v.length > 2 && v.length <= 4) {
@@ -400,7 +404,7 @@
       return nomi[d.getDay()];
     }
 
-    // AUTOCOMPLETAMENTO LIVE CITTÀ CON SUPPORTO CASE-INSENSITIVE GLOBALE
+    // AUTOCOMPLETAMENTO CITTÀ, FRAZIONI E PASSI (MULTI-INDEX)
     function cercaCittaLive(inputElem, dropId) {
       const q = normalizzaTesto(inputElem.value);
       const drop = document.getElementById(dropId);
@@ -414,21 +418,40 @@
 
       debounceTimer = setTimeout(async () => {
         try {
-          const res = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=7&language=it&format=json`);
+          // Ricerca combinata ad alta copertura (Open-Meteo + Photon OSM)
+          const res = await fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&limit=6&lang=it`);
           const data = await res.json();
-          if (data.results && data.results.length > 0) {
-            drop.innerHTML = data.results.map(r => {
-              const extra = [r.admin1, r.country].filter(Boolean).join(', ');
+          if (data.features && data.features.length > 0) {
+            drop.innerHTML = data.features.map(f => {
+              const p = f.properties;
+              const nome = p.name || '';
+              const extra = [p.state, p.country].filter(Boolean).join(', ');
               return `
-                <div class="autocomplete-item" onmousedown="selezionaCitta('${inputElem.id}', '${dropId}', '${r.name.replace(/'/g, "\\'")}', '${extra.replace(/'/g, "\\'")}')">
-                  <span class="font-bold text-white">${r.name}</span>
+                <div class="autocomplete-item" onmousedown="selezionaCitta('${inputElem.id}', '${dropId}', '${nome.replace(/'/g, "\\'")}', '${extra.replace(/'/g, "\\'")}')">
+                  <span class="font-bold text-white">${nome}</span>
                   <span class="text-[11px] text-gray-400 block">${extra}</span>
                 </div>
               `;
             }).join('');
             drop.classList.remove('hidden');
           } else {
-            drop.classList.add('hidden');
+            // Fallback su indice Open-Meteo
+            const res2 = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=5&language=it&format=json`);
+            const data2 = await res2.json();
+            if (data2.results && data2.results.length > 0) {
+              drop.innerHTML = data2.results.map(r => {
+                const extra = [r.admin1, r.country].filter(Boolean).join(', ');
+                return `
+                  <div class="autocomplete-item" onmousedown="selezionaCitta('${inputElem.id}', '${dropId}', '${r.name.replace(/'/g, "\\'")}', '${extra.replace(/'/g, "\\'")}')">
+                    <span class="font-bold text-white">${r.name}</span>
+                    <span class="text-[11px] text-gray-400 block">${extra}</span>
+                  </div>
+                `;
+              }).join('');
+              drop.classList.remove('hidden');
+            } else {
+              drop.classList.add('hidden');
+            }
           }
         } catch(e) {
           drop.classList.add('hidden');
@@ -446,11 +469,9 @@
     async function selezionaCitta(inputId, dropId, nome, extra) {
       document.getElementById(inputId).value = `${nome} (${extra})`;
       document.getElementById(dropId).classList.add('hidden');
-      // Innesca il calcolo automatico dei dati di rotta
       await calcolaMetricheRottaAutomatica();
     }
 
-    // GESTIONE PUNTI INTERMEDI MULTIPLI
     function aggiungiRigaIntermedio(valore = "") {
       const container = document.getElementById('containerIntermediDinamici');
       const idx = Date.now() + Math.floor(Math.random()*1000);
@@ -470,7 +491,7 @@
       container.appendChild(div);
     }
 
-    // CALCOLO AUTOMATICO: KM TOTALI, ORE, QUOTA MAX E TEMP MIN/MAX
+    // CALCOLO AUTOMATICO: KM, ORE GUIDA, QUOTA E TEMPERATURE MIN/MAX
     async function calcolaMetricheRottaAutomatica() {
       const p = document.getElementById('m_partenza').value.trim();
       const a = document.getElementById('m_arrivo').value.trim();
@@ -490,33 +511,36 @@
         const start = resP.results[0];
         const end = resA.results[0];
 
-        // Calcolo distanza Haversine con fattore curva
+        // Calcolo distanza Haversine
         const dLat = (end.latitude - start.latitude) * Math.PI / 180;
         const dLon = (end.longitude - start.longitude) * Math.PI / 180;
         const h = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(start.latitude * Math.PI / 180) * Math.cos(end.latitude * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         const distKm = Math.round(6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h)) * 1.25);
 
-        // Calcolo Ore Guida a 100 km/h di media
-        const oreTot = Math.floor(distKm / 100);
-        const minTot = Math.round((distKm % 100) / 100 * 60);
+        // Calcolo velocità stimata in base a distanza e orografia
+        const elevResInit = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${start.latitude},${end.latitude}&longitude=${start.longitude},${end.longitude}`).then(r => r.json());
+        const maxQuotaPunti = Math.max(...elevResInit.elevation);
+        
+        // Se si toccano quote alte (passi di montagna), andatura stimata a ~70 km/h, altrimenti ~95-100 km/h
+        const andaturaMedia = maxQuotaPunti > 900 ? 70 : 95;
+        const oreTot = Math.floor(distKm / andaturaMedia);
+        const minTot = Math.round((distKm % andaturaMedia) / andaturaMedia * 60);
 
         document.getElementById('m_km').value = distKm;
         document.getElementById('m_ore').value = `${oreTot}h ${minTot}m`;
 
-        // Interrogazione Quota Max
+        // Quota Massima lungo la tratta campionata
         const ptsLats = [start.latitude, (start.latitude + end.latitude)/2, end.latitude].join(',');
         const ptsLons = [start.longitude, (start.longitude + end.longitude)/2, end.longitude].join(',');
-        const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${ptsLats}&longitude=${ptsLons}`);
-        const elevData = await elevRes.json();
-        const quotaMax = Math.max(...elevData.elevation);
+        const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${ptsLats}&longitude=${ptsLons}`).then(r => r.json());
+        const quotaMax = Math.max(...elevRes.elevation);
         document.getElementById('m_alt').value = `${quotaMax} m`;
 
-        // Interrogazione Temp Min/Max durante il percorso
-        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${start.latitude}&longitude=${start.longitude}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`);
-        const wData = await wRes.json();
-        if (wData.daily && wData.daily.temperature_2m_min) {
-          const tMin = Math.round(wData.daily.temperature_2m_min[0]);
-          const tMax = Math.round(wData.daily.temperature_2m_max[0]);
+        // Temperature Min/Max
+        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${start.latitude}&longitude=${start.longitude}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`).then(r => r.json());
+        if (wRes.daily && wRes.daily.temperature_2m_min) {
+          const tMin = Math.round(wRes.daily.temperature_2m_min[0]);
+          const tMax = Math.round(wRes.daily.temperature_2m_max[0]);
           document.getElementById('m_tempMinMax').value = `${tMin}° / ${tMax}°C`;
         }
       } catch(e) {}
@@ -524,7 +548,7 @@
 
     // MEMORIA LOCALE
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v12_tappe');
+      const saved = localStorage.getItem('djroute_v13_tappe');
       if (saved) {
         try { tappe = JSON.parse(saved); } catch(e) { tappe = []; }
       }
@@ -532,7 +556,7 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_v12_tappe', JSON.stringify(tappe));
+      localStorage.setItem('djroute_v13_tappe', JSON.stringify(tappe));
       aggiornaRiepilogo();
     }
 
@@ -548,7 +572,7 @@
           const [h, m] = t.oreGuida.split(':').map(Number);
           totMinuti += (h * 60) + (m || 0);
         } else if (km > 0) {
-          totMinuti += Math.round((km / 100) * 60);
+          totMinuti += Math.round((km / 90) * 60);
         }
       });
 
@@ -635,8 +659,8 @@
         cont.innerHTML = `
           <div class="glass-card rounded-2xl text-center py-12 px-4">
             <i class="fa-solid fa-map-location-dot text-3xl text-amber-500 mb-2"></i>
-            <h3 class="text-sm font-bold text-white">Nessuna tappa inserita</h3>
-            <p class="text-xs text-gray-400 mt-1">Carica un file Excel con il tasto Verde o premi il tasto Giallo (+).</p>
+            <h3 class="text-sm font-bold text-white">Nessuna tappa presente</h3>
+            <p class="text-xs text-gray-400 mt-1">Carica un file Excel con "+EXCL" o premi "TAPPA" per crearne una.</p>
           </div>
         `;
         return;
@@ -723,7 +747,7 @@
             </div>
           </div>
 
-          <!-- Quota, Temp Min/Max e Grafico -->
+          <!-- Quota, Temp Min/Max e Grafico Allineati -->
           <div class="grid grid-cols-3 gap-2 text-xs">
             <div class="bg-gray-900/70 p-2.5 rounded-xl border border-gray-800 text-center">
               <span class="text-gray-400 block text-[10px]">Quota Max:</span>
@@ -739,7 +763,7 @@
             </button>
           </div>
 
-          <!-- METEO ORARIO A 100 KM/H CON CITTÀ IPOTETICA SOTTO OGNI ORA -->
+          <!-- METEO ORARIO CON CITTÀ DI TRANSITO -->
           <div class="bg-gray-950/80 p-3 rounded-2xl border border-gray-800/80 space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -752,7 +776,7 @@
 
             <div id="timelineMeteoBox" class="flex gap-2 overflow-x-auto scroll-hide py-1"></div>
             <div id="meteoStatoNote" class="text-[10px] text-gray-400 italic">
-              Tocca "Aggiorna Meteo" per calcolare il meteo e le località ipotetiche a intervalli di 100 km.
+              Tocca "Aggiorna Meteo" per calcolare il meteo e le località di passaggio per ogni ora.
             </div>
           </div>
 
@@ -782,7 +806,7 @@
             </div>
           </div>
 
-          <!-- NAVIGATORE: GOOGLE MAPS + MYROUTE-APP + GPX -->
+          <!-- NAVIGATORE -->
           <div class="pt-1 space-y-1.5">
             <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block">Avvia Navigazione:</label>
             <div class="grid grid-cols-3 gap-2 text-center">
@@ -811,7 +835,7 @@
     function popolaTimelineOrariaIniziale(t) {
       const box = document.getElementById('timelineMeteoBox');
       const kmTot = parseFloat(t.kmTot) || 200;
-      const numSegmenti = Math.max(2, Math.ceil(kmTot / 100));
+      const numSegmenti = Math.max(2, Math.ceil(kmTot / 90));
       const [hPart, mPart] = (t.oraPartenza || "08:30").split(':').map(Number);
 
       const pNome = t.partenza ? t.partenza.split('(')[0].trim() : 'Partenza';
@@ -821,7 +845,7 @@
       for (let i = 0; i < numSegmenti; i++) {
         const curH = (hPart + i) % 24;
         const curM = String(mPart).padStart(2, '0');
-        const kmProg = i * 100;
+        const kmProg = i * 90;
         const cittaIpotetica = i === 0 ? pNome : (i === numSegmenti - 1 ? aNome : `~Km ${kmProg}`);
 
         cardsHtml += `
@@ -847,7 +871,7 @@
       return { icon: "fa-cloud text-gray-400", label: "Nuvoloso" };
     }
 
-    // CALCOLO METEO DINAMICO CON NOME CITTÀ SOTTO OGNI ORARIO
+    // CALCOLO METEO DINAMICO CON REVERSE-GEOCODING DEL NOME CITTÀ
     async function calcolaMeteoDinamicoConGps(idx) {
       const t = tappe[idx];
       const box = document.getElementById('timelineMeteoBox');
@@ -858,7 +882,7 @@
         return;
       }
 
-      note.innerHTML = `<span class="text-sky-300"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Rilevamento coordinate e calcolo meteo orario per ogni località...</span>`;
+      note.innerHTML = `<span class="text-sky-300"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Rilevamento comuni attraversati e meteo orario...</span>`;
 
       try {
         const queryP = t.partenza.split('(')[0].trim();
@@ -870,7 +894,7 @@
         ]);
 
         if (!resP.results || !resA.results) {
-          note.innerHTML = `<span class="text-amber-400">Località non identificate nel database.</span>`;
+          note.innerHTML = `<span class="text-amber-400">Località non identificate.</span>`;
           return;
         }
 
@@ -878,7 +902,7 @@
         const coordEnd = { lat: resA.results[0].latitude, lon: resA.results[0].longitude, name: resA.results[0].name };
 
         const kmTot = parseFloat(t.kmTot) || 200;
-        const numSegmenti = Math.max(2, Math.ceil(kmTot / 100));
+        const numSegmenti = Math.max(2, Math.ceil(kmTot / 90));
         const [hPart, mPart] = (t.oraPartenza || "08:30").split(':').map(Number);
 
         let isStorico = false;
@@ -892,7 +916,7 @@
           }
         }
 
-        // Recupero località e meteo per ciascun segmento
+        // Genera segmenti e recupera nome località reale per ciascun punto
         const segmenti = [];
         for (let i = 0; i < numSegmenti; i++) {
           const ratio = i / (numSegmenti - 1);
@@ -901,7 +925,7 @@
           const curH = (hPart + i) % 24;
           const curM = String(mPart).padStart(2, '0');
 
-          let nomePunto = i === 0 ? coordStart.name : (i === numSegmenti - 1 ? coordEnd.name : `Tratta km ${i*100}`);
+          let nomePunto = i === 0 ? coordStart.name : (i === numSegmenti - 1 ? coordEnd.name : '');
           segmenti.push({
             orario: `${String(curH).padStart(2, '0')}:${curM}`,
             lat: latInterp,
@@ -910,28 +934,42 @@
           });
         }
 
+        // Reverse-geocoding per i punti intermedi
+        for (let i = 1; i < segmenti.length - 1; i++) {
+          try {
+            const revRes = await fetch(`https://photon.komoot.io/reverse?lon=${segmenti[i].lon}&lat=${segmenti[i].lat}`);
+            const revData = await revRes.json();
+            if (revData.features && revData.features.length > 0) {
+              const p = revData.features[0].properties;
+              segmenti[i].nome = p.city || p.town || p.village || p.name || `Km ${i*90}`;
+            } else {
+              segmenti[i].nome = `Km ${i*90}`;
+            }
+          } catch(e) {
+            segmenti[i].nome = `Km ${i*90}`;
+          }
+        }
+
         const meteoPromesse = segmenti.map(async (s) => {
           if (isStorico) {
             const anno1 = dViaggio.getFullYear() - 1;
             const anno2 = dViaggio.getFullYear() - 2;
             const mm = String(dViaggio.getMonth() + 1).padStart(2, '0');
             const dd = String(dViaggio.getDate()).padStart(2, '0');
-            const resH = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${s.lat}&longitude=${s.lon}&start_date=${anno2}-${mm}-${dd}&end_date=${anno1}-${mm}-${dd}&hourly=temperature_2m`);
-            const dataH = await resH.json();
+            const resH = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${s.lat}&longitude=${s.lon}&start_date=${anno2}-${mm}-${dd}&end_date=${anno1}-${mm}-${dd}&hourly=temperature_2m`).then(r => r.json());
             let tempMedia = 20;
-            if (dataH.hourly && dataH.hourly.temperature_2m) {
-              const arr = dataH.hourly.temperature_2m;
+            if (resH.hourly && resH.hourly.temperature_2m) {
+              const arr = resH.hourly.temperature_2m;
               tempMedia = Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
             }
             return { temp: tempMedia, code: 1, pioggia: 0, isStorico: true };
           } else {
-            const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.lat}&longitude=${s.lon}&hourly=temperature_2m,precipitation_probability,weathercode&timezone=auto`);
-            const dataW = await resW.json();
-            const hIndex = Math.min(12, dataW.hourly.time.length - 1);
+            const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.lat}&longitude=${s.lon}&hourly=temperature_2m,precipitation_probability,weathercode&timezone=auto`).then(r => r.json());
+            const hIndex = Math.min(12, resW.hourly.time.length - 1);
             return {
-              temp: Math.round(dataW.hourly.temperature_2m[hIndex]),
-              code: dataW.hourly.weathercode[hIndex],
-              pioggia: dataW.hourly.precipitation_probability ? dataW.hourly.precipitation_probability[hIndex] : 0,
+              temp: Math.round(resW.hourly.temperature_2m[hIndex]),
+              code: resW.hourly.weathercode[hIndex],
+              pioggia: resW.hourly.precipitation_probability ? resW.hourly.precipitation_probability[hIndex] : 0,
               isStorico: false
             };
           }
@@ -955,9 +993,9 @@
         }).join('');
 
         if (isStorico) {
-          note.innerHTML = `<span class="text-amber-400 font-semibold"><i class="fa-solid fa-calendar-xmark mr-1"></i> Ancora è presto per questo dato.</span> Calcolate medie storiche degli ultimi 2 anni con relative città di passaggio.`;
+          note.innerHTML = `<span class="text-amber-400 font-semibold"><i class="fa-solid fa-calendar-xmark mr-1"></i> Ancora è presto per questo dato.</span> Calcolate medie storiche con città di passaggio.`;
         } else {
-          note.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> Meteo aggiornato: sincronizzato su ogni ora e località di passaggio.</span>`;
+          note.innerHTML = `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> Previsione meteorologica attiva con comuni reali di transito.</span>`;
         }
 
       } catch(err) {
@@ -965,7 +1003,7 @@
       }
     }
 
-    // GRAFICO ALTIMETRICO
+    // GRAFICO ALTIMETRICO E TEMPERATURE IN QUOTA
     async function apriGraficoQuote() {
       const t = tappe[indexTappaAttiva];
       if (!t || (!t.partenza && !t.arrivo)) return;
@@ -993,13 +1031,16 @@
           });
         }
 
-        const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${pts.map(p => p.lat.toFixed(4)).join(',')}&longitude=${pts.map(p => p.lon.toFixed(4)).join(',')}`);
-        const elevData = await elevRes.json();
-        const altitudini = elevData.elevation;
+        const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${pts.map(p => p.lat.toFixed(4)).join(',')}&longitude=${pts.map(p => p.lon.toFixed(4)).join(',')}`).then(r => r.json());
+        const altitudini = elevRes.elevation;
+
+        // Calcolo temperatura in quota (gradiente termico ~0.65°C ogni 100m)
+        const tBase = 22; // temperatura base a livello del mare
+        const temperatureStimate = altitudini.map(alt => Math.round(tBase - (alt * 0.0065)));
 
         const maxAlt = Math.max(...altitudini);
         t.altitudine = `${maxAlt} m`;
-        document.getElementById('infoAltMax').textContent = `Quota Massima Registrata: ${maxAlt} m s.l.m.`;
+        document.getElementById('infoAltMax').textContent = `Quota Max: ${maxAlt} m s.l.m. • Temp. Minima in Quota: ${Math.min(...temperatureStimate)}°C`;
 
         const ctx = document.getElementById('chartQuoteCanvas').getContext('2d');
         if (chartInstance) chartInstance.destroy();
@@ -1007,12 +1048,12 @@
         chartInstance = new Chart(ctx, {
           type: 'line',
           data: {
-            labels: pts.map(p => `${p.km} km`),
+            labels: pts.map((p, i) => `${p.km} km (${temperatureStimate[i]}°C)`),
             datasets: [{
               label: 'Altitudine (metri)',
               data: altitudini,
               borderColor: '#f59e0b',
-              backgroundColor: 'rgba(245, 158, 11, 0.2)',
+              backgroundColor: 'rgba(245, 158, 11, 0.25)',
               fill: true,
               tension: 0.35,
               pointRadius: 3,
@@ -1024,7 +1065,7 @@
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: {
-              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 10 } } },
+              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
               y: { grid: { color: 'rgba(255,255,255,0.08)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
             }
           }
@@ -1053,7 +1094,7 @@
       document.getElementById('m_alt').value = "";
       document.getElementById('m_tempMinMax').value = "";
       document.getElementById('m_hotel').value = "";
-      document.getElementById('m_piattaforma').value = "";
+      document.getElementById('m_piattaforma').value = "Booking";
       document.getElementById('m_prezzo').value = "";
       document.getElementById('m_pagato').value = "Da pagare";
       document.getElementById('m_parcheggio').value = "";
@@ -1088,7 +1129,7 @@
       document.getElementById('m_alt').value = t.altitudine || '';
       document.getElementById('m_tempMinMax').value = t.tempMinMax || '';
       document.getElementById('m_hotel').value = t.hotel || '';
-      document.getElementById('m_piattaforma').value = t.piattaforma || '';
+      document.getElementById('m_piattaforma').value = t.piattaforma || 'Booking';
       document.getElementById('m_prezzo').value = t.prezzo || '';
       document.getElementById('m_pagato').value = t.pagato || 'Da pagare';
       document.getElementById('m_parcheggio').value = t.parcheggio || '';
@@ -1121,7 +1162,7 @@
         altitudine: document.getElementById('m_alt').value.trim(),
         tempMinMax: document.getElementById('m_tempMinMax').value.trim(),
         hotel: document.getElementById('m_hotel').value.trim(),
-        piattaforma: document.getElementById('m_piattaforma').value.trim(),
+        piattaforma: document.getElementById('m_piattaforma').value,
         prezzo: document.getElementById('m_prezzo').value.trim(),
         pagato: document.getElementById('m_pagato').value,
         parcheggio: document.getElementById('m_parcheggio').value.trim(),
@@ -1174,7 +1215,7 @@
       link.click();
     }
 
-    // PARSER EXCEL UNIVERSALE
+    // PARSER EXCEL UNIVERSALE CON MAPPATURA INTELLIGENTE
     function importaQualsiasiExcel(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -1234,6 +1275,10 @@
               const giornoCalcolato = calcolaGiornoDaData(dataFormattata);
               const arrInt = intermedio ? intermedio.split(',').map(s => s.trim()).filter(Boolean) : [];
 
+              let platSelezionata = "Booking";
+              if (piattaforma.toLowerCase().includes("expedia")) platSelezionata = "Expedia";
+              if (piattaforma.toLowerCase().includes("dirett")) platSelezionata = "Pren. Diretta";
+
               tappe.push({
                 giorno: giornoCalcolato,
                 data: dataFormattata,
@@ -1243,11 +1288,11 @@
                 intermedio: arrInt.join(', '),
                 arrivo: arrivo,
                 kmTot: km,
-                oreGuida: ore || (km ? `${Math.floor(parseFloat(km)/100)}h` : "03:00"),
+                oreGuida: ore || (km ? `${Math.floor(parseFloat(km)/90)}h` : "03:00"),
                 altitudine: alt,
                 tempMinMax: temp,
                 hotel: hotel,
-                piattaforma: piattaforma || (hotel ? "Booking" : ""),
+                piattaforma: platSelezionata,
                 prezzo: prezzo ? (prezzo.includes('€') ? prezzo : prezzo + ' €') : "",
                 pagato: "Da pagare",
                 parcheggio: parcheggio,
