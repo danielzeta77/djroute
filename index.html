@@ -12,7 +12,7 @@
   <!-- Tailwind CSS & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SheetJS per importazione Excel -->
+  <!-- SheetJS per importazione Excel universale -->
   <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
   <!-- Chart.js per profilo altimetrico -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -176,7 +176,7 @@
 
     <!-- Tasti Switch Cockpit: +EXCL e + TAPPA -->
     <div class="grid grid-cols-2 gap-3">
-      <!-- Tasto +EXCL (Smeraldo Rally) -->
+      <!-- Tasto +EXCL (Smeraldo Rally con Motore Semantico) -->
       <label class="tft-card hover:border-emerald-500/60 p-3.5 rounded-2xl flex items-center space-x-3 cursor-pointer shadow-xl active:scale-95 transition-all border border-emerald-500/30 bg-gradient-to-br from-emerald-950/40 to-gray-900/80">
         <div class="w-12 h-12 rounded-xl bg-emerald-500 text-gray-950 flex items-center justify-center font-black text-xl shadow-lg shadow-emerald-500/30 flex-shrink-0">
           <i class="fa-solid fa-file-arrow-up"></i>
@@ -185,7 +185,7 @@
           <span class="text-sm font-black text-emerald-300 block leading-tight tracking-wider">+EXCL</span>
           <span class="text-[10px] text-gray-400 font-medium truncate block">Carica Roadbook</span>
         </div>
-        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaQualsiasiExcel(event)">
+        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaConMotoreEuristico(event)">
       </label>
 
       <!-- Tasto + TAPPA (Ambra Racing) -->
@@ -228,7 +228,7 @@
     </div>
   </div>
 
-  <!-- MODAL NUOVA / MODIFICA TAPPA CON RICERCA INDIRIZZO COMPLETO -->
+  <!-- MODAL NUOVA / MODIFICA TAPPA -->
   <div id="tappaModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="tft-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-5 max-h-[92vh] overflow-y-auto space-y-3.5">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
@@ -261,7 +261,7 @@
         </div>
       </div>
 
-      <!-- LOCALITÀ A CAMPO UNICO (CITTÀ + VIA/PIAZZA ESATTA) -->
+      <!-- LOCALITÀ A CAMPO UNICO -->
       <div class="space-y-3 text-xs">
         <!-- Partenza -->
         <div class="relative">
@@ -295,7 +295,7 @@
         </div>
       </div>
 
-      <!-- METRICHE ALLINEATE: KM, ORE, QUOTA MAX, TEMP MIN/MAX -->
+      <!-- METRICHE: KM, ORE, QUOTA MAX, TEMP MIN/MAX -->
       <div class="grid grid-cols-2 gap-2 text-xs">
         <div>
           <label class="block text-gray-400 mb-1">Km Totali (Auto)</label>
@@ -374,7 +374,7 @@
     let chartInstance = null;
     let debounceTimer = null;
 
-    // Normalizzazione testo per ricerca insensibile a maiuscole, minuscole, accenti e apostrofi
+    // Normalizzazione stringhe (rimozione accenti, maiuscole, apostrofi)
     function normalizzaTesto(t) {
       return (t || '')
         .normalize("NFD")
@@ -403,6 +403,16 @@
         const mm = String(val.getMonth() + 1).padStart(2, '0');
         const aaaa = val.getFullYear();
         return `${gg}/${mm}/${aaaa}`;
+      }
+      // Se è un numero seriale Excel (es. 45443)
+      if (typeof val === 'number' || (!isNaN(val) && String(val).length === 5)) {
+        const dateObj = new Date((val - (25567 + 2)) * 86400 * 1000);
+        if (!isNaN(dateObj.getTime())) {
+          const gg = String(dateObj.getDate()).padStart(2, '0');
+          const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const aaaa = dateObj.getFullYear();
+          return `${gg}/${mm}/${aaaa}`;
+        }
       }
       const str = String(val).trim();
       if (str.includes('/')) {
@@ -576,7 +586,7 @@
 
     // Memoria locale
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v15_tappe');
+      const saved = localStorage.getItem('djroute_v16_tappe');
       if (saved) {
         try { tappe = JSON.parse(saved); } catch(e) { tappe = []; }
       }
@@ -584,7 +594,7 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_v15_tappe', JSON.stringify(tappe));
+      localStorage.setItem('djroute_v16_tappe', JSON.stringify(tappe));
       aggiornaRiepilogo();
     }
 
@@ -993,8 +1003,8 @@
             const hIndex = Math.min(12, resW.hourly.time.length - 1);
             return {
               temp: Math.round(resW.hourly.temperature_2m[hIndex]),
-              code: dataW.hourly.weathercode[hIndex],
-              pioggia: dataW.hourly.precipitation_probability ? dataW.hourly.precipitation_probability[hIndex] : 0,
+              code: resW.hourly.weathercode[hIndex],
+              pioggia: resW.hourly.precipitation_probability ? resW.hourly.precipitation_probability[hIndex] : 0,
               isStorico: false
             };
           }
@@ -1239,8 +1249,8 @@
       link.click();
     }
 
-    // Parser Excel universale
-    function importaQualsiasiExcel(event) {
+    // MOTORE EURISTICO / SEMANTICO OFFLINE PER QUALSIASI FOGLIO EXCEL
+    function importaConMotoreEuristico(event) {
       const file = event.target.files[0];
       if (!file) return;
 
@@ -1248,88 +1258,153 @@
       reader.onload = function(e) {
         try {
           const data = new Uint8Array(e.target.result);
-          const wb = XLSX.read(data, { type: 'array', cellDates: true });
+          const wb = XLSX.read(data, { type: 'array', cellDates: false });
           const ws = wb.Sheets[wb.SheetNames[0]];
-          const rows = XLSX.utils.sheet_to_json(ws, { defval: "" });
+          
+          // Estrai matrice bidimensionale grezza (tutte le celle)
+          const matrix = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
 
-          if (rows.length === 0) {
-            alert("Il file Excel è vuoto.");
+          if (!matrix || matrix.length === 0) {
+            alert("Il foglio caricato è vuoto.");
             return;
           }
 
-          function val(riga, chiavi) {
-            const cols = Object.keys(riga);
-            for (let c of cols) {
-              const lower = c.toLowerCase().trim();
-              for (let k of chiavi) {
-                if (lower === k.toLowerCase() || lower.includes(k.toLowerCase())) {
-                  const v = riga[c];
-                  if (v !== undefined && v !== null && String(v).trim() !== '') {
-                    return String(v).trim();
-                  }
-                }
-              }
-            }
-            return "";
-          }
+          const nuoveTappe = [];
 
-          tappe = [];
-          rows.forEach((r) => {
-            const dataRaw = val(r, ['data', 'date']);
-            const partenza = val(r, ['partenza', 'start', 'from', 'da']);
-            const arrivo = val(r, ['arrivo', 'destinazione', 'arrival', 'to', 'a']);
-            const intermedio = val(r, ['intermedio', 'passo', 'via']);
-            const temp = val(r, ['temp. min/max', 'temp', 'temperatura']);
-            const km = val(r, ['km tot', 'km']);
-            const ore = val(r, ['ore guida', 'ore']);
-            const alt = val(r, ['alt.', 'altitudine']);
-            const hotel = val(r, ['pernottamento', 'hotel', 'alloggio']);
-            const parcheggio = val(r, ['indicazioni parcheggio', 'parcheggio', 'parking']);
-            const prezzo = val(r, ['costo camera', 'prezzo €', 'prezzo', 'costo']);
-            const piattaforma = val(r, ['sito prenotazione', 'piattaforma', 'booking']);
-            const myroute = val(r, ['track', 'myroute', 'link']);
+          // Regex di riconoscimento semantico
+          const regexDataNumerica = /\b(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{2,4})\b/;
+          const regexFrecciaRotta = /\s*(?:->|➔|-->|—|-|>|verso|to)\s*/i;
+          const regexPrezzo = /(\d+[\.,]?\d*)\s*(?:€|euro|\$)/i;
+          const regexKm = /(\d+)\s*(?:km|chilometri)/i;
+          const regexOre = /(\d{1,2})[h:](\d{2})?/i;
 
-            const testIgnora = (dataRaw + " " + partenza + " " + arrivo).toUpperCase();
-            if (testIgnora.includes("TOTALE") || testIgnora.includes("MANUTENZIONE") || testIgnora.includes("ASSICURAZIONI") || testIgnora.includes("PREVENTIVO")) {
+          // Scansione riga per riga
+          matrix.forEach((riga, rowIdx) => {
+            if (!Array.isArray(riga) || riga.length === 0) return;
+
+            // Unisci il testo della riga per verificare filtri di esclusione
+            const testoRiga = riga.map(c => String(c).trim()).join(" ");
+            const testUpper = testoRiga.toUpperCase();
+
+            // Filtro rumore
+            if (testUpper.includes("TOTALE") || testUpper.includes("TAGLIANDO") || testUpper.includes("ASSICURAZIONE") || testUpper.includes("PREVENTIVO")) {
               return;
             }
 
-            if (dataRaw || partenza || arrivo || temp) {
-              const dataFormattata = formattaInGiornoMeseAnno(dataRaw);
-              const giornoCalcolato = calcolaGiornoDaData(dataFormattata);
-              const arrInt = intermedio ? intermedio.split(',').map(s => s.trim()).filter(Boolean) : [];
+            let dataTappa = "";
+            let partenza = "";
+            let arrivo = "";
+            let intermedi = [];
+            let km = "";
+            let ore = "";
+            let hotel = "";
+            let prezzo = "";
+            let piattaforma = "Booking";
+            let parcheggio = "";
 
-              let platSelezionata = "Booking";
-              if (piattaforma.toLowerCase().includes("expedia")) platSelezionata = "Expedia";
-              if (piattaforma.toLowerCase().includes("dirett")) platSelezionata = "Pren. Diretta";
+            // Analizza ogni cella della riga con logica euristica
+            riga.forEach((cella) => {
+              const val = String(cella).trim();
+              if (!val) return;
 
-              tappe.push({
+              // 1. Riconoscimento Date (Formato o Seriale Excel)
+              if (!dataTappa) {
+                if (regexDataNumerica.test(val)) {
+                  dataTappa = formattaInGiornoMeseAnno(val);
+                } else if (!isNaN(val) && val.length === 5 && parseInt(val) > 40000 && parseInt(val) < 60000) {
+                  dataTappa = formattaInGiornoMeseAnno(parseInt(val));
+                }
+              }
+
+              // 2. Riconoscimento Rotta Unificata con Frecce (es: "Ancona -> Kalambaka")
+              if (regexFrecciaRotta.test(val) && val.length > 5 && !partenza) {
+                const parti = val.split(regexFrecciaRotta).map(s => s.trim()).filter(Boolean);
+                if (parti.length >= 2) {
+                  partenza = parti[0];
+                  arrivo = parti[parti.length - 1];
+                  if (parti.length > 2) {
+                    intermedi = parti.slice(1, parti.length - 1);
+                  }
+                }
+              }
+
+              // 3. Riconoscimento Chilometri
+              if (!km && regexKm.test(val)) {
+                const match = val.match(regexKm);
+                km = match[1];
+              }
+
+              // 4. Riconoscimento Prezzi
+              if (!prezzo && regexPrezzo.test(val)) {
+                const match = val.match(regexPrezzo);
+                prezzo = `${match[1]} €`;
+              }
+
+              // 5. Riconoscimento Alloggi (parole chiave hotel, b&b, camping)
+              const valLower = val.toLowerCase();
+              if (!hotel && (valLower.includes("hotel") || valLower.includes("b&b") || valLower.includes("residence") || valLower.includes("camping") || valLower.includes("appartamento") || valLower.includes("albergo"))) {
+                hotel = val;
+              }
+
+              // 6. Riconoscimento Parcheggio
+              if (!parcheggio && (valLower.includes("garage") || valLower.includes("parcheggio") || valLower.includes("parking") || valLower.includes("posto moto"))) {
+                parcheggio = val;
+              }
+
+              // 7. Riconoscimento Piattaforma
+              if (valLower.includes("expedia")) piattaforma = "Expedia";
+              if (valLower.includes("dirett") || valLower.includes("privat")) piattaforma = "Pren. Diretta";
+            });
+
+            // Se la rotta non era in una singola cella, cerca città in colonne distinte
+            if (!partenza || !arrivo) {
+              const celleTestuali = riga.map(c => String(c).trim()).filter(c => c.length > 2 && isNaN(c) && !regexDataNumerica.test(c) && !c.includes("€"));
+              if (celleTestuali.length >= 2) {
+                partenza = celleTestuali[0];
+                arrivo = celleTestuali[1];
+                if (celleTestuali.length > 2 && !hotel) {
+                  hotel = celleTestuali[2];
+                }
+              }
+            }
+
+            // Se abbiamo almeno una data o una coppia partenza/arrivo, registra la tappa
+            if ((partenza && arrivo) || dataTappa) {
+              const giornoCalcolato = calcolaGiornoDaData(dataTappa);
+              nuoveTappe.push({
                 giorno: giornoCalcolato,
-                data: dataFormattata,
+                data: dataTappa,
                 oraPartenza: "08:30",
-                partenza: partenza,
-                intermedi: arrInt,
-                intermedio: arrInt.join(', '),
-                arrivo: arrivo,
+                partenza: partenza || "Partenza",
+                intermedi: intermedi,
+                intermedio: intermedi.join(", "),
+                arrivo: arrivo || "Arrivo",
                 kmTot: km,
                 oreGuida: ore || (km ? `${Math.floor(parseFloat(km)/90)}h` : "03:00"),
-                altitudine: alt,
-                tempMinMax: temp,
+                altitudine: "",
+                tempMinMax: "",
                 hotel: hotel,
-                piattaforma: platSelezionata,
-                prezzo: prezzo ? (prezzo.includes('€') ? prezzo : prezzo + ' €') : "",
+                piattaforma: piattaforma,
+                prezzo: prezzo,
                 pagato: "Da pagare",
                 parcheggio: parcheggio,
-                myRouteUrl: (myroute && myroute.startsWith('http')) ? myroute : ""
+                myRouteUrl: ""
               });
             }
           });
 
+          if (nuoveTappe.length === 0) {
+            alert("Nessuna tappa identificabile trovata nel file. Verifica che contenga date o città di rotta.");
+            return;
+          }
+
+          tappe = nuoveTappe;
           salvaSuMemoria();
           vaiAllaHome();
-          alert(`Caricate ${tappe.length} tappe con successo!`);
+          alert(`Motore Euristico: ${tappe.length} tappe identificate e create con successo!`);
+
         } catch(err) {
-          alert("Errore nella lettura del file: " + err.message);
+          alert("Errore durante l'interpretazione del file: " + err.message);
         }
       };
       reader.readAsArrayBuffer(file);
