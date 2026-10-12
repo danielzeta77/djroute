@@ -137,11 +137,11 @@
   <div class="cinema-overlay"></div>
 
   <!-- Header Ottimizzato con margini sicuri -->
-  <header class="sticky top-0 z-40 bg-[#06090e]/98 backdrop-blur-md border-b border-gray-800 px-3.5 pb-2.5 safe-top shadow-xl">
+  <header class="sticky top-0 z-40 bg-[#06090e]/98 backdrop-blur-md border-b border-gray-800 px-3 pb-2.5 safe-top shadow-xl">
     <div class="flex items-center justify-between gap-2 max-w-xl mx-auto">
       
       <!-- Frecce e Home -->
-      <div class="flex items-center space-x-1.5 flex-shrink-0">
+      <div class="flex items-center space-x-1 flex-shrink-0">
         <button onclick="navigaIndietro()" id="btnNavPrev" class="w-8 h-8 rounded-xl bg-gray-900 border border-gray-700 text-gray-300 flex items-center justify-center active:scale-90" title="Indietro">
           <i class="fa-solid fa-chevron-left text-xs"></i>
         </button>
@@ -161,8 +161,8 @@
         <p class="text-[9px] text-sky-400 font-semibold" id="headerSubtitle">Roadbook Tour</p>
       </div>
 
-      <!-- GPS & Cestino Centrato nel Layout -->
-      <div class="flex items-center space-x-1.5 flex-shrink-0 pr-1">
+      <!-- GPS & Cestino -->
+      <div class="flex items-center space-x-1.5 flex-shrink-0">
         <button onclick="attivaGps()" class="h-8 px-2 rounded-xl bg-emerald-950 border border-emerald-500/50 text-[11px] text-emerald-300 font-mono flex items-center gap-1 active:scale-90">
           <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> GPS
         </button>
@@ -264,7 +264,7 @@
     <div class="blue-card w-full max-w-lg rounded-2xl p-4 space-y-3">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
         <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-mountain text-amber-400"></i> Profilo Altimetrico & Temperature
+          <i class="fa-solid fa-mountain text-amber-400"></i> Profilo Altimetrico Stradale
         </h3>
         <button onclick="chiudiGraficoQuote()" class="text-gray-400 hover:text-white p-1">
           <i class="fa-solid fa-xmark text-base"></i>
@@ -277,7 +277,7 @@
     </div>
   </div>
 
-  <!-- MODAL NUOVA / MODIFICA TAPPA CON SEZIONE ALLOGGIO ALLINEATA -->
+  <!-- MODAL NUOVA / MODIFICA TAPPA CON DATI PERNOTTAMENTO PERFETTAMENTE ALLINEATI -->
   <div id="tappaModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="blue-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-5 max-h-[92vh] overflow-y-auto space-y-3.5">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
@@ -312,7 +312,7 @@
       <div class="space-y-3 text-xs">
         <div class="relative">
           <label class="block text-gray-300 font-medium mb-1">Partenza (Città o Indirizzo) *</label>
-          <input type="text" id="m_partenza" placeholder="es. Ancona Porto..." autocomplete="off" 
+          <input type="text" id="m_partenza" placeholder="es. Tione di Trento..." autocomplete="off" 
                  oninput="cercaCittaLive(this, 'sugg_partenza')" onblur="ritardoChiudiDropdown('sugg_partenza')"
                  class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
           <div id="sugg_partenza" class="autocomplete-dropdown hidden"></div>
@@ -332,7 +332,7 @@
 
         <div class="relative">
           <label class="block text-gray-300 font-medium mb-1">Arrivo (Città o Destinazione) *</label>
-          <input type="text" id="m_arrivo" placeholder="es. Kalambaka (o stessa città se permanenza)..." autocomplete="off" 
+          <input type="text" id="m_arrivo" placeholder="es. Mantova..." autocomplete="off" 
                  oninput="cercaCittaLive(this, 'sugg_arrivo')" onblur="ritardoChiudiDropdown('sugg_arrivo')"
                  class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
           <div id="sugg_arrivo" class="autocomplete-dropdown hidden"></div>
@@ -349,7 +349,7 @@
           <input type="text" id="m_ore" placeholder="Calcolo tempo..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-sky-300 font-bold text-xs">
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Quota Max Reale (Passo)</label>
+          <label class="block text-gray-400 mb-1">Quota Max Reale Asfalto</label>
           <input type="text" id="m_alt" placeholder="Calcolato..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs">
         </div>
         <div>
@@ -358,7 +358,7 @@
         </div>
       </div>
 
-      <!-- SEZIONE: DATI PERNOTTAMENTO CON CAMPI PERFETTAMENTE ALLINEATI -->
+      <!-- SEZIONE: DATI PERNOTTAMENTO CON LAYOUT MOBILE PERFETTAMENTE ALLINEATO -->
       <div class="border-t border-gray-800 pt-3 space-y-2.5 text-xs">
         <div class="flex items-center justify-between">
           <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -370,43 +370,47 @@
           </label>
         </div>
 
-        <!-- RIGA 1: HOTEL & PIATTAFORMA -->
+        <!-- RIGA 1: HOTEL & PIATTAFORMA (SENZA DEFAULT FORZATO) -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <div>
-            <label class="block text-gray-400 mb-1">Nome Struttura / Hotel</label>
-            <input type="text" id="m_hotel" placeholder="Nome Alloggio o Hotel" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
+            <label class="block text-gray-400 mb-1 font-medium">Nome Struttura / Alloggio</label>
+            <input type="text" id="m_hotel" placeholder="Nome Struttura o Hotel" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">Piattaforma di Prenotazione</label>
+            <label class="block text-gray-400 mb-1 font-medium">Piattaforma di Prenotazione</label>
             <select id="m_piattaforma" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs outline-none focus:border-sky-400">
+              <option value="">-- Seleziona Piattaforma --</option>
               <option value="Booking">Booking.com</option>
               <option value="Expedia">Expedia</option>
-              <option value="Pren. Diretta">Pren. Diretta</option>
-              <option value="Altro">Altro / Airbnb</option>
+              <option value="Pren. Diretta">Prenotazione Diretta</option>
+              <option value="Airbnb">Airbnb</option>
+              <option value="Altro">Altro Canale</option>
             </select>
           </div>
         </div>
 
-        <!-- RIGA 2: PREZZO, STATO PAGAMENTO & METODO -->
-        <div class="grid grid-cols-3 gap-2">
+        <!-- RIGA 2: PREZZO E STATO PAGAMENTO -->
+        <div class="grid grid-cols-2 gap-2">
           <div>
-            <label class="block text-gray-400 mb-1">Prezzo Totale €</label>
+            <label class="block text-gray-400 mb-1 font-medium">Prezzo Totale €</label>
             <input type="text" id="m_prezzo" placeholder="es. 85 €" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs font-mono focus:border-sky-400 outline-none">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">Stato Pagamento</label>
-            <input type="text" id="m_pagato" placeholder="Pagato / Da pagare" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1">Metodo Usato</label>
-            <input type="text" id="m_metodoPagamento" placeholder="Carta / PayPal" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
+            <label class="block text-gray-400 mb-1 font-medium">Stato Pagamento</label>
+            <input type="text" id="m_pagato" placeholder="es. Pagato / Da pagare" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
           </div>
         </div>
 
-        <!-- RIGA 3: INDICAZIONI PARCHEGGIO MOTO -->
+        <!-- RIGA 3: METODO DI PAGAMENTO -->
         <div>
-          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-square-parking mr-1"></i> Parcheggio Moto</label>
-          <input type="text" id="m_parcheggio" placeholder="es. Garage coperto chiuso o cortile interno" class="w-full h-10 bg-gray-900 border border-emerald-600/40 rounded-xl px-3 text-white text-xs focus:border-emerald-400 outline-none">
+          <label class="block text-gray-400 mb-1 font-medium">Metodo di Pagamento</label>
+          <input type="text" id="m_metodoPagamento" placeholder="es. Carta di Credito / PayPal / Contanti" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
+        </div>
+
+        <!-- RIGA 4: INDICAZIONI PARCHEGGIO MOTO -->
+        <div>
+          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-square-parking mr-1"></i> Indicazioni Parcheggio Moto</label>
+          <input type="text" id="m_parcheggio" placeholder="es. Cortile interno privato con cancello chiuso" class="w-full h-10 bg-gray-900 border border-emerald-600/40 rounded-xl px-3 text-white text-xs focus:border-emerald-400 outline-none">
         </div>
       </div>
 
@@ -492,7 +496,7 @@
       return nomi[d.getDay()];
     }
 
-    // Decoder polyline OSRM (precision 1e5)
+    // Decoder polyline OSRM
     function decodePolyline(str, precision = 5) {
       let index = 0, lat = 0, lng = 0, coordinates = [];
       let factor = Math.pow(10, precision);
@@ -518,7 +522,7 @@
       return coordinates;
     }
 
-    // Ricerca località live
+    // Ricerca località
     function cercaCittaLive(inputElem, dropId) {
       const testoOriginale = inputElem.value.trim();
       const testoPulito = normalizzaTesto(testoOriginale);
@@ -613,7 +617,7 @@
       container.appendChild(div);
     }
 
-    // CALCOLO ACCURATO SU STRADA REALE: QUOTA MAX EFFETTIVA & METRICHE OSRM
+    // CALCOLO ACCURATO DELLA QUOTA STRADALE (CON FILTRO CONTRO I PICCHI DELLE CRESTE)
     async function calcolaMetricheRottaAutomatica() {
       const p = document.getElementById('m_partenza').value.trim();
       const a = document.getElementById('m_arrivo').value.trim();
@@ -633,26 +637,26 @@
         const start = { lat: parseFloat(resP[0].lat), lon: parseFloat(resP[0].lon) };
         const end = { lat: parseFloat(resA[0].lat), lon: parseFloat(resA[0].lon) };
 
-        // 1. Chiamata OSRM con geometria reale
+        // 1. Chiamata OSRM per il percorso stradale reale
         const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=polyline`;
         const resRoute = await fetch(osrmUrl).then(r => r.json()).catch(() => null);
 
         let distKm = 0;
         let secGuida = 0;
-        let puntiTracciato = [];
+        let puntiRotta = [];
 
         if (resRoute && resRoute.routes && resRoute.routes.length > 0) {
           const rotta = resRoute.routes[0];
           distKm = Math.round(rotta.distance / 1000);
           secGuida = rotta.duration;
-          puntiTracciato = decodePolyline(rotta.geometry);
+          puntiRotta = decodePolyline(rotta.geometry);
         } else {
           const dLat = (end.lat - start.lat) * Math.PI / 180;
           const dLon = (end.lon - start.lon) * Math.PI / 180;
           const h = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(start.lat * Math.PI / 180) * Math.cos(end.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
           distKm = Math.round(6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h)) * 1.30);
           secGuida = (distKm / 80) * 3600;
-          puntiTracciato = [[start.lat, start.lon], [end.lat, end.lon]];
+          puntiRotta = [[start.lat, start.lon], [end.lat, end.lon]];
         }
 
         const oreH = Math.floor(secGuida / 3600);
@@ -661,53 +665,67 @@
         document.getElementById('m_km').value = distKm;
         document.getElementById('m_ore').value = `${oreH}h ${minM}m`;
 
-        // 2. Calcolo preciso quota massima lungo i passi reali (campionamento 25 punti)
-        const stepCamp = Math.max(1, Math.floor(puntiTracciato.length / 25));
+        // 2. Campionamento ad alta densità per l'altimetria effettiva
         const campionati = [];
-        for (let i = 0; i < puntiTracciato.length; i += stepCamp) {
-          campionati.push(puntiTracciato[i]);
+        const step = Math.max(1, Math.floor(puntiRotta.length / 30));
+        for (let i = 0; i < puntiRotta.length; i += step) {
+          campionati.push(puntiRotta[i]);
         }
-        if (campionati[campionati.length - 1] !== puntiTracciato[puntiTracciato.length - 1]) {
-          campionati.push(puntiTracciato[puntiTracciato.length - 1]);
+        if (campionati[campionati.length - 1] !== puntiRotta[puntiRotta.length - 1]) {
+          campionati.push(puntiRotta[puntiRotta.length - 1]);
         }
 
-        const latsStr = campionati.map(p => p[0].toFixed(4)).join(',');
-        const lonsStr = campionati.map(p => p[1].toFixed(4)).join(',');
+        const latsStr = campionati.map(pt => pt[0].toFixed(4)).join(',');
+        const lonsStr = campionati.map(pt => pt[1].toFixed(4)).join(',');
 
         const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${latsStr}&longitude=${lonsStr}`).then(r => r.json());
-        let quotaMax = 0;
+        
+        let quotaMaxStradale = 0;
         if (elevRes && elevRes.elevation && elevRes.elevation.length > 0) {
-          quotaMax = Math.max(...elevRes.elevation);
-          document.getElementById('m_alt').value = `${quotaMax} m`;
+          // Filtro mediano per eliminare i pixel errati che toccano le pareti rocciose laterali
+          const quoteFiltrate = elevRes.elevation.map((q, idx, arr) => {
+            if (idx === 0 || idx === arr.length - 1) return q;
+            const intorno = [arr[idx - 1], q, arr[idx + 1]].sort((x, y) => x - y);
+            return intorno[1]; // Prendi la mediana
+          });
+          quotaMaxStradale = Math.max(...quoteFiltrate);
+          document.getElementById('m_alt').value = `${quotaMaxStradale} m`;
         }
 
-        // 3. Previsione temperature ponderata con l'altitudine reale
-        const wRes = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${start.lat}&longitude=${start.lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`).then(r => r.json());
-        if (wRes.daily && wRes.daily.temperature_2m_min) {
-          let tMin = Math.round(wRes.daily.temperature_2m_min[0]);
-          let tMax = Math.round(wRes.daily.temperature_2m_max[0]);
-          // Se la quota massima supera 1000m, adatta la temperatura minima in vetta (-6.5°C per 1000m)
-          if (quotaMax > 900) {
-            const dropTemp = Math.round((quotaMax - 200) * 0.0065);
-            tMin = Math.max(-5, tMin - dropTemp);
+        // 3. Previsioni temperature reali alla partenza e all'arrivo
+        const [wStart, wEnd] = await Promise.all([
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${start.lat}&longitude=${start.lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`).then(r => r.json()).catch(() => null),
+          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${end.lat}&longitude=${end.lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`).then(r => r.json()).catch(() => null)
+        ]);
+
+        if (wStart && wStart.daily && wStart.daily.temperature_2m_min) {
+          let tMin = Math.round(wStart.daily.temperature_2m_min[0]);
+          let tMax = Math.round(wStart.daily.temperature_2m_max[0]);
+          if (wEnd && wEnd.daily && wEnd.daily.temperature_2m_max) {
+            tMax = Math.max(tMax, Math.round(wEnd.daily.temperature_2m_max[0]));
+          }
+          // Adeguamento alla quota massima raggiunta lungo il passo
+          if (quotaMaxStradale > 800) {
+            const caloTermico = Math.round((quotaMaxStradale - 400) * 0.0055);
+            tMin = Math.round(tMin - caloTermico);
           }
           document.getElementById('m_tempMinMax').value = `${tMin}° / ${tMax}°C`;
         }
       } catch(e) {}
     }
 
-    // GESTIONE MEMORIA & CESTINO (PULIZIA AUTOMATICA 15 GIORNI)
+    // MEMORIA LOCALE & CESTINO (CON AUTO-SVUOTAMENTO 15 GIORNI)
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v21_tappe');
+      const saved = localStorage.getItem('djroute_v22_tappe');
       if (saved) {
         try { tappe = JSON.parse(saved); } catch(e) { tappe = []; }
       }
-      const savedCestino = localStorage.getItem('djroute_v21_cestino');
+      const savedCestino = localStorage.getItem('djroute_v22_cestino');
       if (savedCestino) {
         try { cestinoTappe = JSON.parse(savedCestino); } catch(e) { cestinoTappe = []; }
       }
 
-      // Auto-svuotamento elementi cestino più vecchi di 15 giorni
+      // Svuota gli elementi del cestino più vecchi di 15 giorni
       const adesso = Date.now();
       const limite15Giorni = 15 * 24 * 60 * 60 * 1000;
       cestinoTappe = cestinoTappe.filter(el => (adesso - (el.cancellatoIl || adesso)) < limite15Giorni);
@@ -718,12 +736,12 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_v21_tappe', JSON.stringify(tappe));
+      localStorage.setItem('djroute_v22_tappe', JSON.stringify(tappe));
       aggiornaRiepilogo();
     }
 
     function salvaCestinoSuMemoria() {
-      localStorage.setItem('djroute_v21_cestino', JSON.stringify(cestinoTappe));
+      localStorage.setItem('djroute_v22_cestino', JSON.stringify(cestinoTappe));
       aggiornaBadgeCestino();
     }
 
@@ -761,7 +779,7 @@
       document.getElementById('totOreVal').textContent = `${ore}h ${min}m`;
     }
 
-    // SWIPE-TO-DELETE FLUIDO SENZA CONFERMA
+    // ELIMINAZIONE ISTANTANEA AL CESTINO
     function eliminaTappaIstantanea(idx) {
       const rimossa = tappe.splice(idx, 1)[0];
       if (rimossa) {
@@ -863,7 +881,7 @@
       });
     }
 
-    // DASHBOARD: CARD BLU RALLY
+    // DASHBOARD: ELENCO DELLE TAPPE IN BLU RALLY
     function renderListaDashboard() {
       const cont = document.getElementById('listaTappeContainer');
       if (!tappe || tappe.length === 0) {
@@ -950,7 +968,7 @@
                 </span>
                 ${!isSosta ? `
                   <span class="text-[11px] bg-gray-900 px-2 py-0.5 rounded text-gray-300 font-mono">
-                    <i class="fa-regular fa-clock text-amber-400 mr-1"></i>Partenza: ${t.oraPartenza || '08:30'}
+                    <i class="fa-regular fa-clock text-amber-400 mr-1"></i>${t.oraPartenza || '08:30'}
                   </span>
                 ` : ''}
               </div>
@@ -1037,7 +1055,7 @@
             </div>
 
             <div class="flex justify-between text-[11px] text-gray-400 pt-0.5">
-              <span>Piattaforma: <strong class="text-gray-200">${t.piattaforma || 'Diretto'}</strong></span>
+              <span>Piattaforma: <strong class="text-gray-200">${t.piattaforma || 'Non specificata'}</strong></span>
             </div>
 
             <div class="text-[11px] text-emerald-300 bg-emerald-950/30 p-2.5 rounded-xl border border-emerald-800/40">
@@ -1072,7 +1090,6 @@
       popolaTimelineOrariaIniziale(t);
     }
 
-    // TIMELINE PREVENTIVA (OGNI 45 MINUTI DALL'ORA DI PARTENZA)
     function popolaTimelineOrariaIniziale(t) {
       const box = document.getElementById('timelineMeteoBox');
       const kmTot = parseFloat(t.kmTot) || 150;
@@ -1147,7 +1164,6 @@
         const start = { lat: parseFloat(resP[0].lat), lon: parseFloat(resP[0].lon), name: queryP.split(',')[0] };
         const end = { lat: parseFloat(resA[0].lat), lon: parseFloat(resA[0].lon), name: queryA.split(',')[0] };
 
-        // Ottieni tracciato effettivo da OSRM
         const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=polyline`;
         const resRoute = await fetch(osrmUrl).then(r => r.json()).catch(() => null);
 
@@ -1178,7 +1194,6 @@
           }
         }
 
-        // Punti campionati esattamente ogni 45 minuti
         const segmenti = [];
         for (let i = 0; i < numStep; i++) {
           const ratio = numStep === 1 ? 0 : i / (numStep - 1);
@@ -1200,7 +1215,6 @@
           });
         }
 
-        // Reverse geocoding sui punti intermedi
         if (!t.isPermanenza) {
           for (let i = 1; i < segmenti.length - 1; i++) {
             try {
@@ -1217,7 +1231,6 @@
           }
         }
 
-        // Query meteo per ciascun punto all'orario effettivo di passaggio
         const meteoPromesse = segmenti.map(async (s) => {
           if (isStorico) {
             const anno1 = dViaggio.getFullYear() - 1;
@@ -1269,7 +1282,7 @@
       }
     }
 
-    // GRAFICO ALTIMETRICO AD ALTA RISOLUZIONE LUNGO IL TRACCIATO REALE
+    // GRAFICO ALTIMETRICO AD ALTA RISOLUZIONE
     async function apriGraficoQuote() {
       const t = tappe[indexTappaAttiva];
       if (!t || (!t.partenza && !t.arrivo)) return;
@@ -1299,7 +1312,6 @@
           puntiRotta = [[start.lat, start.lon], [end.lat, end.lon]];
         }
 
-        // Campiona 25 punti lungo la strada
         const step = Math.max(1, Math.floor(puntiRotta.length / 25));
         const campionati = [];
         const kmProg = [];
@@ -1408,7 +1420,7 @@
       document.getElementById('m_alt').value = "";
       document.getElementById('m_tempMinMax').value = "";
       document.getElementById('m_hotel').value = "";
-      document.getElementById('m_piattaforma').value = "Booking";
+      document.getElementById('m_piattaforma').value = "";
       document.getElementById('m_prezzo').value = "";
       document.getElementById('m_pagato').value = "";
       document.getElementById('m_metodoPagamento').value = "";
@@ -1444,7 +1456,7 @@
       document.getElementById('m_alt').value = t.altitudine || '';
       document.getElementById('m_tempMinMax').value = t.tempMinMax || '';
       document.getElementById('m_hotel').value = t.hotel || '';
-      document.getElementById('m_piattaforma').value = t.piattaforma || 'Booking';
+      document.getElementById('m_piattaforma').value = t.piattaforma || '';
       document.getElementById('m_prezzo').value = t.prezzo || '';
       document.getElementById('m_pagato').value = t.pagato || '';
       document.getElementById('m_metodoPagamento').value = t.metodoPagamento || '';
@@ -1698,10 +1710,11 @@
               else if (pagato.toLowerCase().includes("contanti")) metodoPagamento = "Contanti";
             }
 
-            let piattaforma = "Booking";
+            let piattaforma = "";
             if (colPiattaforma !== -1) {
               const pStr = String(row[colPiattaforma]).toLowerCase();
-              if (pStr.includes("expedia")) piattaforma = "Expedia";
+              if (pStr.includes("booking")) piattaforma = "Booking";
+              else if (pStr.includes("expedia")) piattaforma = "Expedia";
               else if (pStr.includes("dirett") || pStr.includes("privat")) piattaforma = "Pren. Diretta";
               else if (pStr) piattaforma = row[colPiattaforma];
             }
