@@ -136,7 +136,7 @@
   </div>
   <div class="cinema-overlay"></div>
 
-  <!-- Header Ottimizzato con margini sicuri -->
+  <!-- Header Ottimizzato -->
   <header class="sticky top-0 z-40 bg-[#06090e]/98 backdrop-blur-md border-b border-gray-800 px-3 pb-2.5 safe-top shadow-xl">
     <div class="flex items-center justify-between gap-2 max-w-xl mx-auto">
       
@@ -194,8 +194,6 @@
 
   <!-- VISTA 1: HOME (DASHBOARD) -->
   <section id="vistaDashboard" class="p-3.5 space-y-3.5 max-w-xl mx-auto">
-    
-    <!-- Tasti Principali Responsive Senza Testo Tagliato -->
     <div class="grid grid-cols-2 gap-2.5">
       <!-- Tasto ROADBOOK -->
       <label class="action-btn-green p-2.5 sm:p-3 rounded-2xl flex items-center space-x-2.5 cursor-pointer shadow-lg active:scale-95 transition-all overflow-hidden">
@@ -221,7 +219,6 @@
       </button>
     </div>
 
-    <!-- Indicazione Swipe -->
     <div class="flex items-center justify-between text-[11px] text-gray-400 px-1 pt-1">
       <span class="font-bold text-gray-300 uppercase tracking-wider text-[10px]">Tappe del Viaggio</span>
       <span class="text-[10px] text-sky-400"><i class="fa-solid fa-angles-left mr-1"></i>Scorri a sinistra per cestinare</span>
@@ -277,7 +274,7 @@
     </div>
   </div>
 
-  <!-- MODAL NUOVA / MODIFICA TAPPA CON DATI PERNOTTAMENTO PERFETTAMENTE ALLINEATI -->
+  <!-- MODAL NUOVA / MODIFICA TAPPA -->
   <div id="tappaModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
     <div class="blue-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-5 max-h-[92vh] overflow-y-auto space-y-3.5">
       <div class="flex justify-between items-center border-b border-gray-800 pb-2">
@@ -682,11 +679,10 @@
         
         let quotaMaxStradale = 0;
         if (elevRes && elevRes.elevation && elevRes.elevation.length > 0) {
-          // Filtro mediano per eliminare i pixel errati che toccano le pareti rocciose laterali
           const quoteFiltrate = elevRes.elevation.map((q, idx, arr) => {
             if (idx === 0 || idx === arr.length - 1) return q;
             const intorno = [arr[idx - 1], q, arr[idx + 1]].sort((x, y) => x - y);
-            return intorno[1]; // Prendi la mediana
+            return intorno[1];
           });
           quotaMaxStradale = Math.max(...quoteFiltrate);
           document.getElementById('m_alt').value = `${quotaMaxStradale} m`;
@@ -704,7 +700,6 @@
           if (wEnd && wEnd.daily && wEnd.daily.temperature_2m_max) {
             tMax = Math.max(tMax, Math.round(wEnd.daily.temperature_2m_max[0]));
           }
-          // Adeguamento alla quota massima raggiunta lungo il passo
           if (quotaMaxStradale > 800) {
             const caloTermico = Math.round((quotaMaxStradale - 400) * 0.0055);
             tMin = Math.round(tMin - caloTermico);
@@ -716,16 +711,15 @@
 
     // MEMORIA LOCALE & CESTINO (CON AUTO-SVUOTAMENTO 15 GIORNI)
     window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v22_tappe');
+      const saved = localStorage.getItem('djroute_v23_tappe');
       if (saved) {
         try { tappe = JSON.parse(saved); } catch(e) { tappe = []; }
       }
-      const savedCestino = localStorage.getItem('djroute_v22_cestino');
+      const savedCestino = localStorage.getItem('djroute_v23_cestino');
       if (savedCestino) {
         try { cestinoTappe = JSON.parse(savedCestino); } catch(e) { cestinoTappe = []; }
       }
 
-      // Svuota gli elementi del cestino più vecchi di 15 giorni
       const adesso = Date.now();
       const limite15Giorni = 15 * 24 * 60 * 60 * 1000;
       cestinoTappe = cestinoTappe.filter(el => (adesso - (el.cancellatoIl || adesso)) < limite15Giorni);
@@ -736,12 +730,12 @@
     });
 
     function salvaSuMemoria() {
-      localStorage.setItem('djroute_v22_tappe', JSON.stringify(tappe));
+      localStorage.setItem('djroute_v23_tappe', JSON.stringify(tappe));
       aggiornaRiepilogo();
     }
 
     function salvaCestinoSuMemoria() {
-      localStorage.setItem('djroute_v22_cestino', JSON.stringify(cestinoTappe));
+      localStorage.setItem('djroute_v23_cestino', JSON.stringify(cestinoTappe));
       aggiornaBadgeCestino();
     }
 
@@ -1009,7 +1003,7 @@
             </div>
           ` : ''}
 
-          <!-- METEO LIVE OGNI 45 MINUTI DALL'ORA DI PARTENZA -->
+          <!-- METEO LIVE OGNI 45 MINUTI DALL'ORA DI PARTENZA CON DATA SOPRA L'ORARIO -->
           <div class="bg-gray-950/80 p-3 rounded-2xl border border-gray-800 space-y-2.5">
             <div class="flex items-center justify-between">
               <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -1090,6 +1084,22 @@
       popolaTimelineOrariaIniziale(t);
     }
 
+    // HELPER PER SOMMA MINUTI A UNA DATA GG/MM/AAAA
+    function calcolaDataConOffset(strData, minutiAggiuntivi) {
+      let d = new Date();
+      if (strData && strData.length >= 8) {
+        const p = strData.split('/');
+        if (p.length === 3) {
+          d = new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10));
+        }
+      }
+      d.setMinutes(d.getMinutes() + minutiAggiuntivi);
+      const gg = String(d.getDate()).padStart(2, '0');
+      const mm = String(d.getMonth() + 1).padStart(2, '0');
+      return `${gg}/${mm}`;
+    }
+
+    // TIMELINE PREVENTIVA CON DATA SOPRA L'ORARIO
     function popolaTimelineOrariaIniziale(t) {
       const box = document.getElementById('timelineMeteoBox');
       const kmTot = parseFloat(t.kmTot) || 150;
@@ -1104,17 +1114,21 @@
 
       let cardsHtml = '';
       for (let i = 0; i < numeroStep; i++) {
-        const minutiTot = minutiPartenza + (i * 45);
+        const offsetMin = i * 45;
+        const minutiTot = minutiPartenza + offsetMin;
         const curH = Math.floor(minutiTot / 60) % 24;
         const curM = minutiTot % 60;
         const orarioFormattato = `${String(curH).padStart(2, '0')}:${String(curM).padStart(2, '0')}`;
+        const dataStep = calcolaDataConOffset(t.data, offsetMin);
+
         const kmProg = Math.round((kmTot / Math.max(1, numeroStep - 1)) * i);
         const cittaIpotetica = t.isPermanenza ? pNome : (i === 0 ? pNome : (i === numeroStep - 1 ? aNome : `Km ${kmProg}`));
 
         cardsHtml += `
-          <div class="flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl p-2.5 text-center w-24 shadow">
-            <span class="text-[11px] text-gray-300 font-mono font-semibold block">${orarioFormattato}</span>
-            <div class="my-1.5 text-base text-gray-500"><i class="fa-solid fa-cloud"></i></div>
+          <div class="flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl p-2 text-center w-24 shadow">
+            <span class="text-[9px] text-gray-400 font-mono block tracking-tight">${dataStep}</span>
+            <span class="text-[11px] text-white font-mono font-bold block">${orarioFormattato}</span>
+            <div class="my-1.5 text-base text-slate-100 flex items-center justify-center h-6"><i class="fa-solid fa-cloud text-slate-100"></i></div>
             <span class="text-[12px] text-gray-400 font-bold block">-°C</span>
             <span class="text-[10px] text-sky-400 truncate block mt-1 font-medium" title="${cittaIpotetica}">${cittaIpotetica}</span>
           </div>
@@ -1123,18 +1137,75 @@
       box.innerHTML = cardsHtml;
     }
 
+    // ICONE METEO REALISTICHE (NUVOLE BIANCHE / SLATE-100, SOLE AMBRA, PIOGGIA CIANO)
     function getWmoIcon(code) {
-      if (code === 0) return { icon: "fa-sun text-amber-400", label: "Sereno" };
-      if (code >= 1 && code <= 3) return { icon: "fa-cloud-sun text-yellow-300", label: "Poco nuvoloso" };
-      if (code >= 45 && code <= 48) return { icon: "fa-smog text-gray-400", label: "Nebbia" };
-      if (code >= 51 && code <= 67) return { icon: "fa-cloud-rain text-blue-400", label: "Pioggia" };
-      if (code >= 71 && code <= 77) return { icon: "fa-snowflake text-sky-200", label: "Neve" };
-      if (code >= 80 && code <= 82) return { icon: "fa-cloud-showers-heavy text-blue-500", label: "Rovesci" };
-      if (code >= 95) return { icon: "fa-cloud-bolt text-purple-400", label: "Temporale" };
-      return { icon: "fa-cloud text-gray-400", label: "Nuvoloso" };
+      // 0: Sereno
+      if (code === 0) {
+        return { 
+          html: `<i class="fa-solid fa-sun text-amber-400 text-base drop-shadow-[0_0_6px_rgba(251,191,36,0.5)]"></i>`, 
+          label: "Sereno" 
+        };
+      }
+      // 1, 2, 3: Poco nuvoloso o Parzialmente nuvoloso
+      if (code === 1 || code === 2) {
+        return { 
+          html: `<span class="relative inline-flex items-center justify-center">
+                   <i class="fa-solid fa-sun text-amber-400 text-xs absolute -top-1 -right-1"></i>
+                   <i class="fa-solid fa-cloud text-slate-100 text-base"></i>
+                 </span>`, 
+          label: "Poco nuvoloso" 
+        };
+      }
+      if (code === 3) {
+        return { 
+          html: `<i class="fa-solid fa-cloud text-slate-200 text-base"></i>`, 
+          label: "Nuvoloso" 
+        };
+      }
+      // 45, 48: Nebbia
+      if (code >= 45 && code <= 48) {
+        return { 
+          html: `<i class="fa-solid fa-smog text-slate-300 text-base"></i>`, 
+          label: "Nebbia" 
+        };
+      }
+      // 51 - 67: Pioggerella o Pioggia
+      if (code >= 51 && code <= 67) {
+        return { 
+          html: `<span class="inline-flex items-center justify-center">
+                   <i class="fa-solid fa-cloud-rain text-sky-400 text-base"></i>
+                 </span>`, 
+          label: "Pioggia" 
+        };
+      }
+      // 71 - 77: Neve
+      if (code >= 71 && code <= 77) {
+        return { 
+          html: `<i class="fa-solid fa-snowflake text-sky-100 text-base"></i>`, 
+          label: "Neve" 
+        };
+      }
+      // 80 - 82: Rovesci
+      if (code >= 80 && code <= 82) {
+        return { 
+          html: `<i class="fa-solid fa-cloud-showers-heavy text-blue-400 text-base"></i>`, 
+          label: "Rovesci" 
+        };
+      }
+      // 95 - 99: Temporale
+      if (code >= 95) {
+        return { 
+          html: `<i class="fa-solid fa-cloud-bolt text-indigo-400 text-base"></i>`, 
+          label: "Temporale" 
+        };
+      }
+      return { 
+        html: `<i class="fa-solid fa-cloud text-slate-200 text-base"></i>`, 
+        label: "Coperto" 
+      };
     }
 
-    // CALCOLO METEO DINAMICO ACCURATO: SCAGLIONATO OGNI 45 MINUTI DALL'ORA DI PARTENZA
+    // CALCOLO METEO DINAMICO: SCAGLIONATO OGNI 45 MINUTI DALL'ORA DI PARTENZA CON DATA DEDICATA
     async function calcolaMeteoDinamicoConGps(idx) {
       const t = tappe[idx];
       const box = document.getElementById('timelineMeteoBox');
@@ -1200,13 +1271,16 @@
           const indexPoly = Math.min(puntiRotta.length - 1, Math.floor(ratio * (puntiRotta.length - 1)));
           const puntoCorrente = puntiRotta[indexPoly];
 
-          const minutiStep = minutiPartenza + (i * 45);
+          const offsetMin = i * 45;
+          const minutiStep = minutiPartenza + offsetMin;
           const curH = Math.floor(minutiStep / 60) % 24;
           const curM = minutiStep % 60;
           const orarioStr = `${String(curH).padStart(2, '0')}:${String(curM).padStart(2, '0')}`;
+          const dataStep = calcolaDataConOffset(t.data, offsetMin);
 
           let nomePunto = t.isPermanenza ? start.name : (i === 0 ? start.name : (i === numStep - 1 ? end.name : ''));
           segmenti.push({
+            data: dataStep,
             orario: orarioStr,
             oraIntera: curH,
             lat: puntoCorrente[0],
@@ -1260,14 +1334,15 @@
 
         box.innerHTML = segmenti.map((s, i) => {
           const w = risultatiMeteo[i];
-          const { icon, label } = getWmoIcon(w.code);
+          const { html, label } = getWmoIcon(w.code);
 
           return `
-            <div class="flex-shrink-0 bg-gray-900 border ${w.isStorico ? 'border-amber-500/30' : 'border-gray-700'} rounded-xl p-2.5 text-center w-24 shadow-md">
-              <span class="text-[11px] text-gray-300 font-mono font-semibold block">${s.orario}</span>
-              <div class="my-1 text-base"><i class="fa-solid ${icon}"></i></div>
+            <div class="flex-shrink-0 bg-gray-900 border ${w.isStorico ? 'border-amber-500/30' : 'border-gray-700'} rounded-xl p-2 text-center w-24 shadow-md">
+              <span class="text-[9px] text-gray-400 font-mono block tracking-tight">${s.data}</span>
+              <span class="text-[11px] text-white font-mono font-bold block">${s.orario}</span>
+              <div class="my-1.5 flex items-center justify-center h-6">${html}</div>
               <span class="text-[12px] text-white font-bold font-mono block">${w.temp}°C</span>
-              ${w.pioggia > 10 ? `<span class="text-[9px] text-blue-300 block"><i class="fa-solid fa-droplet text-[8px]"></i> ${w.pioggia}%</span>` : ''}
+              ${w.pioggia > 10 ? `<span class="text-[9px] text-sky-400 block"><i class="fa-solid fa-droplet text-[8px]"></i> ${w.pioggia}%</span>` : ''}
               <span class="text-[10px] text-sky-400 truncate block mt-1 font-medium" title="${s.nome}">${s.nome}</span>
             </div>
           `;
