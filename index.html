@@ -2,1982 +2,346 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>djRoutePlanner - Roadbook</title>
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="djRoute">
-  <meta name="theme-color" content="#06090e">
-  
-  <!-- Font Moderno Orbitron & Rajdhani per Logo Hi-Tech -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>djRoute Master Roadbook</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
-
-  <!-- Tailwind CSS & FontAwesome -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- SheetJS per Excel -->
-  <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
-  <!-- Chart.js per Altimetria -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    body { 
-      background-color: #06090e; 
-      color: #f1f5f9; 
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-      -webkit-tap-highlight-color: transparent;
-      overflow-x: hidden;
+    :root {
+      --bg-dark: #0b0f19;
+      --card-bg: #131c2e;
+      --accent-green: #059669;
+      --accent-green-hover: #10b981;
+      --accent-yellow: #f59e0b;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --border-color: #24324d;
+      --highlight-weekend: #3730a3;
     }
 
-    .safe-top {
-      padding-top: max(env(safe-area-inset-top, 50px), 52px) !important;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
-    .font-brand {
+    body {
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      padding: 12px;
+      padding-bottom: 80px;
+    }
+
+    header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 16px;
+    }
+
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .brand {
       font-family: 'Orbitron', sans-serif;
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 1px;
+      color: var(--accent-green-hover);
     }
 
-    .bg-cinema-wrap {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      z-index: -2;
-      overflow: hidden;
-      background: #040609;
-    }
-    .bg-cinema {
-      position: absolute;
-      top: -8%; left: -8%; width: 116%; height: 116%;
-      background: url('https://images.unsplash.com/photo-1558981403-c5f9899a28bc?q=80&w=1920&auto=format&fit=crop') center center / cover no-repeat;
-      animation: kenburns 40s ease-in-out infinite alternate;
-      filter: brightness(0.20) contrast(1.2) saturate(0.8);
-    }
-    @keyframes kenburns {
-      0% { transform: scale(1) translate(0, 0); }
-      50% { transform: scale(1.05) translate(-1%, -1%); }
-      100% { transform: scale(1.1) translate(1%, 1%); }
-    }
-    .cinema-overlay {
-      position: fixed;
-      top: 0; left: 0; width: 100vw; height: 100vh;
-      background: linear-gradient(180deg, rgba(6, 9, 14, 0.8) 0%, rgba(6, 9, 14, 0.95) 50%, rgba(4, 6, 9, 0.99) 100%);
-      z-index: -1;
-      pointer-events: none;
+    .brand span {
+      color: #ffffff;
     }
 
-    .blue-card {
-      background: linear-gradient(135deg, rgba(15, 30, 55, 0.94) 0%, rgba(10, 20, 38, 0.96) 100%);
-      border: 1px solid rgba(56, 189, 248, 0.22);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.55);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
-    }
-
-    .action-btn-green {
-      background: linear-gradient(135deg, rgba(6, 78, 59, 0.95) 0%, rgba(4, 47, 46, 0.95) 100%);
-      border: 1px solid rgba(52, 211, 153, 0.45);
-    }
-    .action-btn-amber {
-      background: linear-gradient(135deg, rgba(120, 53, 15, 0.95) 0%, rgba(69, 26, 3, 0.95) 100%);
-      border: 1px solid rgba(251, 191, 36, 0.45);
-    }
-
-    .scroll-hide::-webkit-scrollbar { display: none; }
-    .scroll-hide { -ms-overflow-style: none; scrollbar-width: none; }
-
-    .autocomplete-dropdown {
-      position: absolute;
-      left: 0; right: 0; top: 100%;
-      z-index: 80;
-      background: #0b1322;
-      border: 1px solid #1e293b;
-      border-radius: 0.75rem;
-      max-height: 200px;
-      overflow-y: auto;
-      margin-top: 4px;
-      box-shadow: 0 16px 36px rgba(0,0,0,0.85);
-    }
-    .autocomplete-item {
-      padding: 9px 12px;
+    .sync-btn {
+      background: var(--accent-green);
+      color: #fff;
+      border: 1px solid var(--accent-green-hover);
+      padding: 10px 16px;
+      font-family: 'Orbitron', sans-serif;
       font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
       cursor: pointer;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .autocomplete-item:last-child { border-bottom: none; }
-    .autocomplete-item:hover {
-      background: rgba(56, 189, 248, 0.2);
-      color: #38bdf8;
-    }
-
-    .swipe-container {
-      position: relative;
-      overflow: hidden;
-      touch-action: pan-y;
-      border-radius: 1rem;
-      margin-bottom: 0.65rem;
-    }
-    .swipe-delete-bg {
-      position: absolute;
-      top: 0; bottom: 0; right: 0; width: 100%;
-      background: #be123c;
       display: flex;
       align-items: center;
-      justify-content: flex-end;
-      padding-right: 1.5rem;
-      color: white;
-      font-weight: bold;
-      border-radius: 1rem;
-      z-index: 1;
+      gap: 8px;
+      transition: all 0.2s;
     }
-    .swipe-content {
-      position: relative;
-      z-index: 2;
-      transition: transform 0.18s ease-out;
+
+    .sync-btn:active {
+      transform: scale(0.97);
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .stage-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    }
+
+    .stage-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .stage-date {
+      font-family: 'Orbitron', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      color: #60a5fa;
+    }
+
+    .stage-time {
+      background: #1e293b;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .route-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-bottom: 10px;
+    }
+
+    .location {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .location.departure {
+      color: #a7f3d0;
+    }
+
+    .location.arrival {
+      color: #fca5a5;
+    }
+
+    .via-points {
+      font-size: 12px;
+      color: var(--text-muted);
+      padding-left: 24px;
+      font-style: italic;
+    }
+
+    .stage-details {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background: #0f172a;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .detail-item strong {
+      color: var(--text-muted);
+      display: block;
+      font-size: 10px;
+      text-transform: uppercase;
+    }
+
+    .actions-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .btn-myroute {
+      background: #1d4ed8;
+      color: #fff;
+      border-color: #3b82f6;
+    }
+
+    .btn-notes {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
     }
   </style>
 </head>
-<body class="pb-24 min-h-screen relative select-none">
+<body>
 
-  <!-- Sfondo Cinematografico -->
-  <div class="bg-cinema-wrap">
-    <div class="bg-cinema"></div>
-  </div>
-  <div class="cinema-overlay"></div>
-
-  <!-- Header con Brand Moderno djROUTE in Orbitron -->
-  <header class="sticky top-0 z-40 bg-[#06090e]/98 backdrop-blur-md border-b border-gray-800 px-3 pb-2.5 safe-top shadow-xl">
-    <div class="flex items-center justify-between gap-2 max-w-xl mx-auto">
-      
-      <!-- Frecce e Home -->
-      <div class="flex items-center space-x-1 flex-shrink-0">
-        <button onclick="navigaIndietro()" id="btnNavPrev" class="w-8 h-8 rounded-xl bg-gray-900 border border-gray-700 text-gray-300 flex items-center justify-center active:scale-90" title="Indietro">
-          <i class="fa-solid fa-chevron-left text-xs"></i>
-        </button>
-        <button onclick="vaiAllaHome()" class="w-8 h-8 rounded-xl bg-gray-900 border border-gray-700 text-amber-400 flex items-center justify-center active:scale-90" title="Home">
-          <i class="fa-solid fa-house text-xs"></i>
-        </button>
-        <button onclick="navigaAvanti()" id="btnNavNext" class="w-8 h-8 rounded-xl bg-gray-900 border border-gray-700 text-gray-300 flex items-center justify-center active:scale-90" title="Avanti">
-          <i class="fa-solid fa-chevron-right text-xs"></i>
-        </button>
-      </div>
-
-      <!-- Brand djROUTE Hi-Tech Moderno -->
-      <div class="text-center px-1 flex-1 cursor-pointer truncate" onclick="vaiAllaHome()">
-        <h1 class="font-brand font-black text-base text-white tracking-wider leading-none flex items-center justify-center gap-1.5">
-          <span class="text-gray-300">dj</span><span class="text-amber-400 drop-shadow-[0_0_8px_rgba(251,191,36,0.5)]">ROUTE</span>
-        </h1>
-        <p class="text-[9px] text-sky-400 font-mono tracking-widest uppercase mt-0.5" id="headerSubtitle">Roadbook Pro</p>
-      </div>
-
-      <!-- GPS & Cestino -->
-      <div class="flex items-center space-x-1.5 flex-shrink-0">
-        <button onclick="attivaGps()" class="h-8 px-2 rounded-xl bg-emerald-950 border border-emerald-500/50 text-[11px] text-emerald-300 font-mono flex items-center gap-1 active:scale-90">
-          <span class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> GPS
-        </button>
-        <button onclick="apriCestino()" class="w-8 h-8 rounded-xl bg-gray-900 border border-gray-700 text-rose-400 flex items-center justify-center active:scale-90 relative" title="Cestino Tappe">
-          <i class="fa-solid fa-trash-can text-xs"></i>
-          <span id="badgeCestino" class="hidden absolute -top-1 -right-1 w-4 h-4 bg-rose-600 text-white rounded-full text-[9px] font-bold flex items-center justify-center">0</span>
-        </button>
-      </div>
+  <header>
+    <div class="header-top">
+      <div class="brand">djRoute <span>2026</span></div>
+      <button id="btnSyncCloud" class="sync-btn" onclick="sincronizzaCloud()">
+        🔄 Sincronizza
+      </button>
     </div>
-
-    <!-- Status Bar Metriche -->
-    <div class="flex items-center justify-around border-t border-gray-800/80 mt-2 pt-2 text-center text-xs max-w-xl mx-auto">
-      <div>
-        <span class="text-[9px] text-gray-400 uppercase tracking-wider block">Tappe</span>
-        <strong id="totTappeVal" class="text-white font-mono text-xs">0</strong>
-      </div>
-      <div class="h-4 w-px bg-gray-800"></div>
-      <div>
-        <span class="text-[9px] text-gray-400 uppercase tracking-wider block">Percorso Reale</span>
-        <strong id="totKmVal" class="text-amber-400 font-mono text-xs">0 km</strong>
-      </div>
-      <div class="h-4 w-px bg-gray-800"></div>
-      <div>
-        <span class="text-[9px] text-gray-400 uppercase tracking-wider block">Tempo Guida</span>
-        <strong id="totOreVal" class="text-sky-300 font-mono text-xs">0h 0m</strong>
-      </div>
+    <div class="status-bar">
+      <span id="syncStatus">Stato: Pronto</span>
+      <span id="stageCount">0 tappe</span>
     </div>
   </header>
 
-  <!-- VISTA 1: HOME (DASHBOARD) -->
-  <section id="vistaDashboard" class="p-3.5 space-y-3.5 max-w-xl mx-auto">
-    
-    <!-- Tasti Principali Responsive -->
-    <div class="grid grid-cols-2 gap-2.5">
-      <label class="action-btn-green p-2.5 sm:p-3 rounded-2xl flex items-center space-x-2.5 cursor-pointer shadow-lg active:scale-95 transition-all overflow-hidden">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-400 text-gray-950 flex items-center justify-center font-black text-base sm:text-lg flex-shrink-0 shadow">
-          <i class="fa-solid fa-file-excel"></i>
-        </div>
-        <div class="min-w-0 flex-1">
-          <span class="text-[11px] sm:text-xs font-black text-white block leading-tight tracking-wider truncate">ROADBOOK</span>
-          <span class="text-[9px] sm:text-[10px] text-emerald-300 block font-medium truncate">Carica Excel</span>
-        </div>
-        <input type="file" id="excelInput" accept=".xlsx, .xls, .csv" class="hidden" onchange="importaRoadbookIntelligente(event)">
-      </label>
-
-      <button onclick="apriModalNuovaTappa()" class="action-btn-amber p-2.5 sm:p-3 rounded-2xl flex items-center space-x-2.5 shadow-lg active:scale-95 transition-all text-left overflow-hidden">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-amber-400 text-gray-950 flex items-center justify-center font-black text-base sm:text-lg flex-shrink-0 shadow">
-          <i class="fa-solid fa-plus font-bold"></i>
-        </div>
-        <div class="min-w-0 flex-1">
-          <span class="text-[11px] sm:text-xs font-black text-white block leading-tight tracking-wider truncate">+ TAPPA</span>
-          <span class="text-[9px] sm:text-[10px] text-amber-300 block font-medium truncate">Crea Nuova</span>
-        </div>
-      </button>
+  <main id="tappeContainer">
+    <div class="empty-state">
+      Premi "Sincronizza" in alto per scaricare le tappe dal tuo Google Sheet.
     </div>
-
-    <!-- Indicazione Swipe -->
-    <div class="flex items-center justify-between text-[11px] text-gray-400 px-1 pt-1">
-      <span class="font-bold text-gray-300 uppercase tracking-wider text-[10px]">Tappe del Viaggio</span>
-      <span class="text-[10px] text-sky-400"><i class="fa-solid fa-angles-left mr-1"></i>Scorri a sinistra per cestinare</span>
-    </div>
-
-    <!-- Lista Tappe (BLU RALLY CON ALERT DATA PASSATA) -->
-    <div id="listaTappeContainer" class="space-y-2"></div>
-  </section>
-
-  <!-- VISTA 2: SCHEDA DETTAGLIO TAPPA -->
-  <section id="vistaDettaglio" class="p-3.5 max-w-xl mx-auto hidden space-y-3.5">
-    <div id="schedaDettaglioContainer"></div>
-  </section>
-
-  <!-- MODAL CESTINO TAPPE -->
-  <div id="modalCestino" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-3">
-    <div class="blue-card w-full max-w-lg rounded-2xl p-4 space-y-3 max-h-[85vh] flex flex-col">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-2 flex-shrink-0">
-        <h3 class="font-bold text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-trash-can text-rose-400"></i> Cestino Tappe
-        </h3>
-        <button onclick="chiudiCestino()" class="text-gray-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-base"></i>
-        </button>
-      </div>
-
-      <div class="text-[11px] text-gray-300 flex justify-between items-center bg-gray-950/60 p-2.5 rounded-xl border border-gray-800 flex-shrink-0">
-        <span>Pulizia automatica ogni 15 giorni.</span>
-        <button onclick="svuotaCestinoManuale()" class="px-2.5 py-1 bg-rose-900/60 hover:bg-rose-800 border border-rose-500/50 text-rose-200 text-xs font-bold rounded-lg active:scale-95">
-          Svuota Tutto
-        </button>
-      </div>
-
-      <div id="listaCestinoContainer" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
-    </div>
-  </div>
-
-  <!-- MODAL GRAFICO PROFILO ALTIMETRICO -->
-  <div id="modalGraficoQuote" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-3">
-    <div class="blue-card w-full max-w-lg rounded-2xl p-4 space-y-3">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-        <h3 class="font-bold text-xs sm:text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-mountain text-amber-400"></i> Profilo Altimetrico Stradale
-        </h3>
-        <button onclick="chiudiGraficoQuote()" class="text-gray-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-base"></i>
-        </button>
-      </div>
-      <div class="w-full h-56 sm:h-64 relative">
-        <canvas id="chartQuoteCanvas"></canvas>
-      </div>
-      <p id="infoAltMax" class="text-[11px] text-center text-amber-400 font-mono"></p>
-    </div>
-  </div>
-
-  <!-- MODAL IMPORTAZIONE MYROUTE-APP (FILE GPX O TESTO/WAYPOINTS) -->
-  <div id="modalMyRouteImport" class="fixed inset-0 bg-black/85 z-50 hidden flex items-center justify-center p-3">
-    <div class="blue-card w-full max-w-lg rounded-2xl p-4 space-y-3">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-        <h3 class="font-bold text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-route text-orange-400"></i> Importa Percorso da MyRoute-app
-        </h3>
-        <button onclick="chiudiModalMyRoute()" class="text-gray-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-base"></i>
-        </button>
-      </div>
-
-      <p class="text-xs text-gray-300">
-        Carica il file <strong class="text-orange-400">.GPX</strong> esportato da MyRoute-app oppure incolla i punti/link per riprodurre fedelmente soste e waypoints studiati:
-      </p>
-
-      <!-- Caricamento File GPX da MyRoute-app -->
-      <label class="w-full py-3 px-4 rounded-xl bg-orange-950/40 hover:bg-orange-900/50 border border-orange-500/40 text-orange-300 text-xs font-bold flex items-center justify-center gap-2 cursor-pointer active:scale-95 transition-all">
-        <i class="fa-solid fa-file-arrow-up text-base"></i> Carica Traccia .GPX di MyRoute-app
-        <input type="file" accept=".gpx" class="hidden" onchange="elaboraGpxMyRoute(event)">
-      </label>
-
-      <div class="relative flex py-1 items-center">
-        <div class="flex-grow border-t border-gray-800"></div>
-        <span class="flex-shrink mx-2 text-[10px] text-gray-500 uppercase">oppure incolla testo/link</span>
-        <div class="flex-grow border-t border-gray-800"></div>
-      </div>
-
-      <textarea id="myroute_text_input" rows="3" placeholder="Incolla link MyRoute-app o elenco waypoints separati da trattino o virgola..." class="w-full bg-gray-900 border border-gray-700 rounded-xl p-2.5 text-white text-xs outline-none focus:border-orange-400"></textarea>
-
-      <div class="flex gap-2 pt-1">
-        <button onclick="chiudiModalMyRoute()" class="w-1/2 py-2 bg-gray-800 text-gray-300 rounded-xl text-xs font-semibold">Annulla</button>
-        <button onclick="applicaTestoMyRoute()" class="w-1/2 py-2 bg-orange-500 hover:bg-orange-400 text-gray-950 rounded-xl text-xs font-bold">Importa Punti</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL NUOVA / MODIFICA TAPPA -->
-  <div id="tappaModal" class="fixed inset-0 bg-black/85 z-50 hidden flex items-end sm:items-center justify-center p-0 sm:p-4">
-    <div class="blue-card w-full max-w-lg rounded-t-2xl sm:rounded-2xl p-4 sm:p-5 max-h-[92vh] overflow-y-auto space-y-3.5">
-      <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-        <h3 class="font-bold text-sm text-white flex items-center gap-2">
-          <i class="fa-solid fa-route text-amber-400"></i> Scheda Itinerario Tappa
-        </h3>
-        <button onclick="chiudiModalTappa()" class="text-gray-400 hover:text-white p-1">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <input type="hidden" id="m_editIndex" value="-1">
-
-      <div class="grid grid-cols-3 gap-2 text-xs items-end">
-        <div>
-          <label class="block text-gray-400 mb-1 font-medium">Data</label>
-          <input type="text" id="m_data" placeholder="GG/MM/AAAA" maxlength="10" oninput="gestisciInputData(this)" 
-                 class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white font-mono text-xs focus:border-sky-400 outline-none">
-        </div>
-        <div>
-          <label class="block text-gray-400 mb-1 font-medium">Giorno (Auto)</label>
-          <input type="text" id="m_giorno" placeholder="Calcolato..." readonly 
-                 class="w-full h-11 bg-gray-950 border border-gray-800 rounded-xl px-3 text-sky-400 font-bold capitalize text-xs">
-        </div>
-        <div>
-          <label class="block text-amber-400 font-semibold mb-1">Ora Partenza</label>
-          <input type="time" id="m_ora" value="08:30" 
-                 class="w-full h-11 bg-gray-900 border border-amber-500/40 rounded-xl px-2 text-white font-bold text-xs focus:border-amber-400 outline-none">
-        </div>
-      </div>
-
-      <div class="space-y-3 text-xs">
-        <div class="relative">
-          <label class="block text-gray-300 font-medium mb-1">Partenza (Città o Indirizzo) *</label>
-          <input type="text" id="m_partenza" placeholder="es. Tione di Trento..." autocomplete="off" 
-                 oninput="cercaCittaLive(this, 'sugg_partenza')" onblur="ritardoChiudiDropdown('sugg_partenza')"
-                 class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-          <div id="sugg_partenza" class="autocomplete-dropdown hidden"></div>
-        </div>
-
-        <div class="bg-gray-950/60 p-2.5 rounded-xl border border-gray-800 space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-gray-300 font-bold flex items-center gap-1.5">
-              <i class="fa-solid fa-signs-post text-amber-400"></i> Passi / Waypoints Intermedi
-            </span>
-            <button type="button" onclick="aggiungiRigaIntermedio()" class="h-8 px-3 rounded-lg bg-amber-400 hover:bg-amber-300 text-gray-950 text-xs font-bold flex items-center gap-1 active:scale-95 transition-all shadow">
-              <i class="fa-solid fa-plus font-bold"></i> Aggiungi Passo
-            </button>
-          </div>
-          <div id="containerIntermediDinamici" class="space-y-2 pt-1"></div>
-        </div>
-
-        <div class="relative">
-          <label class="block text-gray-300 font-medium mb-1">Arrivo (Città o Destinazione) *</label>
-          <input type="text" id="m_arrivo" placeholder="es. Mantova..." autocomplete="off" 
-                 oninput="cercaCittaLive(this, 'sugg_arrivo')" onblur="ritardoChiudiDropdown('sugg_arrivo')"
-                 class="w-full h-11 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-          <div id="sugg_arrivo" class="autocomplete-dropdown hidden"></div>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-2 gap-2 text-xs">
-        <div>
-          <label class="block text-gray-400 mb-1">Km Stradali Reali (OSRM)</label>
-          <input type="text" id="m_km" placeholder="Calcolo percorso..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-amber-400 font-bold text-xs">
-        </div>
-        <div>
-          <label class="block text-gray-400 mb-1">Tempo Guida Reale (OSRM)</label>
-          <input type="text" id="m_ore" placeholder="Calcolo tempo..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-sky-300 font-bold text-xs">
-        </div>
-        <div>
-          <label class="block text-gray-400 mb-1">Quota Max Reale Asfalto</label>
-          <input type="text" id="m_alt" placeholder="Calcolato..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs">
-        </div>
-        <div>
-          <label class="block text-gray-400 mb-1">Temp. Min/Max Percorso</label>
-          <input type="text" id="m_tempMinMax" placeholder="Calcolato..." class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-emerald-400 font-bold text-xs">
-        </div>
-      </div>
-
-      <!-- SEZIONE: DATI PERNOTTAMENTO CON LAYOUT MOBILE ALLINEATO -->
-      <div class="border-t border-gray-800 pt-3 space-y-2.5 text-xs">
-        <div class="flex items-center justify-between">
-          <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-            <i class="fa-solid fa-hotel text-sky-400"></i> DATI PERNOTTAMENTO
-          </span>
-          <label class="bg-gray-800 hover:bg-gray-700 text-gray-200 border border-gray-700 px-2 py-1 rounded-lg cursor-pointer text-[10px] font-medium flex items-center gap-1 active:scale-95 transition-all">
-            <i class="fa-solid fa-calendar-check text-amber-400"></i> .ICS (Booking/Expedia)
-            <input type="file" accept=".ics" class="hidden" onchange="leggiFileIcsPrenotazione(event)">
-          </label>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <div>
-            <label class="block text-gray-400 mb-1 font-medium">Nome Struttura / Alloggio</label>
-            <input type="text" id="m_hotel" placeholder="Nome Struttura o Hotel" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1 font-medium">Piattaforma di Prenotazione</label>
-            <select id="m_piattaforma" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs outline-none focus:border-sky-400">
-              <option value="">-- Seleziona Piattaforma --</option>
-              <option value="Booking">Booking.com</option>
-              <option value="Expedia">Expedia</option>
-              <option value="Pren. Diretta">Prenotazione Diretta</option>
-              <option value="Airbnb">Airbnb</option>
-              <option value="Altro">Altro Canale</option>
-            </select>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 gap-2">
-          <div>
-            <label class="block text-gray-400 mb-1 font-medium">Prezzo Totale €</label>
-            <input type="text" id="m_prezzo" placeholder="es. 85 €" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs font-mono focus:border-sky-400 outline-none">
-          </div>
-          <div>
-            <label class="block text-gray-400 mb-1 font-medium">Stato Pagamento</label>
-            <input type="text" id="m_pagato" placeholder="es. Pagato / Da pagare" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-          </div>
-        </div>
-
-        <div>
-          <label class="block text-gray-400 mb-1 font-medium">Metodo di Pagamento</label>
-          <input type="text" id="m_metodoPagamento" placeholder="es. Carta di Credito / PayPal / Contanti" class="w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-        </div>
-
-        <div>
-          <label class="block text-emerald-400 font-semibold mb-1"><i class="fa-solid fa-square-parking mr-1"></i> Indicazioni Parcheggio Moto</label>
-          <input type="text" id="m_parcheggio" placeholder="es. Cortile interno privato con cancello chiuso" class="w-full h-10 bg-gray-900 border border-emerald-600/40 rounded-xl px-3 text-white text-xs focus:border-emerald-400 outline-none">
-        </div>
-      </div>
-
-      <!-- TASTO AGGIUNGI PERCORSO DA MYROUTE-APP (INVECE DEL SEMPLICE LINK) -->
-      <div class="border-t border-gray-800 pt-3">
-        <button type="button" onclick="apriModalMyRoute()" class="w-full h-11 rounded-xl bg-gradient-to-r from-orange-950/70 to-gray-900 border border-orange-500/50 hover:border-orange-400 text-orange-300 text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all shadow">
-          <i class="fa-solid fa-route text-base text-orange-400"></i> Aggiungi Percorso da MyRoute-app
-        </button>
-        <input type="hidden" id="m_myroute" value="">
-      </div>
-
-      <div class="pt-2 flex gap-2">
-        <button onclick="chiudiModalTappa()" class="w-1/2 py-2.5 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-semibold text-gray-300">Annulla</button>
-        <button onclick="salvaTappaManuale()" class="w-1/2 py-2.5 bg-amber-500 hover:bg-amber-400 rounded-xl text-xs font-bold text-gray-950">Salva Tappa</button>
-      </div>
-    </div>
-  </div>
+  </main>
 
   <script>
-    let tappe = [];
-    let cestinoTappe = [];
-    let vistaAttuale = "dashboard";
-    let indexTappaAttiva = 0;
-    let chartInstance = null;
-    let debounceTimer = null;
+    // URL dell'API di Google Apps Script generata dal tuo foglio
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
 
-    function normalizzaTesto(t) {
-      return (t || '')
-        .normalize("NFD")
-        .replace(/[\u0300-\u036f]/g, "")
-        .replace(/['’]/g, " ")
-        .toLowerCase()
-        .trim();
-    }
-
-    function gestisciInputData(input) {
-      let v = input.value.replace(/\D/g, '');
-      if (v.length > 2 && v.length <= 4) {
-        v = v.substring(0, 2) + '/' + v.substring(2);
-      } else if (v.length > 4) {
-        v = v.substring(0, 2) + '/' + v.substring(2, 4) + '/' + v.substring(4, 8);
-      }
-      input.value = v;
-      document.getElementById('m_giorno').value = calcolaGiornoDaData(v);
-    }
-
-    function formattaInGiornoMeseAnno(val) {
-      if (!val) return "";
-      if (val instanceof Date && !isNaN(val.getTime())) {
-        const gg = String(val.getDate()).padStart(2, '0');
-        const mm = String(val.getMonth() + 1).padStart(2, '0');
-        const aaaa = val.getFullYear();
-        return `${gg}/${mm}/${aaaa}`;
-      }
-      if (typeof val === 'number' || (!isNaN(val) && String(val).length === 5)) {
-        const dateObj = new Date((val - (25567 + 2)) * 86400 * 1000);
-        if (!isNaN(dateObj.getTime())) {
-          const gg = String(dateObj.getDate()).padStart(2, '0');
-          const mm = String(dateObj.getMonth() + 1).padStart(2, '0');
-          const aaaa = dateObj.getFullYear();
-          return `${gg}/${mm}/${aaaa}`;
-        }
-      }
-      const str = String(val).trim();
-      if (str.includes('/')) {
-        const p = str.split('/');
-        if (p.length === 3) return `${p[0].padStart(2, '0')}/${p[1].padStart(2, '0')}/${p[2]}`;
-      }
-      if (str.includes('-')) {
-        const p = str.split('T')[0].split('-');
-        if (p.length === 3) return `${p[2].padStart(2, '0')}/${p[1].padStart(2, '0')}/${p[0]}`;
-      }
-      return str;
-    }
-
-    function calcolaGiornoDaData(strData) {
-      if (!strData || strData.length < 10) return "";
-      const p = strData.split('/');
-      if (p.length !== 3) return "";
-      const gg = parseInt(p[0], 10);
-      const mm = parseInt(p[1], 10) - 1;
-      const aaaa = parseInt(p[2], 10);
-      const d = new Date(aaaa, mm, gg);
-      if (isNaN(d.getTime())) return "";
-      const nomi = ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"];
-      return nomi[d.getDay()];
-    }
-
-    // VERIFICA SE LA DATA È ANTECEDENTE AD OGGI
-    function isDataPassata(strData) {
-      if (!strData || strData.length < 8) return false;
-      const p = strData.split('/');
-      if (p.length !== 3) return false;
-      const dataTappa = new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10), 23, 59, 59);
-      const oggi = new Date();
-      return dataTappa.getTime() < oggi.getTime();
-    }
-
-    // Decoder polyline OSRM
-    function decodePolyline(str, precision = 5) {
-      let index = 0, lat = 0, lng = 0, coordinates = [];
-      let factor = Math.pow(10, precision);
-      while (index < str.length) {
-        let byte = null, shift = 0, result = 0;
-        do {
-          byte = str.charCodeAt(index++) - 63;
-          result |= (byte & 0x1f) << shift;
-          shift += 5;
-        } while (byte >= 0x20);
-        let latitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
-        shift = result = 0;
-        do {
-          byte = str.charCodeAt(index++) - 63;
-          result |= (byte & 0x1f) << shift;
-          shift += 5;
-        } while (byte >= 0x20);
-        let longitude_change = ((result & 1) ? ~(result >> 1) : (result >> 1));
-        lat += latitude_change;
-        lng += longitude_change;
-        coordinates.push([lat / factor, lng / factor]);
-      }
-      return coordinates;
-    }
-
-    // Ricerca località
-    function cercaCittaLive(inputElem, dropId) {
-      const testoOriginale = inputElem.value.trim();
-      const testoPulito = normalizzaTesto(testoOriginale);
-      const drop = document.getElementById(dropId);
-      clearTimeout(debounceTimer);
-
-      if (testoPulito.length < 2) {
-        drop.classList.add('hidden');
-        drop.innerHTML = '';
-        return;
-      }
-
-      debounceTimer = setTimeout(async () => {
+    // Carica eventuali tappe salvate localmente all'avvio
+    window.addEventListener("DOMContentLoaded", () => {
+      const cached = localStorage.getItem("djRoute_tappe_attive");
+      if (cached) {
         try {
-          const [resOM, resNom] = await Promise.all([
-            fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(testoPulito)}&count=5&language=it&format=json`)
-              .then(r => r.json()).catch(() => ({ results: [] })),
-            fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(testoOriginale)}&format=json&addressdetails=1&limit=6&accept-language=it`)
-              .then(r => r.json()).catch(() => [])
-          ]);
-
-          let listaRisultati = [];
-
-          if (Array.isArray(resNom)) {
-            resNom.forEach(item => {
-              const a = item.address || {};
-              const via = [a.road, a.house_number].filter(Boolean).join(' ');
-              const comune = a.city || a.town || a.village || a.hamlet || a.municipality || item.display_name.split(',')[0];
-              const nomeVisualizzato = via ? `${via}, ${comune}` : comune;
-              const extra = [a.county || a.state_district, a.state, a.country].filter(Boolean).join(', ');
-              if (nomeVisualizzato && !listaRisultati.some(x => x.nome.toLowerCase() === nomeVisualizzato.toLowerCase())) {
-                listaRisultati.push({ nome: nomeVisualizzato, extra });
-              }
-            });
-          }
-
-          if (resOM && resOM.results) {
-            resOM.results.forEach(r => {
-              const extra = [r.admin1, r.country].filter(Boolean).join(', ');
-              if (!listaRisultati.some(x => x.nome.toLowerCase() === r.name.toLowerCase())) {
-                listaRisultati.push({ nome: r.name, extra });
-              }
-            });
-          }
-
-          if (listaRisultati.length > 0) {
-            drop.innerHTML = listaRisultati.map(item => `
-              <div class="autocomplete-item" onmousedown="selezionaCitta('${inputElem.id}', '${dropId}', '${item.nome.replace(/'/g, "\\'")}', '${item.extra.replace(/'/g, "\\'")}')">
-                <span class="font-bold text-white">${item.nome}</span>
-                <span class="text-[11px] text-gray-400 block">${item.extra}</span>
-              </div>
-            `).join('');
-            drop.classList.remove('hidden');
-          } else {
-            drop.classList.add('hidden');
-          }
-        } catch(e) {
-          drop.classList.add('hidden');
+          const tappe = JSON.parse(cached);
+          renderTappe(tappe);
+        } catch (e) {
+          console.error("Errore lettura cache:", e);
         }
-      }, 220);
-    }
-
-    function ritardoChiudiDropdown(dropId) {
-      setTimeout(() => {
-        const drop = document.getElementById(dropId);
-        if (drop) drop.classList.add('hidden');
-      }, 250);
-    }
-
-    async function selezionaCitta(inputId, dropId, nome, extra) {
-      document.getElementById(inputId).value = `${nome} (${extra})`;
-      document.getElementById(dropId).classList.add('hidden');
-      await calcolaMetricheRottaAutomatica();
-    }
-
-    function aggiungiRigaIntermedio(valore = "") {
-      const container = document.getElementById('containerIntermediDinamici');
-      const idx = Date.now() + Math.floor(Math.random()*1000);
-      const div = document.createElement('div');
-      div.className = "flex items-center gap-2 relative";
-      div.innerHTML = `
-        <div class="relative flex-1">
-          <input type="text" placeholder="Passo o Indirizzo intermedio..." value="${valore}" autocomplete="off"
-                 oninput="cercaCittaLive(this, 'sugg_int_${idx}')" onblur="ritardoChiudiDropdown('sugg_int_${idx}')"
-                 class="input-intermedio w-full h-10 bg-gray-900 border border-gray-700 rounded-xl px-3 text-white text-xs focus:border-sky-400 outline-none">
-          <div id="sugg_int_${idx}" class="autocomplete-dropdown hidden"></div>
-        </div>
-        <button type="button" onclick="this.parentElement.remove(); calcolaMetricheRottaAutomatica();" class="w-10 h-10 rounded-xl bg-gray-800 text-rose-400 hover:bg-rose-950/40 border border-gray-700 flex items-center justify-center flex-shrink-0 active:scale-95" title="Elimina punto">
-          <i class="fa-solid fa-trash-can text-xs"></i>
-        </button>
-      `;
-      container.appendChild(div);
-    }
-
-    // MODAL & PARSER MYROUTE-APP (ESTRAZIONE FEDELE DI WAYPOINTS E SOSTE)
-    function apriModalMyRoute() {
-      document.getElementById('modalMyRouteImport').classList.remove('hidden');
-    }
-
-    function chiudiModalMyRoute() {
-      document.getElementById('modalMyRouteImport').classList.add('hidden');
-    }
-
-    function elaboraGpxMyRoute(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const parser = new DOMParser();
-          const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
-          
-          // Estrai Waypoints (<wpt>) oppure punti di rotta (<rtept>)
-          let puntiNomi = [];
-          const wpts = xmlDoc.getElementsByTagName("wpt");
-          const rtepts = xmlDoc.getElementsByTagName("rtept");
-
-          const items = wpts.length > 0 ? wpts : rtepts;
-          for (let i = 0; i < items.length; i++) {
-            const nameEl = items[i].getElementsByTagName("name")[0];
-            if (nameEl && nameEl.textContent.trim()) {
-              puntiNomi.push(nameEl.textContent.trim());
-            }
-          }
-
-          if (puntiNomi.length < 2) {
-            alert("Traccia GPX priva di sufficienti punti con nome. Verrà usata la rotta disponibile.");
-          } else {
-            // Partenza = primo punto, Arrivo = ultimo, Intermedi = punti centrali
-            document.getElementById('m_partenza').value = puntiNomi[0];
-            document.getElementById('m_arrivo').value = puntiNomi[puntiNomi.length - 1];
-
-            const container = document.getElementById('containerIntermediDinamici');
-            container.innerHTML = "";
-            const intermedi = puntiNomi.slice(1, puntiNomi.length - 1);
-            intermedi.forEach(intName => aggiungiRigaIntermedio(intName));
-          }
-
-          chiudiModalMyRoute();
-          alert(`Percorso MyRoute-app importato con successo: ${puntiNomi.length} punti/soste impostati!`);
-          calcolaMetricheRottaAutomatica();
-        } catch(err) {
-          alert("Errore nella lettura del file GPX di MyRoute-app: " + err.message);
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function applicaTestoMyRoute() {
-      const txt = document.getElementById('myroute_text_input').value.trim();
-      if (!txt) return;
-
-      if (txt.startsWith("http")) {
-        document.getElementById('m_myroute').value = txt;
-        chiudiModalMyRoute();
-        alert("Link MyRoute-app salvato nella scheda!");
-        return;
       }
-
-      // Se incolla una lista di punti (separati da trattino, freccia o virgola)
-      const parti = txt.split(/(?:->|➔|—|-|,)/).map(s => s.trim()).filter(Boolean);
-      if (parti.length >= 2) {
-        document.getElementById('m_partenza').value = parti[0];
-        document.getElementById('m_arrivo').value = parti[parti.length - 1];
-
-        const container = document.getElementById('containerIntermediDinamici');
-        container.innerHTML = "";
-        const intermedi = parti.slice(1, parti.length - 1);
-        intermedi.forEach(intName => aggiungiRigaIntermedio(intName));
-
-        chiudiModalMyRoute();
-        alert(`Impostati ${parti.length} punti da MyRoute-app!`);
-        calcolaMetricheRottaAutomatica();
-      } else {
-        alert("Inserisci almeno una partenza e una destinazione.");
-      }
-    }
-
-    // CALCOLO ACCURATO DELLA QUOTA STRADALE (CON FILTRO CONTRO I PICCHI DELLE CRESTE)
-    async function calcolaMetricheRottaAutomatica() {
-      const p = document.getElementById('m_partenza').value.trim();
-      const a = document.getElementById('m_arrivo').value.trim();
-      if (!p || !a) return;
-
-      const pClean = p.split('(')[0].trim();
-      const aClean = a.split('(')[0].trim();
-
-      try {
-        const [resP, resA] = await Promise.all([
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(pClean)}&format=json&limit=1`).then(r => r.json()),
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(aClean)}&format=json&limit=1`).then(r => r.json())
-        ]);
-
-        if (!resP[0] || !resA[0]) return;
-
-        const start = { lat: parseFloat(resP[0].lat), lon: parseFloat(resP[0].lon) };
-        const end = { lat: parseFloat(resA[0].lat), lon: parseFloat(resA[0].lon) };
-
-        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=polyline`;
-        const resRoute = await fetch(osrmUrl).then(r => r.json()).catch(() => null);
-
-        let distKm = 0;
-        let secGuida = 0;
-        let puntiRotta = [];
-
-        if (resRoute && resRoute.routes && resRoute.routes.length > 0) {
-          const rotta = resRoute.routes[0];
-          distKm = Math.round(rotta.distance / 1000);
-          secGuida = rotta.duration;
-          puntiRotta = decodePolyline(rotta.geometry);
-        } else {
-          const dLat = (end.lat - start.lat) * Math.PI / 180;
-          const dLon = (end.lon - start.lon) * Math.PI / 180;
-          const h = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(start.lat * Math.PI / 180) * Math.cos(end.lat * Math.PI / 180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-          distKm = Math.round(6371 * 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1-h)) * 1.30);
-          secGuida = (distKm / 80) * 3600;
-          puntiRotta = [[start.lat, start.lon], [end.lat, end.lon]];
-        }
-
-        const oreH = Math.floor(secGuida / 3600);
-        const minM = Math.round((secGuida % 3600) / 60);
-
-        document.getElementById('m_km').value = distKm;
-        document.getElementById('m_ore').value = `${oreH}h ${minM}m`;
-
-        const campionati = [];
-        const step = Math.max(1, Math.floor(puntiRotta.length / 30));
-        for (let i = 0; i < puntiRotta.length; i += step) {
-          campionati.push(puntiRotta[i]);
-        }
-        if (campionati[campionati.length - 1] !== puntiRotta[puntiRotta.length - 1]) {
-          campionati.push(puntiRotta[puntiRotta.length - 1]);
-        }
-
-        const latsStr = campionati.map(pt => pt[0].toFixed(4)).join(',');
-        const lonsStr = campionati.map(pt => pt[1].toFixed(4)).join(',');
-
-        const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${latsStr}&longitude=${lonsStr}`).then(r => r.json());
-        
-        let quotaMaxStradale = 0;
-        if (elevRes && elevRes.elevation && elevRes.elevation.length > 0) {
-          const quoteFiltrate = elevRes.elevation.map((q, idx, arr) => {
-            if (idx === 0 || idx === arr.length - 1) return q;
-            const intorno = [arr[idx - 1], q, arr[idx + 1]].sort((x, y) => x - y);
-            return intorno[1];
-          });
-          quotaMaxStradale = Math.max(...quoteFiltrate);
-          document.getElementById('m_alt').value = `${quotaMaxStradale} m`;
-        }
-
-        const [wStart, wEnd] = await Promise.all([
-          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${start.lat}&longitude=${start.lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`).then(r => r.json()).catch(() => null),
-          fetch(`https://api.open-meteo.com/v1/forecast?latitude=${end.lat}&longitude=${end.lon}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`).then(r => r.json()).catch(() => null)
-        ]);
-
-        if (wStart && wStart.daily && wStart.daily.temperature_2m_min) {
-          let tMin = Math.round(wStart.daily.temperature_2m_min[0]);
-          let tMax = Math.round(wStart.daily.temperature_2m_max[0]);
-          if (wEnd && wEnd.daily && wEnd.daily.temperature_2m_max) {
-            tMax = Math.max(tMax, Math.round(wEnd.daily.temperature_2m_max[0]));
-          }
-          if (quotaMaxStradale > 800) {
-            const caloTermico = Math.round((quotaMaxStradale - 400) * 0.0055);
-            tMin = Math.round(tMin - caloTermico);
-          }
-          document.getElementById('m_tempMinMax').value = `${tMin}° / ${tMax}°C`;
-        }
-      } catch(e) {}
-    }
-
-    // MEMORIA LOCALE & CESTINO (CON AUTO-SVUOTAMENTO 15 GIORNI)
-    window.addEventListener('DOMContentLoaded', () => {
-      const saved = localStorage.getItem('djroute_v24_tappe');
-      if (saved) {
-        try { tappe = JSON.parse(saved); } catch(e) { tappe = []; }
-      }
-      const savedCestino = localStorage.getItem('djroute_v24_cestino');
-      if (savedCestino) {
-        try { cestinoTappe = JSON.parse(savedCestino); } catch(e) { cestinoTappe = []; }
-      }
-
-      const adesso = Date.now();
-      const limite15Giorni = 15 * 24 * 60 * 60 * 1000;
-      cestinoTappe = cestinoTappe.filter(el => (adesso - (el.cancellatoIl || adesso)) < limite15Giorni);
-      salvaCestinoSuMemoria();
-
-      aggiornaVista();
-      aggiornaBadgeCestino();
     });
 
-    function salvaSuMemoria() {
-      localStorage.setItem('djroute_v24_tappe', JSON.stringify(tappe));
-      aggiornaRiepilogo();
-    }
-
-    function salvaCestinoSuMemoria() {
-      localStorage.setItem('djroute_v24_cestino', JSON.stringify(cestinoTappe));
-      aggiornaBadgeCestino();
-    }
-
-    function aggiornaBadgeCestino() {
-      const badge = document.getElementById('badgeCestino');
-      if (cestinoTappe.length > 0) {
-        badge.textContent = cestinoTappe.length;
-        badge.classList.remove('hidden');
-      } else {
-        badge.classList.add('hidden');
-      }
-    }
-
-    function aggiornaRiepilogo() {
-      document.getElementById('totTappeVal').textContent = tappe.length;
-      let totKm = 0;
-      let totMinuti = 0;
-
-      tappe.forEach(t => {
-        const km = parseFloat(t.kmTot) || 0;
-        totKm += km;
-        if (t.oreGuida && String(t.oreGuida).includes('h')) {
-          const parts = t.oreGuida.replace('m','').split('h');
-          const h = parseInt(parts[0], 10) || 0;
-          const m = parseInt(parts[1], 10) || 0;
-          totMinuti += (h * 60) + m;
-        } else if (km > 0) {
-          totMinuti += Math.round((km / 85) * 60);
-        }
-      });
-
-      document.getElementById('totKmVal').textContent = Math.round(totKm) + " km";
-      const ore = Math.floor(totMinuti / 60);
-      const min = totMinuti % 60;
-      document.getElementById('totOreVal').textContent = `${ore}h ${min}m`;
-    }
-
-    function eliminaTappaIstantanea(idx) {
-      const rimossa = tappe.splice(idx, 1)[0];
-      if (rimossa) {
-        rimossa.cancellatoIl = Date.now();
-        cestinoTappe.unshift(rimossa);
-        salvaCestinoSuMemoria();
-        salvaSuMemoria();
-        renderListaDashboard();
-      }
-    }
-
-    function apriCestino() {
-      renderListaCestino();
-      document.getElementById('modalCestino').classList.remove('hidden');
-    }
-
-    function chiudiCestino() {
-      document.getElementById('modalCestino').classList.add('hidden');
-    }
-
-    function renderListaCestino() {
-      const cont = document.getElementById('listaCestinoContainer');
-      if (cestinoTappe.length === 0) {
-        cont.innerHTML = `<p class="text-xs text-gray-500 text-center py-6">Il cestino è vuoto.</p>`;
-        return;
-      }
-
-      cont.innerHTML = cestinoTappe.map((t, idx) => `
-        <div class="bg-gray-950/80 p-2.5 rounded-xl border border-gray-800 flex items-center justify-between">
-          <div class="truncate pr-2">
-            <span class="text-xs text-white font-bold block truncate">${t.partenza} ➔ ${t.arrivo}</span>
-            <span class="text-[10px] text-gray-400 block">${t.data || 'Nessuna data'}</span>
-          </div>
-          <button onclick="ripristinaDaCestino(${idx})" class="px-2.5 py-1 bg-sky-900/60 hover:bg-sky-800 border border-sky-500/50 text-sky-200 text-xs font-bold rounded-lg active:scale-95 flex-shrink-0">
-            Ripristina
-          </button>
-        </div>
-      `).join('');
-    }
-
-    function ripristinaDaCestino(idx) {
-      const recuperata = cestinoTappe.splice(idx, 1)[0];
-      if (recuperata) {
-        delete recuperata.cancellatoIl;
-        tappe.push(recuperata);
-        salvaSuMemoria();
-        salvaCestinoSuMemoria();
-        renderListaCestino();
-        renderListaDashboard();
-      }
-    }
-
-    function svuotaCestinoManuale() {
-      if (cestinoTappe.length === 0) return;
-      if (confirm("Vuoi cancellare definitivamente tutte le tappe dal cestino?")) {
-        cestinoTappe = [];
-        salvaCestinoSuMemoria();
-        renderListaCestino();
-      }
-    }
-
-    function attivaSwipeGesture() {
-      tappe.forEach((_, idx) => {
-        const card = document.getElementById(`card-content-${idx}`);
-        if (!card) return;
-
-        let startX = 0;
-        let startY = 0;
-        let currentTranslate = 0;
-        let isSwiping = false;
-
-        card.addEventListener('touchstart', (e) => {
-          startX = e.touches[0].clientX;
-          startY = e.touches[0].clientY;
-          isSwiping = false;
-        }, { passive: true });
-
-        card.addEventListener('touchmove', (e) => {
-          const deltaX = e.touches[0].clientX - startX;
-          const deltaY = e.touches[0].clientY - startY;
-
-          if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0) {
-            isSwiping = true;
-            currentTranslate = Math.max(deltaX, -140);
-            card.style.transform = `translateX(${currentTranslate}px)`;
-          }
-        }, { passive: true });
-
-        card.addEventListener('touchend', () => {
-          if (isSwiping && currentTranslate < -80) {
-            card.style.transform = 'translateX(-100%)';
-            setTimeout(() => {
-              eliminaTappaIstantanea(idx);
-            }, 120);
-          } else {
-            card.style.transform = 'translateX(0px)';
-          }
-        });
-      });
-    }
-
-    // DASHBOARD: CARD BLU CON ALERT DATA PASSATA
-    function renderListaDashboard() {
-      const cont = document.getElementById('listaTappeContainer');
-      if (!tappe || tappe.length === 0) {
-        cont.innerHTML = `
-          <div class="blue-card rounded-2xl text-center py-10 px-4 border border-sky-500/20 shadow-xl">
-            <i class="fa-solid fa-map-location-dot text-3xl text-sky-400 mb-2"></i>
-            <h3 class="text-sm font-bold text-white">Nessuna tappa presente</h3>
-            <p class="text-xs text-gray-400 mt-1">Carica il tuo file con "ROADBOOK" o tocca "+ TAPPA".</p>
-          </div>
-        `;
-        return;
-      }
-
-      cont.innerHTML = tappe.map((t, idx) => {
-        const giorno = t.giorno || calcolaGiornoDaData(t.data);
-        const intermediText = Array.isArray(t.intermedi) ? t.intermedi.join(', ') : (t.intermedio || '');
-        const isSosta = t.isPermanenza || (t.partenza && t.arrivo && t.partenza.toLowerCase() === t.arrivo.toLowerCase());
-        const passata = isDataPassata(t.data);
-
-        return `
-          <div class="swipe-container" id="swipe-box-${idx}">
-            <div class="swipe-delete-bg">
-              <span class="flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold">
-                Cestina <i class="fa-solid fa-trash-can text-sm"></i>
-              </span>
-            </div>
-
-            <div class="swipe-content blue-card p-3.5 rounded-2xl flex items-center justify-between cursor-pointer shadow-md"
-                 id="card-content-${idx}"
-                 onclick="apriDettaglioTappa(${idx})">
-              
-              <div class="flex items-center space-x-3 overflow-hidden">
-                <div class="w-10 h-10 rounded-xl bg-sky-500/20 border border-sky-400/40 text-sky-300 font-black flex items-center justify-center text-xs flex-shrink-0 shadow">
-                  ${isSosta ? '<i class="fa-solid fa-bed text-sm"></i>' : (idx + 1)}
-                </div>
-                <div class="truncate">
-                  <div class="flex items-center gap-1.5 text-[10px] text-gray-400">
-                    <span class="text-gray-300 font-medium">${giorno}</span>
-                    ${t.data ? `• <span>${t.data}</span>` : ''}
-                    ${isSosta ? '<span class="text-sky-400 font-bold">• Sosta</span>' : `<span class="text-amber-400 font-mono">(${t.oraPartenza || '08:30'})</span>`}
-                    ${passata ? `<span class="text-[9px] bg-rose-950/80 text-rose-300 border border-rose-500/40 px-1.5 py-0.2 rounded font-semibold"><i class="fa-solid fa-clock-rotate-left mr-0.5"></i>Data già passata</span>` : ''}
-                  </div>
-                  <h4 class="font-bold text-sm text-white truncate mt-0.5">
-                    ${isSosta ? t.partenza : `${t.partenza || 'Partenza'} <i class="fa-solid fa-arrow-right text-[10px] text-sky-400 mx-1"></i> ${t.arrivo || 'Arrivo'}`}
-                  </h4>
-                  ${intermediText && !isSosta ? `<p class="text-[10px] text-gray-400 truncate"><i class="fa-solid fa-signs-post mr-1 text-amber-400"></i>${intermediText}</p>` : ''}
-                  ${t.hotel ? `<p class="text-[10px] text-emerald-400 truncate font-medium"><i class="fa-solid fa-hotel mr-1"></i>${t.hotel}</p>` : ''}
-                </div>
-              </div>
-
-              <div class="text-right flex-shrink-0 pl-2">
-                <span class="text-xs font-bold text-amber-400 font-mono block">${isSosta ? 'Sosta' : (t.kmTot ? t.kmTot + ' km' : '0 km')}</span>
-                <span class="text-[10px] text-gray-300 block">${isSosta ? '' : (t.oreGuida || '0h')}</span>
-                ${t.prezzo ? `<span class="text-[9px] text-emerald-300 block font-mono font-semibold">${t.prezzo}</span>` : ''}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      attivaSwipeGesture();
-    }
-
-    // SCHEDA DETTAGLIO CON ALERT DATA E DATI PERNOTTAMENTO
-    function renderSchedaDettaglio() {
-      const cont = document.getElementById('schedaDettaglioContainer');
-      const t = tappe[indexTappaAttiva];
-      if (!t) { vaiAllaHome(); return; }
-
-      const giorno = t.giorno || calcolaGiornoDaData(t.data);
-      const arrIntermedi = Array.isArray(t.intermedi) ? t.intermedi : (t.intermedio ? t.intermedio.split(',') : []);
-      const isSosta = t.isPermanenza || (t.partenza && t.arrivo && t.partenza.toLowerCase() === t.arrivo.toLowerCase());
-      const passata = isDataPassata(t.data);
-
-      let gmapsLink = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza ? t.partenza.split('(')[0].trim() : '')}&destination=${encodeURIComponent(t.arrivo ? t.arrivo.split('(')[0].trim() : '')}&travelmode=driving`;
-      if (arrIntermedi.length > 0) {
-        gmapsLink += `&waypoints=${encodeURIComponent(arrIntermedi.map(s => s.split('(')[0].trim()).join('|'))}`;
-      }
-
-      cont.innerHTML = `
-        <div class="blue-card rounded-2xl p-4 shadow-xl space-y-4">
-          <div class="flex justify-between items-start border-b border-gray-800 pb-3">
-            <div>
-              <div class="flex items-center gap-1.5 flex-wrap">
-                <span class="text-[11px] font-bold px-2 py-0.5 rounded bg-sky-500/20 text-sky-300 uppercase tracking-wide">
-                  ${isSosta ? 'Sosta / Permanenza' : `Tappa ${indexTappaAttiva + 1}`} ${giorno ? '• ' + giorno : ''} ${t.data ? '• ' + t.data : ''}
-                </span>
-                ${!isSosta ? `
-                  <span class="text-[11px] bg-gray-900 px-2 py-0.5 rounded text-gray-300 font-mono">
-                    <i class="fa-regular fa-clock text-amber-400 mr-1"></i>${t.oraPartenza || '08:30'}
-                  </span>
-                ` : ''}
-                ${passata ? `
-                  <span class="text-[10px] bg-rose-950 text-rose-300 border border-rose-500/50 px-2 py-0.5 rounded font-bold">
-                    <i class="fa-solid fa-clock-rotate-left mr-1"></i>Data già passata
-                  </span>
-                ` : ''}
-              </div>
-              <h2 class="text-base font-bold text-white mt-2 leading-snug">
-                ${isSosta ? `<i class="fa-solid fa-location-dot text-sky-400 mr-1"></i> ${t.partenza}` : `${t.partenza || 'Partenza'} <i class="fa-solid fa-arrow-right text-xs text-sky-400 mx-1"></i> ${t.arrivo || 'Arrivo'}`}
-              </h2>
-              ${arrIntermedi.length > 0 && !isSosta ? `
-                <div class="mt-2 flex flex-wrap gap-1.5">
-                  ${arrIntermedi.map(int => `<span class="text-[11px] bg-gray-900 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-md"><i class="fa-solid fa-signs-post mr-1"></i>${int.trim()}</span>`).join('')}
-                </div>
-              ` : ''}
-            </div>
-
-            <div class="text-right flex flex-col items-end">
-              <span class="text-base font-bold text-amber-400 font-mono">${isSosta ? 'Sosta' : (t.kmTot ? t.kmTot + ' km' : '0 km')}</span>
-              <span class="text-[11px] text-gray-300">${isSosta ? 'Permanenza' : (t.oreGuida || '0h') + ' guida'}</span>
-              <div class="flex gap-1.5 mt-2">
-                <button onclick="modificaTappa(${indexTappaAttiva})" class="p-2 bg-gray-900 text-sky-400 border border-gray-700 rounded-lg text-xs" title="Modifica"><i class="fa-solid fa-pen"></i></button>
-                <button onclick="eliminaTappaIstantanea(${indexTappaAttiva}); vaiAllaHome();" class="p-2 bg-gray-900 text-rose-400 border border-gray-700 rounded-lg text-xs" title="Cestina"><i class="fa-solid fa-trash-can"></i></button>
-              </div>
-            </div>
-          </div>
-
-          ${!isSosta ? `
-            <div class="grid grid-cols-3 gap-2 text-xs">
-              <div class="bg-gray-950/70 p-2.5 rounded-xl border border-gray-800 text-center">
-                <span class="text-gray-400 block text-[10px]">Quota Max Reale:</span>
-                <strong class="text-white font-mono block mt-0.5">${t.altitudine || 'ND'}</strong>
-              </div>
-              <div class="bg-gray-950/70 p-2.5 rounded-xl border border-gray-800 text-center">
-                <span class="text-gray-400 block text-[10px]">Temp Min/Max:</span>
-                <strong class="text-emerald-400 font-mono block mt-0.5">${t.tempMinMax || 'ND'}</strong>
-              </div>
-              <button onclick="apriGraficoQuote()" class="bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 p-2.5 rounded-xl flex flex-col items-center justify-center font-bold transition-all active:scale-95">
-                <i class="fa-solid fa-chart-area text-xs"></i>
-                <span class="text-[10px] mt-0.5">Altimetria</span>
-              </button>
-            </div>
-          ` : ''}
-
-          <!-- METEO LIVE CON DATA E ORA SCAGLIONATE OGNI 45 MINUTI -->
-          <div class="bg-gray-950/80 p-3 rounded-2xl border border-gray-800 space-y-2.5">
-            <div class="flex items-center justify-between">
-              <span class="text-[11px] font-bold text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
-                <i class="fa-solid fa-cloud-sun text-amber-400"></i> ${isSosta ? 'Meteo Locale Sosta' : 'Meteo Rotta (Ogni 45 Minuti)'}
-              </span>
-              <button onclick="calcolaMeteoDinamicoConGps(${indexTappaAttiva})" class="text-[11px] bg-sky-500/20 text-sky-300 border border-sky-500/30 px-2.5 py-1 rounded-lg font-medium flex items-center gap-1 active:scale-95">
-                <i class="fa-solid fa-arrows-rotate"></i> Aggiorna Meteo
-              </button>
-            </div>
-            <div id="timelineMeteoBox" class="flex gap-2 overflow-x-auto scroll-hide py-1"></div>
-            <div id="meteoStatoNote" class="text-[10px] text-gray-400 italic">
-              Tocca "Aggiorna Meteo" per calcolare meteo e temperature ogni 45 min lungo la rotta.
-            </div>
-          </div>
-
-          <!-- SEZIONE: DATI PERNOTTAMENTO CON SCHEDA ORDINATA -->
-          <div class="bg-gray-950/80 p-3.5 rounded-2xl border border-gray-800 space-y-2.5 text-xs">
-            <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-              <span class="font-bold text-white text-sm flex items-center gap-2">
-                <i class="fa-solid fa-hotel text-sky-400"></i> DATI PERNOTTAMENTO
-              </span>
-              <span class="font-bold text-amber-400 font-mono text-sm">${t.prezzo || ''}</span>
-            </div>
-
-            <div class="text-[12px] text-gray-200">
-              <span class="text-gray-400 text-[10px] block uppercase">Struttura Ricettiva:</span>
-              <strong class="text-white font-semibold text-sm">${t.hotel ? t.hotel : '<span class="text-gray-500 font-normal italic">Nessun pernottamento indicato</span>'}</strong>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 text-[11px]">
-              <div class="bg-gray-900/60 p-2.5 rounded-xl border border-gray-800">
-                <span class="text-gray-400 block text-[9px] uppercase font-bold">Stato Pagamento:</span>
-                <span class="font-semibold ${t.pagato && t.pagato.toLowerCase().includes('pagat') ? 'text-emerald-400' : 'text-amber-400'}">
-                  ${t.pagato ? t.pagato : 'Non specificato'}
-                </span>
-              </div>
-              <div class="bg-gray-900/60 p-2.5 rounded-xl border border-gray-800">
-                <span class="text-gray-400 block text-[9px] uppercase font-bold">Metodo Pagamento:</span>
-                <span class="font-semibold text-gray-200">
-                  ${t.metodoPagamento ? `<i class="fa-solid fa-credit-card mr-1 text-sky-400"></i>${t.metodoPagamento}` : 'Non specificato'}
-                </span>
-              </div>
-            </div>
-
-            <div class="flex justify-between text-[11px] text-gray-400 pt-0.5">
-              <span>Piattaforma: <strong class="text-gray-200">${t.piattaforma || 'Non specificata'}</strong></span>
-            </div>
-
-            <div class="text-[11px] text-emerald-300 bg-emerald-950/30 p-2.5 rounded-xl border border-emerald-800/40">
-              <i class="fa-solid fa-square-parking mr-1 text-emerald-400"></i>
-              <strong>Parcheggio Moto:</strong> ${t.parcheggio ? t.parcheggio : 'Nessuna indicazione'}
-            </div>
-          </div>
-
-          <!-- Navigatore -->
-          <div class="pt-1 space-y-1.5">
-            <label class="text-[10px] font-semibold text-gray-400 uppercase tracking-wider block">Navigazione Rapida:</label>
-            <div class="grid grid-cols-3 gap-2 text-center">
-              <a href="${gmapsLink}" target="_blank" class="bg-blue-600/25 border border-blue-500/40 text-blue-200 rounded-xl p-2.5 flex flex-col items-center gap-1 active:scale-95">
-                <i class="fa-solid fa-diamond-turn-right text-base text-blue-400"></i>
-                <span class="text-[11px] font-bold">Google Maps</span>
-              </a>
-
-              <a href="${t.myRouteUrl || 'https://www.myrouteapp.com/routelab'}" target="_blank" class="bg-orange-600/20 border border-orange-500/35 text-orange-200 rounded-xl p-2.5 flex flex-col items-center gap-1 active:scale-95">
-                <i class="fa-solid fa-route text-base text-orange-400"></i>
-                <span class="text-[11px] font-bold">MyRoute-app</span>
-              </a>
-
-              <button onclick="scaricaGpxMultiWaypoint(${indexTappaAttiva})" class="bg-emerald-600/20 border border-emerald-500/35 text-emerald-300 rounded-xl p-2.5 flex flex-col items-center gap-1 active:scale-95">
-                <i class="fa-solid fa-file-arrow-down text-base text-emerald-400"></i>
-                <span class="text-[11px] font-bold">GPX Nav</span>
-              </button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      popolaTimelineOrariaIniziale(t);
-    }
-
-    function calcolaDataConOffset(strData, minutiAggiuntivi) {
-      let d = new Date();
-      if (strData && strData.length >= 8) {
-        const p = strData.split('/');
-        if (p.length === 3) {
-          d = new Date(parseInt(p[2], 10), parseInt(p[1], 10) - 1, parseInt(p[0], 10));
-        }
-      }
-      d.setMinutes(d.getMinutes() + minutiAggiuntivi);
-      const gg = String(d.getDate()).padStart(2, '0');
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      return `${gg}/${mm}`;
-    }
-
-    function popolaTimelineOrariaIniziale(t) {
-      const box = document.getElementById('timelineMeteoBox');
-      const kmTot = parseFloat(t.kmTot) || 150;
-      const [hPart, mPart] = (t.oraPartenza || "08:30").split(':').map(Number);
-      const minutiPartenza = (hPart * 60) + (mPart || 0);
-
-      const minutiGuidaStimati = t.isPermanenza ? 0 : Math.max(45, Math.round((kmTot / 75) * 60));
-      const numeroStep = t.isPermanenza ? 1 : Math.max(2, Math.floor(minutiGuidaStimati / 45) + 1);
-
-      const pNome = t.partenza ? t.partenza.split('(')[0].trim() : 'Partenza';
-      const aNome = t.arrivo ? t.arrivo.split('(')[0].trim() : 'Arrivo';
-
-      let cardsHtml = '';
-      for (let i = 0; i < numeroStep; i++) {
-        const offsetMin = i * 45;
-        const minutiTot = minutiPartenza + offsetMin;
-        const curH = Math.floor(minutiTot / 60) % 24;
-        const curM = minutiTot % 60;
-        const orarioFormattato = `${String(curH).padStart(2, '0')}:${String(curM).padStart(2, '0')}`;
-        const dataStep = calcolaDataConOffset(t.data, offsetMin);
-
-        const kmProg = Math.round((kmTot / Math.max(1, numeroStep - 1)) * i);
-        const cittaIpotetica = t.isPermanenza ? pNome : (i === 0 ? pNome : (i === numeroStep - 1 ? aNome : `Km ${kmProg}`));
-
-        cardsHtml += `
-          <div class="flex-shrink-0 bg-gray-900 border border-gray-800 rounded-xl p-2 text-center w-24 shadow">
-            <span class="text-[9px] text-gray-400 font-mono block tracking-tight">${dataStep}</span>
-            <span class="text-[11px] text-white font-mono font-bold block">${orarioFormattato}</span>
-            <div class="my-1.5 text-base text-slate-100 flex items-center justify-center h-6"><i class="fa-solid fa-cloud text-slate-100"></i></div>
-            <span class="text-[12px] text-gray-400 font-bold block">-°C</span>
-            <span class="text-[10px] text-sky-400 truncate block mt-1 font-medium" title="${cittaIpotetica}">${cittaIpotetica}</span>
-          </div>
-        `;
-      }
-      box.innerHTML = cardsHtml;
-    }
-
-    function getWmoIcon(code) {
-      if (code === 0) {
-        return { 
-          html: `<i class="fa-solid fa-sun text-amber-400 text-base drop-shadow-[0_0_6px_rgba(251,191,36,0.5)]"></i>`, 
-          label: "Sereno" 
-        };
-      }
-      if (code === 1 || code === 2) {
-        return { 
-          html: `<span class="relative inline-flex items-center justify-center">
-                   <i class="fa-solid fa-sun text-amber-400 text-xs absolute -top-1 -right-1"></i>
-                   <i class="fa-solid fa-cloud text-slate-100 text-base"></i>
-                 </span>`, 
-          label: "Poco nuvoloso" 
-        };
-      }
-      if (code === 3) {
-        return { 
-          html: `<i class="fa-solid fa-cloud text-slate-200 text-base"></i>`, 
-          label: "Nuvoloso" 
-        };
-      }
-      if (code >= 45 && code <= 48) {
-        return { 
-          html: `<i class="fa-solid fa-smog text-slate-300 text-base"></i>`, 
-          label: "Nebbia" 
-        };
-      }
-      if (code >= 51 && code <= 67) {
-        return { 
-          html: `<i class="fa-solid fa-cloud-rain text-sky-400 text-base"></i>`, 
-          label: "Pioggia" 
-        };
-      }
-      if (code >= 71 && code <= 77) {
-        return { 
-          html: `<i class="fa-solid fa-snowflake text-sky-100 text-base"></i>`, 
-          label: "Neve" 
-        };
-      }
-      if (code >= 80 && code <= 82) {
-        return { 
-          html: `<i class="fa-solid fa-cloud-showers-heavy text-blue-400 text-base"></i>`, 
-          label: "Rovesci" 
-        };
-      }
-      if (code >= 95) {
-        return { 
-          html: `<i class="fa-solid fa-cloud-bolt text-indigo-400 text-base"></i>`, 
-          label: "Temporale" 
-        };
-      }
-      return { 
-        html: `<i class="fa-solid fa-cloud text-slate-200 text-base"></i>`, 
-        label: "Coperto" 
-      };
-    }
-
-    async function calcolaMeteoDinamicoConGps(idx) {
-      const t = tappe[idx];
-      const box = document.getElementById('timelineMeteoBox');
-      const note = document.getElementById('meteoStatoNote');
-
-      if (!t.partenza && !t.arrivo) {
-        alert("Inserisci almeno partenza o arrivo.");
-        return;
-      }
-
-      note.innerHTML = `<span class="text-sky-300"><i class="fa-solid fa-spinner fa-spin mr-1"></i> Rilevamento rotta e previsioni ogni 45 min...</span>`;
+    async function sincronizzaCloud() {
+      const btn = document.getElementById("btnSyncCloud");
+      const status = document.getElementById("syncStatus");
+      
+      btn.disabled = true;
+      btn.innerText = "⏳ Download...";
+      status.innerText = "Connessione a Google Sheets...";
 
       try {
-        const queryP = t.partenza.split('(')[0].trim();
-        const queryA = t.arrivo.split('(')[0].trim();
+        const response = await fetch(SCRIPT_URL);
+        if (!response.ok) throw new Error("Errore durante la connessione al server");
 
-        const [resP, resA] = await Promise.all([
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryP)}&format=json&limit=1`).then(r => r.json()),
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryA)}&format=json&limit=1`).then(r => r.json())
-        ]);
+        const tappe = await response.json();
+        console.log("Dati scaricati:", tappe);
 
-        if (!resP[0] || !resA[0]) {
-          note.innerHTML = `<span class="text-amber-400">Località non identificate.</span>`;
+        if (!Array.isArray(tappe) || tappe.length === 0) {
+          alert("Nessuna tappa trovata nel foglio ROADBOOK_APP.");
+          status.innerText = "Nessun dato trovato";
           return;
         }
 
-        const start = { lat: parseFloat(resP[0].lat), lon: parseFloat(resP[0].lon), name: queryP.split(',')[0] };
-        const end = { lat: parseFloat(resA[0].lat), lon: parseFloat(resA[0].lon), name: queryA.split(',')[0] };
-
-        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=polyline`;
-        const resRoute = await fetch(osrmUrl).then(r => r.json()).catch(() => null);
-
-        let puntiRotta = [];
-        let secGuida = 0;
-        if (resRoute && resRoute.routes && resRoute.routes.length > 0) {
-          puntiRotta = decodePolyline(resRoute.routes[0].geometry);
-          secGuida = resRoute.routes[0].duration;
-        } else {
-          puntiRotta = [[start.lat, start.lon], [end.lat, end.lon]];
-          secGuida = 7200;
-        }
-
-        const [hPart, mPart] = (t.oraPartenza || "08:30").split(':').map(Number);
-        const minutiPartenza = (hPart * 60) + (mPart || 0);
-
-        const minutiTotali = t.isPermanenza ? 0 : Math.max(45, Math.round(secGuida / 60));
-        const numStep = t.isPermanenza ? 1 : Math.max(2, Math.floor(minutiTotali / 45) + 1);
-
-        let isStorico = false;
-        let dViaggio = null;
-        if (t.data) {
-          const p = t.data.split('/');
-          if (p.length === 3) dViaggio = new Date(p[2], p[1] - 1, p[0]);
-          if (dViaggio && !isNaN(dViaggio.getTime())) {
-            const diffG = Math.ceil((dViaggio - new Date()) / (1000 * 60 * 60 * 24));
-            if (diffG > 14) isStorico = true;
-          }
-        }
-
-        const segmenti = [];
-        for (let i = 0; i < numStep; i++) {
-          const ratio = numStep === 1 ? 0 : i / (numStep - 1);
-          const indexPoly = Math.min(puntiRotta.length - 1, Math.floor(ratio * (puntiRotta.length - 1)));
-          const puntoCorrente = puntiRotta[indexPoly];
-
-          const offsetMin = i * 45;
-          const minutiStep = minutiPartenza + offsetMin;
-          const curH = Math.floor(minutiStep / 60) % 24;
-          const curM = minutiStep % 60;
-          const orarioStr = `${String(curH).padStart(2, '0')}:${String(curM).padStart(2, '0')}`;
-          const dataStep = calcolaDataConOffset(t.data, offsetMin);
-
-          let nomePunto = t.isPermanenza ? start.name : (i === 0 ? start.name : (i === numStep - 1 ? end.name : ''));
-          segmenti.push({
-            data: dataStep,
-            orario: orarioStr,
-            oraIntera: curH,
-            lat: puntoCorrente[0],
-            lon: puntoCorrente[1],
-            nome: nomePunto
-          });
-        }
-
-        if (!t.isPermanenza) {
-          for (let i = 1; i < segmenti.length - 1; i++) {
-            try {
-              const revRes = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${segmenti[i].lat}&lon=${segmenti[i].lon}&format=json&accept-language=it`).then(r => r.json());
-              if (revRes && revRes.address) {
-                const a = revRes.address;
-                segmenti[i].nome = a.city || a.town || a.village || a.hamlet || a.municipality || `Punto ${i}`;
-              } else {
-                segmenti[i].nome = `Punto ${i}`;
-              }
-            } catch(e) {
-              segmenti[i].nome = `Punto ${i}`;
-            }
-          }
-        }
-
-        const meteoPromesse = segmenti.map(async (s) => {
-          if (isStorico) {
-            const anno1 = dViaggio.getFullYear() - 1;
-            const anno2 = dViaggio.getFullYear() - 2;
-            const mm = String(dViaggio.getMonth() + 1).padStart(2, '0');
-            const dd = String(dViaggio.getDate()).padStart(2, '0');
-            const resH = await fetch(`https://archive-api.open-meteo.com/v1/archive?latitude=${s.lat}&longitude=${s.lon}&start_date=${anno2}-${mm}-${dd}&end_date=${anno1}-${mm}-${dd}&hourly=temperature_2m`).then(r => r.json());
-            let tempMedia = 20;
-            if (resH.hourly && resH.hourly.temperature_2m) {
-              const arr = resH.hourly.temperature_2m;
-              tempMedia = Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
-            }
-            return { temp: tempMedia, code: 1, pioggia: 0, isStorico: true };
-          } else {
-            const resW = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${s.lat}&longitude=${s.lon}&hourly=temperature_2m,precipitation_probability,weathercode&timezone=auto`).then(r => r.json());
-            const hIndex = Math.min(s.oraIntera, resW.hourly.time.length - 1);
-            return {
-              temp: Math.round(resW.hourly.temperature_2m[hIndex]),
-              code: resW.hourly.weathercode[hIndex],
-              pioggia: resW.hourly.precipitation_probability ? resW.hourly.precipitation_probability[hIndex] : 0,
-              isStorico: false
-            };
-          }
-        });
-
-        const risultatiMeteo = await Promise.all(meteoPromesse);
-
-        box.innerHTML = segmenti.map((s, i) => {
-          const w = risultatiMeteo[i];
-          const { html, label } = getWmoIcon(w.code);
-
-          return `
-            <div class="flex-shrink-0 bg-gray-900 border ${w.isStorico ? 'border-amber-500/30' : 'border-gray-700'} rounded-xl p-2 text-center w-24 shadow-md">
-              <span class="text-[9px] text-gray-400 font-mono block tracking-tight">${s.data}</span>
-              <span class="text-[11px] text-white font-mono font-bold block">${s.orario}</span>
-              <div class="my-1.5 flex items-center justify-center h-6">${html}</div>
-              <span class="text-[12px] text-white font-bold font-mono block">${w.temp}°C</span>
-              ${w.pioggia > 10 ? `<span class="text-[9px] text-sky-400 block"><i class="fa-solid fa-droplet text-[8px]"></i> ${w.pioggia}%</span>` : ''}
-              <span class="text-[10px] text-sky-400 truncate block mt-1 font-medium" title="${s.nome}">${s.nome}</span>
-            </div>
-          `;
-        }).join('');
-
-        note.innerHTML = isStorico 
-          ? `<span class="text-amber-400 font-semibold"><i class="fa-solid fa-calendar-xmark mr-1"></i> Medie storiche degli ultimi 2 anni.</span>` 
-          : `<span class="text-emerald-400"><i class="fa-solid fa-circle-check mr-1"></i> Previsione calcolata ogni 45 min lungo la rotta reale.</span>`;
-
-      } catch(err) {
-        note.innerHTML = `<span class="text-rose-400">Errore calcolo meteo: ${err.message}</span>`;
+        // Memorizza i dati sul telefono per uso offline
+        localStorage.setItem("djRoute_tappe_attive", JSON.stringify(tappe));
+        renderTappe(tappe);
+        status.innerText = `Aggiornato alle ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+      } catch (err) {
+        console.error("Errore sincro:", err);
+        alert("❌ Errore durante la sincronizzazione. Verifica la connessione internet.");
+        status.innerText = "Errore sincronizzazione";
+      } finally {
+        btn.disabled = false;
+        btn.innerText = "🔄 Sincronizza";
       }
     }
 
-    async function apriGraficoQuote() {
-      const t = tappe[indexTappaAttiva];
-      if (!t || (!t.partenza && !t.arrivo)) return;
-
-      document.getElementById('modalGraficoQuote').classList.remove('hidden');
-
-      try {
-        const queryP = t.partenza.split('(')[0].trim();
-        const queryA = t.arrivo.split('(')[0].trim();
-        const [resP, resA] = await Promise.all([
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryP)}&format=json&limit=1`).then(r => r.json()),
-          fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(queryA)}&format=json&limit=1`).then(r => r.json())
-        ]);
-
-        const start = { lat: parseFloat(resP[0].lat), lon: parseFloat(resP[0].lon) };
-        const end = { lat: parseFloat(resA[0].lat), lon: parseFloat(resA[0].lon) };
-
-        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${start.lon},${start.lat};${end.lon},${end.lat}?overview=full&geometries=polyline`;
-        const resRoute = await fetch(osrmUrl).then(r => r.json()).catch(() => null);
-
-        let puntiRotta = [];
-        let kmTotale = parseFloat(t.kmTot) || 150;
-        if (resRoute && resRoute.routes && resRoute.routes.length > 0) {
-          puntiRotta = decodePolyline(resRoute.routes[0].geometry);
-          kmTotale = Math.round(resRoute.routes[0].distance / 1000);
-        } else {
-          puntiRotta = [[start.lat, start.lon], [end.lat, end.lon]];
-        }
-
-        const step = Math.max(1, Math.floor(puntiRotta.length / 25));
-        const campionati = [];
-        const kmProg = [];
-        for (let i = 0; i < puntiRotta.length; i += step) {
-          campionati.push(puntiRotta[i]);
-          kmProg.push(Math.round((i / (puntiRotta.length - 1)) * kmTotale));
-        }
-
-        const latsStr = campionati.map(p => p[0].toFixed(4)).join(',');
-        const lonsStr = campionati.map(p => p[1].toFixed(4)).join(',');
-
-        const elevRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${latsStr}&longitude=${lonsStr}`).then(r => r.json());
-        const altitudini = elevRes.elevation;
-
-        const maxAlt = Math.max(...altitudini);
-        t.altitudine = `${maxAlt} m`;
-        document.getElementById('infoAltMax').textContent = `Quota Massima Reale: ${maxAlt} m s.l.m.`;
-
-        const ctx = document.getElementById('chartQuoteCanvas').getContext('2d');
-        if (chartInstance) chartInstance.destroy();
-
-        chartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: kmProg.map(k => `${k} km`),
-            datasets: [{
-              label: 'Altitudine (metri)',
-              data: altitudini,
-              borderColor: '#38bdf8',
-              backgroundColor: 'rgba(56, 189, 248, 0.2)',
-              fill: true,
-              tension: 0.35,
-              pointRadius: 2,
-              pointBackgroundColor: '#0284c7'
-            }]
-          },
-          options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: {
-              x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8', font: { size: 9 } } },
-              y: { grid: { color: 'rgba(255,255,255,0.08)' }, ticks: { color: '#94a3b8', font: { size: 10 } } }
-            }
-          }
-        });
-      } catch(e) {
-        document.getElementById('infoAltMax').textContent = "Profilo altimetrico stimato.";
-      }
-    }
-
-    function chiudiGraficoQuote() {
-      document.getElementById('modalGraficoQuote').classList.add('hidden');
-    }
-
-    function leggiFileIcsPrenotazione(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const test = e.target.result;
-          let summary = "";
-          let location = "";
-          let dtstart = "";
-
-          const lines = test.split(/\r\n|\n|\r/);
-          lines.forEach(line => {
-            if (line.startsWith("SUMMARY:")) summary = line.replace("SUMMARY:", "").trim();
-            if (line.startsWith("LOCATION:")) location = line.replace("LOCATION:", "").trim();
-            if (line.startsWith("DTSTART:")) dtstart = line.replace("DTSTART:", "").trim();
-          });
-
-          if (summary) document.getElementById('m_hotel').value = summary;
-          if (location) document.getElementById('m_arrivo').value = location;
-          if (dtstart && dtstart.length >= 8) {
-            const dataFormattata = `${dtstart.substring(6, 8)}/${dtstart.substring(4, 6)}/${dtstart.substring(0, 4)}`;
-            document.getElementById('m_data').value = dataFormattata;
-            document.getElementById('m_giorno').value = calcolaGiornoDaData(dataFormattata);
-          }
-
-          document.getElementById('m_piattaforma').value = test.toLowerCase().includes("expedia") ? "Expedia" : "Booking";
-          alert(`Struttura rilevata da .ICS:\n\n${summary}\nDestinazione impostata per il navigatore!`);
-          calcolaMetricheRottaAutomatica();
-        } catch(err) {
-          alert("Impossibile leggere il file: " + err.message);
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function apriModalNuovaTappa() {
-      document.getElementById('m_editIndex').value = "-1";
-      document.getElementById('m_data').value = "";
-      document.getElementById('m_giorno').value = "";
-      document.getElementById('m_ora').value = "08:30";
-      document.getElementById('m_partenza').value = "";
-      document.getElementById('containerIntermediDinamici').innerHTML = "";
-      aggiungiRigaIntermedio();
-      document.getElementById('m_arrivo').value = "";
-      document.getElementById('m_km').value = "";
-      document.getElementById('m_ore').value = "";
-      document.getElementById('m_alt').value = "";
-      document.getElementById('m_tempMinMax').value = "";
-      document.getElementById('m_hotel').value = "";
-      document.getElementById('m_piattaforma').value = "";
-      document.getElementById('m_prezzo').value = "";
-      document.getElementById('m_pagato').value = "";
-      document.getElementById('m_metodoPagamento').value = "";
-      document.getElementById('m_parcheggio').value = "";
-      document.getElementById('m_myroute').value = "";
-      document.getElementById('tappaModal').classList.remove('hidden');
-    }
-
-    function chiudiModalTappa() {
-      document.getElementById('tappaModal').classList.add('hidden');
-    }
-
-    function modificaTappa(idx) {
-      const t = tappe[idx];
-      document.getElementById('m_editIndex').value = idx;
-      document.getElementById('m_data').value = t.data || '';
-      document.getElementById('m_giorno').value = t.giorno || calcolaGiornoDaData(t.data);
-      document.getElementById('m_ora').value = t.oraPartenza || '08:30';
-      document.getElementById('m_partenza').value = t.partenza || '';
+    function renderTappe(tappe) {
+      const container = document.getElementById("tappeContainer");
+      const countEl = document.getElementById("stageCount");
       
-      const containerInt = document.getElementById('containerIntermediDinamici');
-      containerInt.innerHTML = "";
-      const arr = Array.isArray(t.intermedi) ? t.intermedi : (t.intermedio ? t.intermedio.split(',') : []);
-      if (arr.length > 0) {
-        arr.forEach(val => aggiungiRigaIntermedio(val.trim()));
-      } else {
-        aggiungiRigaIntermedio();
-      }
+      container.innerHTML = "";
+      countEl.innerText = `${tappe.length} tappe caricate`;
 
-      document.getElementById('m_arrivo').value = t.arrivo || '';
-      document.getElementById('m_km').value = t.kmTot || '';
-      document.getElementById('m_ore').value = t.oreGuida || '';
-      document.getElementById('m_alt').value = t.altitudine || '';
-      document.getElementById('m_tempMinMax').value = t.tempMinMax || '';
-      document.getElementById('m_hotel').value = t.hotel || '';
-      document.getElementById('m_piattaforma').value = t.piattaforma || '';
-      document.getElementById('m_prezzo').value = t.prezzo || '';
-      document.getElementById('m_pagato').value = t.pagato || '';
-      document.getElementById('m_metodoPagamento').value = t.metodoPagamento || '';
-      document.getElementById('m_parcheggio').value = t.parcheggio || '';
-      document.getElementById('m_myroute').value = t.myRouteUrl || '';
-      document.getElementById('tappaModal').classList.remove('hidden');
-    }
+      tappe.forEach((tappa, index) => {
+        const card = document.createElement("div");
+        card.className = "stage-card";
 
-    function salvaTappaManuale() {
-      const idx = parseInt(document.getElementById('m_editIndex').value, 10);
-      const dataInserita = document.getElementById('m_data').value.trim();
-      const partenza = document.getElementById('m_partenza').value.trim();
-      const arrivo = document.getElementById('m_arrivo').value.trim();
-
-      const inputsInt = document.querySelectorAll('.input-intermedio');
-      const intermediList = Array.from(inputsInt).map(i => i.value.trim()).filter(v => v !== '');
-
-      const dataFormattata = formattaInGiornoMeseAnno(dataInserita);
-      const giornoCalcolato = calcolaGiornoDaData(dataFormattata);
-      const isSosta = (partenza && arrivo && partenza.toLowerCase() === arrivo.toLowerCase());
-
-      const tappaObj = {
-        giorno: giornoCalcolato,
-        data: dataFormattata,
-        oraPartenza: document.getElementById('m_ora').value || "08:30",
-        partenza: partenza,
-        intermedi: intermediList,
-        intermedio: intermediList.join(', '),
-        arrivo: arrivo,
-        isPermanenza: isSosta,
-        kmTot: isSosta ? "0" : document.getElementById('m_km').value.trim(),
-        oreGuida: isSosta ? "0h" : (document.getElementById('m_ore').value.trim() || "03:00"),
-        altitudine: document.getElementById('m_alt').value.trim(),
-        tempMinMax: document.getElementById('m_tempMinMax').value.trim(),
-        hotel: document.getElementById('m_hotel').value.trim(),
-        piattaforma: document.getElementById('m_piattaforma').value,
-        prezzo: document.getElementById('m_prezzo').value.trim(),
-        pagato: document.getElementById('m_pagato').value.trim(),
-        metodoPagamento: document.getElementById('m_metodoPagamento').value.trim(),
-        parcheggio: document.getElementById('m_parcheggio').value.trim(),
-        myRouteUrl: document.getElementById('m_myroute').value.trim()
-      };
-
-      if (idx === -1) {
-        tappe.push(tappaObj);
-        indexTappaAttiva = tappe.length - 1;
-      } else {
-        tappe[idx] = tappaObj;
-      }
-
-      salvaSuMemoria();
-      chiudiModalTappa();
-      aggiornaVista();
-    }
-
-    function scaricaGpxMultiWaypoint(idx) {
-      const t = tappe[idx];
-      const p = (t.partenza || 'Partenza').split('(')[0].trim();
-      const a = (t.arrivo || 'Arrivo').split('(')[0].trim();
-      const arr = Array.isArray(t.intermedi) ? t.intermedi : (t.intermedio ? t.intermedio.split(',') : []);
-      const nome = `${p}_${a}`.replace(/\s+/g, '_');
-
-      const waypointsGpx = arr.map(w => `<rtept lat="0.0" lon="0.0"><name>${w.split('(')[0].trim()}</name></rtept>`).join('\n');
-
-      const gpx = `<?xml version="1.0" encoding="UTF-8"?>
-<gpx version="1.1" creator="djRoutePlanner">
-  <metadata><name>${nome}</name></metadata>
-  <rte>
-    <name>${nome}</name>
-    <rtept lat="0.0" lon="0.0"><name>${p}</name></rtept>
-    ${waypointsGpx}
-    <rtept lat="0.0" lon="0.0"><name>${a}</name></rtept>
-  </rte>
-</gpx>`;
-      const blob = new Blob([gpx], { type: 'application/gpx+xml' });
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(blob);
-      link.download = `${nome}.gpx`;
-      link.click();
-    }
-
-    function vaiAllaHome() {
-      vistaAttuale = "dashboard";
-      aggiornaVista();
-    }
-
-    function apriDettaglioTappa(idx) {
-      indexTappaAttiva = idx;
-      vistaAttuale = "dettaglio";
-      aggiornaVista();
-    }
-
-    function navigaIndietro() {
-      if (vistaAttuale === "dashboard") return;
-      if (indexTappaAttiva > 0) {
-        indexTappaAttiva--;
-        renderSchedaDettaglio();
-      } else {
-        vaiAllaHome();
-      }
-      aggiornaBottoniNavigazione();
-    }
-
-    function navigaAvanti() {
-      if (vistaAttuale === "dashboard") {
-        if (tappe.length > 0) apriDettaglioTappa(0);
-        return;
-      }
-      if (indexTappaAttiva < tappe.length - 1) {
-        indexTappaAttiva++;
-        renderSchedaDettaglio();
-      }
-      aggiornaBottoniNavigazione();
-    }
-
-    function aggiornaBottoniNavigazione() {
-      const btnPrev = document.getElementById('btnNavPrev');
-      const btnNext = document.getElementById('btnNavNext');
-      if (vistaAttuale === "dashboard") {
-        btnPrev.classList.add('opacity-40');
-        btnNext.classList.remove('opacity-40');
-        document.getElementById('headerSubtitle').textContent = "Roadbook Pro";
-      } else {
-        btnPrev.classList.remove('opacity-40');
-        btnNext.classList.toggle('opacity-40', indexTappaAttiva >= tappe.length - 1);
-        document.getElementById('headerSubtitle').textContent = `Tappa ${indexTappaAttiva + 1} di ${tappe.length}`;
-      }
-    }
-
-    function aggiornaVista() {
-      const vDash = document.getElementById('vistaDashboard');
-      const vDet = document.getElementById('vistaDettaglio');
-
-      if (vistaAttuale === "dashboard") {
-        vDash.classList.remove('hidden');
-        vDet.classList.add('hidden');
-        renderListaDashboard();
-        aggiornaRiepilogo();
-      } else {
-        vDash.classList.add('hidden');
-        vDet.classList.remove('hidden');
-        renderSchedaDettaglio();
-      }
-      aggiornaBottoniNavigazione();
-    }
-
-    function importaRoadbookIntelligente(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          const data = new Uint8Array(e.target.result);
-          const wb = XLSX.read(data, { type: 'array', cellDates: true });
-          const ws = wb.Sheets[wb.SheetNames[0]];
-          
-          const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "" });
-          if (!raw || raw.length === 0) {
-            alert("Il file Excel è vuoto.");
-            return;
-          }
-
-          let headerRowIndex = -1;
-          for (let r = 0; r < Math.min(raw.length, 20); r++) {
-            const rigaStr = raw[r].map(c => String(c).toLowerCase().trim()).join(" ");
-            if ((rigaStr.includes("partenza") || rigaStr.includes("da")) && 
-                (rigaStr.includes("arrivo") || rigaStr.includes("destinazione") || rigaStr.includes("a") || rigaStr.includes("itinerario"))) {
-              headerRowIndex = r;
-              break;
-            }
-          }
-
-          if (headerRowIndex === -1) headerRowIndex = 0;
-          const headers = raw[headerRowIndex].map(h => String(h).toLowerCase().trim());
-
-          function trovaCol(parole) {
-            for (let p of parole) {
-              const idx = headers.findIndex(h => h.includes(p));
-              if (idx !== -1) return idx;
-            }
-            return -1;
-          }
-
-          const colData = trovaCol(['data', 'date', 'giorno']);
-          const colPartenza = trovaCol(['partenza', 'da', 'start', 'from']);
-          const colArrivo = trovaCol(['arrivo', 'destinazione', 'a', 'to']);
-          const colItinerario = trovaCol(['itinerario', 'tratta', 'percorso']);
-          const colIntermedio = trovaCol(['intermedio', 'passo', 'passi', 'via']);
-          const colKm = trovaCol(['km', 'distanza', 'km tot']);
-          const colOre = trovaCol(['ore', 'tempo']);
-          const colQuota = trovaCol(['alt', 'quota', 'altitudine']);
-          const colTemp = trovaCol(['temp', 'temperatura']);
-          
-          const colHotel = trovaCol(['pernottamento', 'hotel', 'alloggio', 'struttura', 'b&b', 'albergo']);
-          const colPrezzo = trovaCol(['costo', 'prezzo', 'camera', '€']);
-          const colStatoPagato = trovaCol(['stato pagamento', 'pagato/da pagare', 'pagato', 'saldo', 'stato']);
-          const colMetodoPagamento = trovaCol(['metodo pagamento', 'pagamento con', 'carta', 'paypal', 'metodo']);
-          const colPiattaforma = trovaCol(['sito', 'piattaforma', 'booking']);
-          const colParcheggio = trovaCol(['parcheggio', 'parking', 'posto moto']);
-
-          const nuoveTappe = [];
-
-          for (let r = headerRowIndex + 1; r < raw.length; r++) {
-            const row = raw[r];
-            if (!row || row.length === 0) continue;
-
-            const testoCompleto = row.map(c => String(c).trim()).join(" ").toUpperCase();
-            if (testoCompleto.includes("TOTALE") || testoCompleto.includes("RIASSUNTO") || 
-                testoCompleto.includes("TAGLIANDO") || testoCompleto.includes("PREVENTIVO") ||
-                testoCompleto.includes("SPESE") || testoCompleto.includes("BENZINA") || 
-                testoCompleto.includes("ASSICURAZIONE") || testoCompleto.includes("MANUTENZIONE")) {
-              continue;
-            }
-
-            const dataRaw = colData !== -1 ? row[colData] : "";
-            let partenza = colPartenza !== -1 ? String(row[colPartenza]).trim() : "";
-            let arrivo = colArrivo !== -1 ? String(row[colArrivo]).trim() : "";
-            
-            if ((!partenza || !arrivo) && colItinerario !== -1) {
-              const itStr = String(row[colItinerario]).trim();
-              if (itStr.includes("->") || itStr.includes("➔") || itStr.includes("-")) {
-                const parti = itStr.split(/(?:->|➔|-)/).map(s => s.trim());
-                partenza = parti[0];
-                arrivo = parti[parti.length - 1];
-              }
-            }
-
-            const isPermanenza = (partenza && arrivo && partenza.toLowerCase() === arrivo.toLowerCase()) || 
-                                 (partenza && !arrivo && testoCompleto.includes("SOSTA")) || 
-                                 (testoCompleto.includes("PERMANENZA"));
-
-            if (isPermanenza && !arrivo) arrivo = partenza;
-            if (!partenza && !arrivo) continue;
-
-            const dataFormattata = formattaInGiornoMeseAnno(dataRaw);
-            const giornoCalcolato = calcolaGiornoDaData(dataFormattata);
-
-            let hotel = colHotel !== -1 ? String(row[colHotel]).trim() : "";
-            let prezzo = colPrezzo !== -1 ? String(row[colPrezzo]).trim() : "";
-            if (prezzo && !prezzo.includes("€") && !isNaN(parseFloat(prezzo))) prezzo += " €";
-
-            let pagato = colStatoPagato !== -1 ? String(row[colStatoPagato]).trim() : "";
-            let metodoPagamento = colMetodoPagamento !== -1 ? String(row[colMetodoPagamento]).trim() : "";
-            
-            if (!metodoPagamento && pagato) {
-              if (pagato.toLowerCase().includes("paypal")) metodoPagamento = "PayPal";
-              else if (pagato.toLowerCase().includes("carta")) metodoPagamento = "Carta di Credito";
-              else if (pagato.toLowerCase().includes("contanti")) metodoPagamento = "Contanti";
-            }
-
-            let piattaforma = "";
-            if (colPiattaforma !== -1) {
-              const pStr = String(row[colPiattaforma]).toLowerCase();
-              if (pStr.includes("booking")) piattaforma = "Booking";
-              else if (pStr.includes("expedia")) piattaforma = "Expedia";
-              else if (pStr.includes("dirett") || pStr.includes("privat")) piattaforma = "Pren. Diretta";
-              else if (pStr) piattaforma = row[colPiattaforma];
-            }
-
-            const intermedioStr = colIntermedio !== -1 ? String(row[colIntermedio]).trim() : "";
-            const arrInt = intermedioStr ? intermedioStr.split(/[,;\/]/).map(s => s.trim()).filter(Boolean) : [];
-
-            nuoveTappe.push({
-              giorno: giornoCalcolato,
-              data: dataFormattata,
-              oraPartenza: "08:30",
-              partenza: partenza || arrivo,
-              intermedi: arrInt,
-              intermedio: arrInt.join(', '),
-              arrivo: arrivo || partenza,
-              isPermanenza: isPermanenza,
-              kmTot: isPermanenza ? "0" : (colKm !== -1 ? String(row[colKm]).replace(/km/i, '').trim() : ""),
-              oreGuida: isPermanenza ? "0h" : (colOre !== -1 ? String(row[colOre]).trim() : ""),
-              altitudine: colQuota !== -1 ? String(row[colQuota]).trim() : "",
-              tempMinMax: colTemp !== -1 ? String(row[colTemp]).trim() : "",
-              hotel: hotel,
-              piattaforma: piattaforma,
-              prezzo: prezzo,
-              pagato: pagato || (prezzo ? "Da verificare" : ""),
-              metodoPagamento: metodoPagamento,
-              parcheggio: colParcheggio !== -1 ? String(row[colParcheggio]).trim() : "",
-              myRouteUrl: ""
-            });
-          }
-
-          if (nuoveTappe.length === 0) {
-            alert("Nessuna tratta o permanenza individuata.");
-            return;
-          }
-
-          tappe = nuoveTappe;
-          salvaSuMemoria();
-          vaiAllaHome();
-          alert(`Caricate ${tappe.length} tappe con successo!`);
-
-        } catch(err) {
-          alert("Errore nell'apertura del file Excel: " + err.message);
+        // Pulsante MyRoute / Navigazione
+        let btnRouteHtml = "";
+        if (tappa.myRouteUrl && tappa.myRouteUrl.trim().startsWith("http")) {
+          btnRouteHtml = `<a href="${tappa.myRouteUrl}" target="_blank" class="action-btn btn-myroute">🗺️ Apri MyRoute</a>`;
+        } else {
+          // Ricerca automatica itinerario su Google Maps come fallback
+          const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(tappa.partenza)}&destination=${encodeURIComponent(tappa.arrivo)}${tappa.passaggio ? '&waypoints=' + encodeURIComponent(tappa.passaggio) : ''}`;
+          btnRouteHtml = `<a href="${mapsUrl}" target="_blank" class="action-btn btn-myroute">🗺️ Mappa</a>`;
         }
-      };
-      reader.readAsArrayBuffer(file);
-    }
 
-    function attivaGps() {
-      if (!navigator.geolocation) {
-        alert("GPS non disponibile sul browser.");
-        return;
-      }
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          alert(`GPS Attivo!\nLat: ${pos.coords.latitude.toFixed(4)}, Lon: ${pos.coords.longitude.toFixed(4)}`);
-          if (vistaAttuale === "dettaglio") {
-            calcolaMeteoDinamicoConGps(indexTappaAttiva);
-          }
-        },
-        () => alert("Permesso GPS non concesso o segnale debole.")
-      );
+        card.innerHTML = `
+          <div class="stage-header">
+            <span class="stage-date">#${index + 1} | ${tappa.data || 'Data N/D'}</span>
+            <span class="stage-time">Partenza: ${tappa.ora || '08:30'}</span>
+          </div>
+
+          <div class="route-flow">
+            <div class="location departure">📍 ${tappa.partenza || 'Partenza da definire'}</div>
+            ${tappa.passaggio ? `<div class="via-points">↳ Via: ${tappa.passaggio}</div>` : ''}
+            <div class="location arrival">🏁 ${tappa.arrivo || 'Arrivo da definire'}</div>
+          </div>
+
+          <div class="stage-details">
+            <div class="detail-item">
+              <strong>Alloggio / Piattaforma</strong>
+              ${tappa.alloggio || 'Libero'} ${tappa.piattaforma ? '(' + tappa.piattaforma + ')' : ''}
+            </div>
+            <div class="detail-item">
+              <strong>Parcheggio</strong>
+              ${tappa.parcheggio || 'Non specificato'}
+            </div>
+            <div class="detail-item">
+              <strong>Spesa Totale</strong>
+              ${tappa.spesa ? tappa.spesa + ' €' : '-'} (${tappa.pagamento || 'N/D'})
+            </div>
+            <div class="detail-item">
+              <strong>Residuo da pagare</strong>
+              <span style="color: ${tappa.daPagare > 0 ? '#f87171' : '#4ade80'}">
+                ${tappa.daPagare > 0 ? tappa.daPagare + ' €' : 'Saldato'}
+              </span>
+            </div>
+          </div>
+
+          ${tappa.note ? `<div style="font-size:11px; color:#cbd5e1; margin-bottom:8px;">📝 ${tappa.note}</div>` : ''}
+
+          <div class="actions-row">
+            ${btnRouteHtml}
+          </div>
+        `;
+
+        container.appendChild(card);
+      });
     }
   </script>
 </body>
