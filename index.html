@@ -3,345 +3,507 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <title>djRoute Master Roadbook</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-dark: #0b0f19;
-      --card-bg: #131c2e;
-      --accent-green: #059669;
-      --accent-green-hover: #10b981;
-      --accent-yellow: #f59e0b;
-      --text-main: #f1f5f9;
-      --text-muted: #94a3b8;
-      --border-color: #24324d;
-      --highlight-weekend: #3730a3;
+      --bg-main: #0a0e17;
+      --card-bg: #121927;
+      --card-inner: #0b111c;
+      --accent-cyan: #00f2fe;
+      --accent-green: #10b981;
+      --accent-orange: #f59e0b;
+      --accent-red: #ef4444;
+      --accent-blue: #3b82f6;
+      --border-subtle: #202d42;
+      --text-bright: #ffffff;
+      --text-dim: #94a3b8;
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
     body {
-      background-color: var(--bg-dark);
-      color: var(--text-main);
-      font-family: 'Inter', sans-serif;
-      padding: 12px;
-      padding-bottom: 80px;
+      background-color: var(--bg-main);
+      color: var(--text-bright);
+      font-family: 'Rajdhani', sans-serif;
+      padding: 10px;
+      padding-bottom: 90px;
     }
 
+    /* BARRA SUPERIORE */
     header {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      padding-bottom: 16px;
-      border-bottom: 1px solid var(--border-color);
-      margin-bottom: 16px;
+      background: linear-gradient(135deg, #101726, #0d121d);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.6);
     }
-
     .header-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 8px;
     }
-
     .brand {
       font-family: 'Orbitron', sans-serif;
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 900;
       letter-spacing: 1px;
-      color: var(--accent-green-hover);
+      color: var(--accent-cyan);
     }
-
-    .brand span {
-      color: #ffffff;
-    }
-
-    .sync-btn {
-      background: var(--accent-green);
+    .brand span { color: #fff; }
+    
+    .btn-sync {
+      background: linear-gradient(135deg, #059669, #10b981);
       color: #fff;
-      border: 1px solid var(--accent-green-hover);
-      padding: 10px 16px;
+      border: none;
+      padding: 8px 14px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 800;
+      border-radius: 7px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
     }
+    .btn-sync:active { transform: scale(0.95); }
 
-    .sync-btn:active {
-      transform: scale(0.97);
-    }
-
-    .status-bar {
+    .status-strip {
       display: flex;
       justify-content: space-between;
       font-size: 12px;
-      color: var(--text-muted);
+      color: var(--text-dim);
+      border-top: 1px solid var(--border-subtle);
+      padding-top: 6px;
     }
 
+    /* CARD DELLA TAPPA */
     .stage-card {
       background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+      overflow: hidden;
     }
 
-    .stage-header {
+    .card-topbar {
+      background: #0f1624;
+      padding: 10px 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
     }
-
+    .stage-num {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent-cyan);
+    }
     .stage-date {
       font-family: 'Orbitron', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      color: #60a5fa;
-    }
-
-    .stage-time {
+      font-size: 12px;
       background: #1e293b;
       padding: 2px 8px;
-      border-radius: 6px;
+      border-radius: 5px;
+      border: 1px solid #334155;
+    }
+    .stage-departure-time {
+      color: var(--accent-orange);
+      font-weight: 700;
       font-size: 12px;
-      color: var(--text-muted);
     }
 
-    .route-flow {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      margin-bottom: 10px;
-    }
+    .card-body { padding: 14px; }
 
-    .location {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 15px;
-      font-weight: 600;
-    }
-
-    .location.departure {
-      color: #a7f3d0;
-    }
-
-    .location.arrival {
-      color: #fca5a5;
-    }
-
-    .via-points {
-      font-size: 12px;
-      color: var(--text-muted);
+    /* TIMELINE */
+    .timeline {
+      position: relative;
       padding-left: 24px;
-      font-style: italic;
+      margin-bottom: 12px;
     }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: #25334a;
+    }
+    .t-node { position: relative; margin-bottom: 8px; }
+    .t-node:last-child { margin-bottom: 0; }
+    .t-node::before {
+      content: '';
+      position: absolute;
+      left: -24px;
+      top: 5px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #475569;
+    }
+    .t-node.dep::before { background: var(--accent-green); box-shadow: 0 0 6px var(--accent-green); }
+    .t-node.arr::before { background: var(--accent-red); box-shadow: 0 0 6px var(--accent-red); }
+    .t-node.via::before { background: var(--accent-orange); }
 
-    .stage-details {
+    .node-title { font-size: 10px; text-transform: uppercase; color: var(--text-dim); }
+    .node-name { font-size: 16px; font-weight: 700; color: #fff; }
+
+    /* METEO ROADBOX (OGNI 45 MINUTI) */
+    .weather-roadbox {
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 12px;
+    }
+    .weather-roadbox-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      margin-bottom: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .weather-timeline {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: thin;
+    }
+    .weather-step {
+      flex: 0 0 auto;
+      background: #141c2b;
+      border: 1px solid #202d42;
+      border-radius: 8px;
+      padding: 6px 10px;
+      text-align: center;
+      min-width: 75px;
+    }
+    .w-time { font-family: 'Orbitron', sans-serif; font-size: 11px; color: var(--accent-orange); font-weight: 700; }
+    .w-icon { font-size: 18px; margin: 3px 0; }
+    .w-temp { font-size: 13px; font-weight: 800; color: #fff; }
+    .w-rain { font-size: 10px; color: #60a5fa; }
+    .w-loc { font-size: 10px; color: var(--text-dim); max-width: 70px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* LOGISTICA E COSTI */
+    .details-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      background: #0f172a;
-      padding: 8px;
+      gap: 6px;
+      background: var(--card-inner);
+      border: 1px solid var(--border-subtle);
       border-radius: 8px;
-      font-size: 12px;
-      margin-bottom: 10px;
-    }
-
-    .detail-item strong {
-      color: var(--text-muted);
-      display: block;
-      font-size: 10px;
-      text-transform: uppercase;
-    }
-
-    .actions-row {
-      display: flex;
-      gap: 8px;
-    }
-
-    .action-btn {
-      flex: 1;
       padding: 8px;
-      border-radius: 6px;
+      margin-bottom: 10px;
       font-size: 12px;
-      font-weight: 600;
+    }
+    .d-item span { display: block; font-size: 10px; color: var(--text-dim); text-transform: uppercase; }
+    .d-item strong { color: #e2e8f0; font-size: 13px; }
+
+    /* TASTI ROTTA */
+    .actions { display: flex; gap: 8px; }
+    .btn-route {
+      flex: 1;
+      padding: 10px;
+      background: linear-gradient(135deg, #1e40af, #3b82f6);
+      color: #fff;
       text-align: center;
+      border-radius: 7px;
       text-decoration: none;
-      cursor: pointer;
-      border: 1px solid transparent;
+      font-family: 'Orbitron', sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      border: 1px solid #60a5fa;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 6px;
     }
-
-    .btn-myroute {
-      background: #1d4ed8;
-      color: #fff;
-      border-color: #3b82f6;
-    }
-
-    .btn-notes {
-      background: #334155;
-      color: #e2e8f0;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-muted);
-      font-size: 14px;
-    }
+    .btn-route:active { transform: scale(0.97); }
   </style>
 </head>
 <body>
 
   <header>
     <div class="header-top">
-      <div class="brand">djRoute <span>2026</span></div>
-      <button id="btnSyncCloud" class="sync-btn" onclick="sincronizzaCloud()">
-        🔄 Sincronizza
+      <div class="brand">🏍️ djRoute <span>2026</span></div>
+      <button id="btnSyncCloud" class="btn-sync" onclick="sincronizzaCloud()">
+        🔄 AGGIORNA
       </button>
     </div>
-    <div class="status-bar">
-      <span id="syncStatus">Stato: Pronto</span>
-      <span id="stageCount">0 tappe</span>
+    <div class="status-strip">
+      <span id="syncStatus">Pronto</span>
+      <span id="stageCounter">0 tappe</span>
     </div>
   </header>
 
   <main id="tappeContainer">
-    <div class="empty-state">
-      Premi "Sincronizza" in alto per scaricare le tappe dal tuo Google Sheet.
+    <div style="text-align:center; padding:50px 20px; color:#94a3b8;">
+      Tocca <strong>AGGIORNA</strong> in alto per scaricare il roadbook e calcolare meteo e tappe.
     </div>
   </main>
 
   <script>
-    // URL dell'API di Google Apps Script generata dal tuo foglio
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
+    const GEO_CACHE = {};
 
-    // Carica eventuali tappe salvate localmente all'avvio
     window.addEventListener("DOMContentLoaded", () => {
       const cached = localStorage.getItem("djRoute_tappe_attive");
       if (cached) {
         try {
-          const tappe = JSON.parse(cached);
-          renderTappe(tappe);
-        } catch (e) {
-          console.error("Errore lettura cache:", e);
-        }
+          renderRoadbook(JSON.parse(cached));
+        } catch(e) { console.error(e); }
       }
     });
 
     async function sincronizzaCloud() {
       const btn = document.getElementById("btnSyncCloud");
       const status = document.getElementById("syncStatus");
-      
+
       btn.disabled = true;
-      btn.innerText = "⏳ Download...";
-      status.innerText = "Connessione a Google Sheets...";
+      btn.innerHTML = "⏳ CARICO...";
+      status.innerText = "Download tappe in corso...";
 
       try {
-        const response = await fetch(SCRIPT_URL);
-        if (!response.ok) throw new Error("Errore durante la connessione al server");
+        const urlWithCacheBuster = SCRIPT_URL + "?_nocache=" + new Date().getTime();
+        const response = await fetch(urlWithCacheBuster);
+        if (!response.ok) throw new Error("Errore chiamata API");
 
         const tappe = await response.json();
-        console.log("Dati scaricati:", tappe);
-
         if (!Array.isArray(tappe) || tappe.length === 0) {
-          alert("Nessuna tappa trovata nel foglio ROADBOOK_APP.");
-          status.innerText = "Nessun dato trovato";
+          alert("Nessuna tappa trovata nel foglio.");
+          status.innerText = "Nessuna tappa";
           return;
         }
 
-        // Memorizza i dati sul telefono per uso offline
         localStorage.setItem("djRoute_tappe_attive", JSON.stringify(tappe));
-        renderTappe(tappe);
-        status.innerText = `Aggiornato alle ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+        status.innerText = "Calcolo percorsi e meteo...";
+        await renderRoadbook(tappe);
+        
+        const now = new Date();
+        status.innerText = `Aggiornato: ${now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
       } catch (err) {
-        console.error("Errore sincro:", err);
-        alert("❌ Errore durante la sincronizzazione. Verifica la connessione internet.");
-        status.innerText = "Errore sincronizzazione";
+        console.error(err);
+        alert("Errore di sincronizzazione con Google Sheets.");
+        status.innerText = "Errore connessione";
       } finally {
         btn.disabled = false;
-        btn.innerText = "🔄 Sincronizza";
+        btn.innerHTML = "🔄 AGGIORNA";
       }
     }
 
-    function renderTappe(tappe) {
-      const container = document.getElementById("tappeContainer");
-      const countEl = document.getElementById("stageCount");
-      
-      container.innerHTML = "";
-      countEl.innerText = `${tappe.length} tappe caricate`;
+    // Geocodifica coordinate località
+    async function geocode(location) {
+      if (!location) return null;
+      const cleanLoc = location.trim().toLowerCase();
+      if (GEO_CACHE[cleanLoc]) return GEO_CACHE[cleanLoc];
 
-      tappe.forEach((tappa, index) => {
-        const card = document.createElement("div");
+      try {
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+          GEO_CACHE[cleanLoc] = coords;
+          return coords;
+        }
+      } catch (e) {
+        console.warn("Geocode fallito per:", location);
+      }
+      return null;
+    }
+
+    // Icona Meteo WMO
+    function getWmoInfo(code) {
+      if (code === 0) return { icon: "☀️", label: "Sereno" };
+      if ([1, 2].includes(code)) return { icon: "🌤️", label: "Poco Nuvoloso" };
+      if (code === 3) return { icon: "☁️", label: "Coperto" };
+      if ([45, 48].includes(code)) return { icon: "🌫️", label: "Nebbia" };
+      if ([51, 53, 55].includes(code)) return { icon: "🌦️", label: "Pioggerella" };
+      if ([61, 63, 65].includes(code)) return { icon: "🌧️", label: "Pioggia" };
+      if ([71, 73, 75].includes(code)) return { icon: "🌨️", label: "Neve" };
+      if ([80, 81, 82].includes(code)) return { icon: "🌦️", label: "Rovescio" };
+      if ([95, 96, 99].includes(code)) return { icon: "⛈️", label: "Temporale" };
+      return { icon: "🌡️", label: "Variabile" };
+    }
+
+    // Meteo Open-Meteo per coordinata
+    async function getPointWeather(lat, lon, dateStr, hourInt) {
+      try {
+        // Conversione data gg/mm/aaaa in aaaa-mm-gg
+        let isoDate = dateStr;
+        if (dateStr && dateStr.includes("/")) {
+          const p = dateStr.split("/");
+          if (p.length === 3) isoDate = `${p[2].trim()}-${p[1].trim().padStart(2,'0')}-${p[0].trim().padStart(2,'0')}`;
+        }
+        
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code&timezone=auto&forecast_days=14`;
+        const res = await fetch(url);
+        const data = await res.json();
+        
+        if (data && data.hourly) {
+          const targetIndex = hourInt;
+          const temp = Math.round(data.hourly.temperature_2m[targetIndex] || 20);
+          const rain = data.hourly.precipitation_probability[targetIndex] || 0;
+          const code = data.hourly.weather_code[targetIndex] || 0;
+          const wmo = getWmoInfo(code);
+          return { temp, rain, icon: wmo.icon, label: wmo.label };
+        }
+      } catch (e) {
+        console.warn("Meteo non disponibile");
+      }
+      return { temp: "--", rain: 0, icon: "🌤️", label: "N/D" };
+    }
+
+    async function renderRoadbook(tappe) {
+      const container = document.getElementById("tappeContainer");
+      const counter = document.getElementById("stageCounter");
+      container.innerHTML = "";
+      counter.innerText = `${tappe.length} tappe in programma`;
+
+      for (let i = 0; i < tappe.length; i++) {
+        const t = tappe[i];
+        const card = document.createElement("article");
         card.className = "stage-card";
 
-        // Pulsante MyRoute / Navigazione
+        // Tasto di Navigazione MyRoute-app
         let btnRouteHtml = "";
-        if (tappa.myRouteUrl && tappa.myRouteUrl.trim().startsWith("http")) {
-          btnRouteHtml = `<a href="${tappa.myRouteUrl}" target="_blank" class="action-btn btn-myroute">🗺️ Apri MyRoute</a>`;
+        if (t.myRouteUrl && t.myRouteUrl.trim().startsWith("http")) {
+          btnRouteHtml = `<a href="${t.myRouteUrl.trim()}" target="_blank" class="btn-route">🚀 APRI IN MYROUTE-APP</a>`;
         } else {
-          // Ricerca automatica itinerario su Google Maps come fallback
-          const mapsUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(tappa.partenza)}&destination=${encodeURIComponent(tappa.arrivo)}${tappa.passaggio ? '&waypoints=' + encodeURIComponent(tappa.passaggio) : ''}`;
-          btnRouteHtml = `<a href="${mapsUrl}" target="_blank" class="action-btn btn-myroute">🗺️ Mappa</a>`;
+          const gmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza)}&destination=${encodeURIComponent(t.arrivo)}${t.passaggio ? '&waypoints=' + encodeURIComponent(t.passaggio) : ''}`;
+          btnRouteHtml = `<a href="${gmaps}" target="_blank" class="btn-route">🗺️ APRI MAPPA</a>`;
         }
 
+        // Calcolo orario di partenza per slot 45 minuti
+        const baseOra = t.ora ? parseInt(t.ora.split(":")[0]) || 8 : 8;
+        const baseMin = t.ora ? parseInt(t.ora.split(":")[1]) || 30 : 30;
+
         card.innerHTML = `
-          <div class="stage-header">
-            <span class="stage-date">#${index + 1} | ${tappa.data || 'Data N/D'}</span>
-            <span class="stage-time">Partenza: ${tappa.ora || '08:30'}</span>
+          <div class="card-topbar">
+            <span class="stage-num">TAPPA #${i + 1}</span>
+            <span class="stage-date">${t.data || 'DATA N/D'}</span>
+            <span class="stage-departure-time">PARTENZA: ${t.ora || '08:30'}</span>
           </div>
 
-          <div class="route-flow">
-            <div class="location departure">📍 ${tappa.partenza || 'Partenza da definire'}</div>
-            ${tappa.passaggio ? `<div class="via-points">↳ Via: ${tappa.passaggio}</div>` : ''}
-            <div class="location arrival">🏁 ${tappa.arrivo || 'Arrivo da definire'}</div>
-          </div>
+          <div class="card-body">
+            <div class="timeline">
+              <div class="t-node dep">
+                <div class="node-title">Partenza</div>
+                <div class="node-name">${t.partenza || 'N/D'}</div>
+              </div>
+              ${t.passaggio ? `
+              <div class="t-node via">
+                <div class="node-title">Passaggi / Passi</div>
+                <div class="node-name" style="font-size:14px; color:#cbd5e1;">${t.passaggio}</div>
+              </div>` : ''}
+              <div class="t-node arr">
+                <div class="node-title">Arrivo</div>
+                <div class="node-name">${t.arrivo || 'N/D'}</div>
+              </div>
+            </div>
 
-          <div class="stage-details">
-            <div class="detail-item">
-              <strong>Alloggio / Piattaforma</strong>
-              ${tappa.alloggio || 'Libero'} ${tappa.piattaforma ? '(' + tappa.piattaforma + ')' : ''}
+            <!-- METEO ROADBOX LUNGO LA ROTTA (45 MIN STEP) -->
+            <div class="weather-roadbox">
+              <div class="weather-roadbox-title">
+                <span>METEO ROTTA (OGNI 45 MIN)</span>
+                <span style="font-size:10px; color:#94a3b8;">Open-Meteo HD</span>
+              </div>
+              <div class="weather-timeline" id="weather-timeline-${i}">
+                <div class="weather-step"><div class="w-time">--:--</div><div class="w-icon">⏳</div><div class="w-temp">In calcolo</div></div>
+              </div>
             </div>
-            <div class="detail-item">
-              <strong>Parcheggio</strong>
-              ${tappa.parcheggio || 'Non specificato'}
-            </div>
-            <div class="detail-item">
-              <strong>Spesa Totale</strong>
-              ${tappa.spesa ? tappa.spesa + ' €' : '-'} (${tappa.pagamento || 'N/D'})
-            </div>
-            <div class="detail-item">
-              <strong>Residuo da pagare</strong>
-              <span style="color: ${tappa.daPagare > 0 ? '#f87171' : '#4ade80'}">
-                ${tappa.daPagare > 0 ? tappa.daPagare + ' €' : 'Saldato'}
-              </span>
-            </div>
-          </div>
 
-          ${tappa.note ? `<div style="font-size:11px; color:#cbd5e1; margin-bottom:8px;">📝 ${tappa.note}</div>` : ''}
+            <!-- LOGISTICA HOTEL E SPESE -->
+            <div class="details-grid">
+              <div class="d-item">
+                <span>Alloggio</span>
+                <strong>${t.alloggio || 'Libero / Tenda'}</strong>
+              </div>
+              <div class="d-item">
+                <span>Parcheggio</span>
+                <strong>${t.parcheggio || 'Non spec.'}</strong>
+              </div>
+              <div class="d-item">
+                <span>Spesa Prevista</span>
+                <strong>${t.spesa ? t.spesa + ' €' : '-'}</strong>
+              </div>
+              <div class="d-item">
+                <span>Residuo Da Pagare</span>
+                <strong style="color:${t.daPagare > 0 ? '#ef4444' : '#10b981'}">
+                  ${t.daPagare > 0 ? t.daPagare + ' €' : 'Saldato'}
+                </strong>
+              </div>
+            </div>
 
-          <div class="actions-row">
-            ${btnRouteHtml}
+            ${t.note ? `<div style="font-size:12px; color:#fde68a; margin-bottom:10px; background:#1e293b; padding:6px 10px; border-radius:6px;">📌 ${t.note}</div>` : ''}
+
+            <div class="actions">
+              ${btnRouteHtml}
+            </div>
           </div>
         `;
 
         container.appendChild(card);
-      });
+
+        // Calcolo asincrono meteo a step di 45 min per la tappa
+        (async (stageIndex, tappaData, bH, bM) => {
+          const wContainer = document.getElementById(`weather-timeline-${stageIndex}`);
+          if (!wContainer) return;
+
+          const steps = [];
+          // Step 1: Partenza
+          if (tappaData.partenza) steps.push({ loc: tappaData.partenza, deltaMin: 0 });
+          // Step 2 & 3: Passaggi intermedi (se presenti)
+          if (tappaData.passaggio) {
+            const passArr = tappaData.passaggio.split(",").map(p => p.trim());
+            passArr.forEach((p, idx) => {
+              steps.push({ loc: p, deltaMin: (idx + 1) * 45 });
+            });
+          }
+          // Step Finale: Arrivo
+          if (tappaData.arrivo) {
+            const lastMin = steps.length > 1 ? steps[steps.length - 1].deltaMin + 45 : 90;
+            steps.push({ loc: tappaData.arrivo, deltaMin: lastMin });
+          }
+
+          let htmlSteps = "";
+          for (const s of steps) {
+            const totalMin = bH * 60 + bM + s.deltaMin;
+            const stepH = Math.floor(totalMin / 60) % 24;
+            const stepM = totalMin % 60;
+            const timeLabel = `${String(stepH).padStart(2,'0')}:${String(stepM).padStart(2,'0')}`;
+
+            const coords = await geocode(s.loc);
+            let wInfo = { icon: "🌤️", temp: "--", rain: 0 };
+            if (coords) {
+              wInfo = await getPointWeather(coords.lat, coords.lon, tappaData.data, stepH);
+            }
+
+            htmlSteps += `
+              <div class="weather-step">
+                <div class="w-time">${timeLabel}</div>
+                <div class="w-icon">${wInfo.icon}</div>
+                <div class="w-temp">${wInfo.temp}°C</div>
+                <div class="w-rain">💧${wInfo.rain}%</div>
+                <div class="w-loc">${s.loc}</div>
+              </div>
+            `;
+          }
+          wContainer.innerHTML = htmlSteps || `<div style="font-size:11px; color:#64748b; padding:4px;">Meteo non disponibile</div>`;
+        })(i, t, baseOra, baseMin);
+      }
     }
   </script>
 </body>
