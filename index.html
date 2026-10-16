@@ -307,6 +307,7 @@
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .grid-info div strong { color: #fff; font-size: 14px; font-weight: 700; }
 
+    /* BOX METEO ROTTA AD ALTA DENSITÀ CON STEP REALI DI 45 MIN */
     .weather-box {
       background: var(--card-alt);
       border: 1px solid var(--border);
@@ -323,21 +324,22 @@
       justify-content: space-between;
       text-transform: uppercase;
     }
-    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
     .weather-cell {
       flex: 0 0 auto;
       background: #131c2c;
       border: 1px solid #24344d;
-      border-radius: 8px;
-      padding: 7px 10px;
+      border-radius: 9px;
+      padding: 8px 10px;
       text-align: center;
-      min-width: 84px;
+      min-width: 95px;
     }
-    .w-time { font-size: 11px; color: var(--yellow); font-weight: 800; }
-    .w-icon { font-size: 18px; margin: 3px 0; }
-    .w-temp { font-size: 14px; font-weight: 800; color: #fff; }
+    .w-time { font-size: 12px; color: var(--yellow); font-weight: 800; }
+    .w-km { font-size: 9px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .w-icon { font-size: 20px; margin: 3px 0; }
+    .w-temp { font-size: 15px; font-weight: 800; color: #fff; }
     .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
-    .w-name { font-size: 10px; color: var(--text-muted); max-width: 75px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .w-name { font-size: 10px; color: #cbd5e1; max-width: 85px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
     .btn-myroute {
       display: block;
@@ -413,7 +415,6 @@
     }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
-    /* GRIGLIA PULSANTI SELEZIONE (BOTTONI BADGE) */
     .btn-select-grid {
       display: flex;
       flex-wrap: wrap;
@@ -510,7 +511,6 @@
 
   <button class="fab-btn" id="fabNuovaTappa" onclick="apriModaleNuovaTappa()">➕ Nuova Tappa</button>
 
-  <!-- MODALE CON BOTTONI BADGE -->
   <div id="modalTappa" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-title" id="modalTitle">🏍️ Nuova Tappa</div>
@@ -520,7 +520,6 @@
       <input type="hidden" id="editAltMax" value="0">
       <input type="hidden" id="editTempMedie" value="">
 
-      <!-- Campi nascosti valorizzati dai bottoni -->
       <input type="hidden" id="valPiattaforma" value="Booking">
       <input type="hidden" id="valPagamento" value="Da pagare">
       <input type="hidden" id="valMetodo" value="Revolut Daniel">
@@ -560,7 +559,6 @@
         <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
       </div>
 
-      <!-- BOTTONI PIATTAFORMA -->
       <div class="form-group">
         <label>Piattaforma Prenotazione</label>
         <div class="btn-select-grid" id="gridPiattaforma">
@@ -572,7 +570,6 @@
         </div>
       </div>
 
-      <!-- BOTTONI STATO PAGAMENTO -->
       <div class="form-group">
         <label>Stato Pagamento</label>
         <div class="btn-select-grid" id="gridPagamento">
@@ -598,7 +595,6 @@
         <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--yellow); font-weight:800;">
       </div>
 
-      <!-- BOTTONI METODO PAGAMENTO -->
       <div class="form-group">
         <label>Metodo di Pagamento</label>
         <div class="btn-select-grid" id="gridMetodo">
@@ -611,7 +607,6 @@
         </div>
       </div>
 
-      <!-- BOTTONI PARCHEGGIO MOTO -->
       <div class="form-group">
         <label>Parcheggio Moto</label>
         <div class="btn-select-grid" id="gridParcheggio">
@@ -648,13 +643,13 @@
     let schedaAttiva = "";
     let tappeCorrenti = [];
     const GEO_CACHE = {};
+    const REVERSE_CACHE = {};
     const ROUTE_CACHE = {};
 
     window.addEventListener("DOMContentLoaded", () => {
       mostraHome();
     });
 
-    // GESTIONE SELEZIONE PULSANTI TIPO BOTTONE
     function selezionaPulsante(containerId, hiddenInputId, valore) {
       document.getElementById(hiddenInputId).value = valore;
       const btns = document.getElementById(containerId).querySelectorAll('.opt-btn');
@@ -707,14 +702,12 @@
       inpDaPagare.value = Math.max(0, Math.round((spesa - p) * 100) / 100);
     }
 
-    // FORMATTAZIONE DATA GG/MM/AAAA
     document.getElementById("inpData").addEventListener("input", (e) => {
       let v = e.target.value.replace(/\D/g, "");
       if (v.length > 2 && v.length <= 4) e.target.value = v.slice(0,2) + "/" + v.slice(2);
       else if (v.length > 4) e.target.value = v.slice(0,2) + "/" + v.slice(2,4) + "/" + v.slice(4,8);
     });
 
-    // AUTOCOMPLETAMENTO MAPPE
     function attivaAutocompleteMappa(inputId, boxId, multiplo = false) {
       const inp = document.getElementById(inputId);
       const box = document.getElementById(boxId);
@@ -1040,10 +1033,11 @@
               <div style="grid-column: span 2;"><span>Metodo di Pagamento</span><strong>${t.metodoPagamento || 'Non specificato'}</strong></div>
             </div>
 
+            <!-- METEO ROTTA CAMPIONATO LUNGO L'INTERO PERCORSO OGNI 45 MIN -->
             <div class="weather-box">
               <div class="weather-head">
-                <span>⛅ Meteo Rotta (Step 45 Min)</span>
-                <span id="w-mode-${i}" style="color:var(--cyan);">Calcolo...</span>
+                <span>⛅ Meteo Percorso (Ogni 45 Minuti Reali)</span>
+                <span id="w-mode-${i}" style="color:var(--cyan);">Calcolo rotta...</span>
               </div>
               <div class="weather-scroll" id="weather-line-${i}">
                 <div class="weather-cell"><div class="w-time">--:--</div><div class="w-icon">⏳</div><div class="w-temp">...</div></div>
@@ -1064,22 +1058,17 @@
     }
 
     async function calcolaTelemetriaCompletaCard(idx, t, bH, bM) {
-      const locs = [];
-      if (t.partenza) locs.push({ name: t.partenza, delta: 0 });
+      const locNomi = [];
+      if (t.partenza) locNomi.push(t.partenza);
       if (t.passaggio) {
-        t.passaggio.split(",").forEach((p, pIdx) => {
-          if (p.trim()) locs.push({ name: p.trim(), delta: (pIdx + 1) * 45 });
-        });
+        t.passaggio.split(",").forEach(p => { if (p.trim()) locNomi.push(p.trim()); });
       }
-      if (t.arrivo) {
-        const lastDelta = locs.length > 1 ? locs[locs.length - 1].delta + 45 : 90;
-        locs.push({ name: t.arrivo, delta: lastDelta });
-      }
+      if (t.arrivo) locNomi.push(t.arrivo);
 
       const coords = [];
-      for (const item of locs) {
-        const c = await geocode(item.name);
-        if (c) coords.push({ ...c, name: item.name, delta: item.delta });
+      for (const name of locNomi) {
+        const c = await geocode(name);
+        if (c) coords.push({ ...c, name: name });
       }
 
       if (coords.length >= 2) {
@@ -1106,33 +1095,66 @@
             tempEl.className = "tele-val " + getTempColorClass(tStorica);
           }
         }
-      }
 
-      const wLine = document.getElementById(`weather-line-${idx}`);
-      const wMode = document.getElementById(`w-mode-${idx}`);
-      if (!wLine) return;
+        // =========================================================================
+        // CALCOLO METEO INTERO PERCORSO: PUNTI GEOGRAFICI A STEP DI 45 MINUTI REALI
+        // =========================================================================
+        const wLine = document.getElementById(`weather-line-${idx}`);
+        const wMode = document.getElementById(`w-mode-${idx}`);
+        if (wLine && stats.fullGeometry && stats.fullGeometry.length > 0) {
+          const totMinutiGuida = Math.max(20, stats.timeMin);
+          const numStep = Math.max(2, Math.floor(totMinutiGuida / 45) + 1);
+          const geo = stats.fullGeometry;
+          const waypointsPercorso = [];
 
-      let wHtml = "";
-      let modalitaTesto = "Live Forecast";
-      for (const c of coords) {
-        const totMin = bH * 60 + bM + c.delta;
-        const h = Math.floor(totMin / 60) % 24;
-        const m = totMin % 60;
-        const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-        const w = await getSmartPointWeather(c.lat, c.lon, t.data, h);
-        if (w.isHistorical) modalitaTesto = "Media Storica Periodo";
-        wHtml += `
-          <div class="weather-cell">
-            <div class="w-time">${timeStr}</div>
-            <div class="w-icon">${w.icon}</div>
-            <div class="w-temp">${w.temp}°C</div>
-            <div class="w-rain">💧${w.rain}%</div>
-            <div class="w-name">${c.name}</div>
-          </div>
-        `;
+          for (let s = 0; s < numStep; s++) {
+            const frazione = s / (numStep - 1);
+            const geoIdx = Math.min(geo.length - 1, Math.round(frazione * (geo.length - 1)));
+            const minTrascorsi = Math.round(frazione * totMinutiGuida);
+            const kmTrascorsi = Math.round(frazione * kmToShow);
+
+            const lon = geo[geoIdx][0];
+            const lat = geo[geoIdx][1];
+
+            let nomePunto = "";
+            if (s === 0) nomePunto = t.partenza;
+            else if (s === numStep - 1) nomePunto = t.arrivo;
+            else nomePunto = await reverseGeocodeLocalita(lat, lon);
+
+            waypointsPercorso.push({
+              lat: lat,
+              lon: lon,
+              minOffset: minTrascorsi,
+              kmProg: kmTrascorsi,
+              name: nomePunto
+            });
+          }
+
+          let wHtml = "";
+          let modalitaTesto = "Previsione Live";
+          for (const wp of waypointsPercorso) {
+            const totMin = bH * 60 + bM + wp.minOffset;
+            const h = Math.floor(totMin / 60) % 24;
+            const m = totMin % 60;
+            const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+            const w = await getSmartPointWeather(wp.lat, wp.lon, t.data, h);
+            if (w.isHistorical) modalitaTesto = "Media Storica Periodo";
+
+            wHtml += `
+              <div class="weather-cell">
+                <div class="w-time">${timeStr}</div>
+                <div class="w-km">+${wp.kmProg} km</div>
+                <div class="w-icon">${w.icon}</div>
+                <div class="w-temp">${w.temp}°C</div>
+                <div class="w-rain">💧${w.rain}%</div>
+                <div class="w-name" title="${wp.name}">${wp.name}</div>
+              </div>
+            `;
+          }
+          if (wMode) wMode.innerText = modalitaTesto;
+          wLine.innerHTML = wHtml;
+        }
       }
-      if (wMode) wMode.innerText = modalitaTesto;
-      if (wHtml) wLine.innerHTML = wHtml;
     }
 
     async function geocode(loc) {
@@ -1151,6 +1173,25 @@
       return null;
     }
 
+    // REVERSE GEOCODING PER DARE IL NOME ALLA LOCALITÀ ATTRAVERSATA A METÀ STRADA
+    async function reverseGeocodeLocalita(lat, lon) {
+      const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
+      if (REVERSE_CACHE[key]) return REVERSE_CACHE[key];
+      try {
+        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=11&accept-language=it`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data && data.address) {
+          const loc = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || "Lungo rotta";
+          REVERSE_CACHE[key] = loc;
+          return loc;
+        }
+      } catch(e) {}
+      const fallback = `Km ${lat.toFixed(1)}°N`;
+      REVERSE_CACHE[key] = fallback;
+      return fallback;
+    }
+
     async function getRouteAndElevationHD(coords) {
       const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";");
       if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
@@ -1159,6 +1200,7 @@
         const data = await res.json();
         let km = 0, timeMin = 0, oreStr = "0:00";
         let sampleLats = [], sampleLons = [];
+        let fullGeometry = [];
 
         if (data.routes && data.routes.length > 0) {
           const route = data.routes[0];
@@ -1168,16 +1210,17 @@
           const m = String(timeMin % 60).padStart(2, "0");
           oreStr = `${h}:${m}`;
 
-          const geo = route.geometry.coordinates;
+          fullGeometry = route.geometry.coordinates;
           const numSamples = 18;
           for (let i = 0; i < numSamples; i++) {
-            const idx = Math.min(geo.length - 1, Math.floor((i / (numSamples - 1)) * (geo.length - 1)));
-            sampleLons.push(geo[idx][0].toFixed(4));
-            sampleLats.push(geo[idx][1].toFixed(4));
+            const idx = Math.min(fullGeometry.length - 1, Math.floor((i / (numSamples - 1)) * (fullGeometry.length - 1)));
+            sampleLons.push(fullGeometry[idx][0].toFixed(4));
+            sampleLats.push(fullGeometry[idx][1].toFixed(4));
           }
         } else {
           sampleLats = coords.map(p => p.lat);
           sampleLons = coords.map(p => p.lon);
+          fullGeometry = coords.map(p => [p.lon, p.lat]);
         }
 
         const eleRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`);
@@ -1189,11 +1232,11 @@
           maxEle = Math.round(Math.max(...elevationCurve));
         }
 
-        const out = { km, timeMin, oreStr, maxEle, elevationCurve };
+        const out = { km, timeMin, oreStr, maxEle, elevationCurve, fullGeometry };
         ROUTE_CACHE[coordStr] = out;
         return out;
       } catch(e){
-        return { km: 0, timeMin: 0, oreStr: "0:00", maxEle: 0, elevationCurve: [] };
+        return { km: 0, timeMin: 0, oreStr: "0:00", maxEle: 0, elevationCurve: [], fullGeometry: [] };
       }
     }
 
