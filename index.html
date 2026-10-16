@@ -307,7 +307,7 @@
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .grid-info div strong { color: #fff; font-size: 14px; font-weight: 700; }
 
-    /* BOX METEO ROTTA AD ALTA DENSITÀ CON STEP REALI DI 45 MIN */
+    /* METEO ROTTA AD ALTA VELOCITÀ */
     .weather-box {
       background: var(--card-alt);
       border: 1px solid var(--border);
@@ -322,24 +322,36 @@
       margin-bottom: 8px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
       text-transform: uppercase;
     }
-    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px; }
+    .weather-badge-status {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 5px;
+      letter-spacing: 0.5px;
+    }
+    .status-obsoleto { background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
+    .status-future { background: rgba(250, 204, 21, 0.15); color: #fef08a; border: 1px solid rgba(250, 204, 21, 0.4); }
+    .status-live { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
+
+    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .weather-cell {
       flex: 0 0 auto;
       background: #131c2c;
       border: 1px solid #24344d;
-      border-radius: 9px;
-      padding: 8px 10px;
+      border-radius: 8px;
+      padding: 7px 10px;
       text-align: center;
-      min-width: 95px;
+      min-width: 86px;
     }
-    .w-time { font-size: 12px; color: var(--yellow); font-weight: 800; }
+    .w-time { font-size: 11px; color: var(--yellow); font-weight: 800; }
     .w-km { font-size: 9px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
-    .w-icon { font-size: 20px; margin: 3px 0; }
-    .w-temp { font-size: 15px; font-weight: 800; color: #fff; }
+    .w-icon { font-size: 18px; margin: 2px 0; }
+    .w-temp { font-size: 14px; font-weight: 800; color: #fff; }
     .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
-    .w-name { font-size: 10px; color: #cbd5e1; max-width: 85px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+    .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
     .btn-myroute {
       display: block;
@@ -374,7 +386,7 @@
       text-transform: uppercase;
     }
 
-    /* MODALE CON TASTI SELEZIONE TIPO BOTTONE */
+    /* MODALE */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -415,11 +427,7 @@
     }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
-    .btn-select-grid {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-    }
+    .btn-select-grid { display: flex; flex-wrap: wrap; gap: 6px; }
     .opt-btn {
       background: #162032;
       border: 1px solid #2d3f5e;
@@ -643,7 +651,6 @@
     let schedaAttiva = "";
     let tappeCorrenti = [];
     const GEO_CACHE = {};
-    const REVERSE_CACHE = {};
     const ROUTE_CACHE = {};
 
     window.addEventListener("DOMContentLoaded", () => {
@@ -870,6 +877,30 @@
       setTimeout(() => scaricaSchedeViaggi(), 1200);
     }
 
+    // ANALISI TEMPORALE DELLA DATA PER IL METEO
+    function analizzaFinestraMeteo(dataStr) {
+      if (!dataStr || !dataStr.includes("/")) return { stato: "invalid", diffDays: 999 };
+      const p = dataStr.split("/");
+      const d = parseInt(p[0]);
+      const m = parseInt(p[1]) - 1;
+      const y = parseInt(p[2] || "2026");
+      const target = new Date(y, m, d, 23, 59, 59);
+
+      const oggi = new Date();
+      oggi.setHours(0, 0, 0, 0);
+
+      const diffMs = target.getTime() - oggi.getTime();
+      const diffGiorni = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+      if (diffGiorni < 0) {
+        return { stato: "obsoleto", diffDays: diffGiorni, isoDate: `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
+      } else if (diffGiorni > 10) {
+        return { stato: "futuro", diffDays: diffGiorni, isoDate: `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
+      } else {
+        return { stato: "disponibile", diffDays: diffGiorni, isoDate: `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
+      }
+    }
+
     async function apriSchedaViaggio(nomeFoglio) {
       schedaAttiva = nomeFoglio;
       document.getElementById("vistaHome").style.display = "none";
@@ -1033,14 +1064,14 @@
               <div style="grid-column: span 2;"><span>Metodo di Pagamento</span><strong>${t.metodoPagamento || 'Non specificato'}</strong></div>
             </div>
 
-            <!-- METEO ROTTA CAMPIONATO LUNGO L'INTERO PERCORSO OGNI 45 MIN -->
+            <!-- BOX METEO ROTTA INTELLIGENTE CON PRIORITÀ -->
             <div class="weather-box">
               <div class="weather-head">
-                <span>⛅ Meteo Percorso (Ogni 45 Minuti Reali)</span>
-                <span id="w-mode-${i}" style="color:var(--cyan);">Calcolo rotta...</span>
+                <span>⛅ Meteo Percorso (Step 45 Min)</span>
+                <span id="w-badge-${i}" class="weather-badge-status">Controllo data...</span>
               </div>
               <div class="weather-scroll" id="weather-line-${i}">
-                <div class="weather-cell"><div class="w-time">--:--</div><div class="w-icon">⏳</div><div class="w-temp">...</div></div>
+                <div class="weather-cell"><div class="w-time">--:--</div><div class="w-icon">⏳</div><div class="w-temp">In attesa</div></div>
               </div>
             </div>
 
@@ -1097,62 +1128,81 @@
         }
 
         // =========================================================================
-        // CALCOLO METEO INTERO PERCORSO: PUNTI GEOGRAFICI A STEP DI 45 MINUTI REALI
+        // NUOVA LOGICA PRIORITARIA E STABILE PER IL METEO PERCORSO
         // =========================================================================
         const wLine = document.getElementById(`weather-line-${idx}`);
-        const wMode = document.getElementById(`w-mode-${idx}`);
-        if (wLine && stats.fullGeometry && stats.fullGeometry.length > 0) {
-          const totMinutiGuida = Math.max(20, stats.timeMin);
-          const numStep = Math.max(2, Math.floor(totMinutiGuida / 45) + 1);
-          const geo = stats.fullGeometry;
-          const waypointsPercorso = [];
+        const wBadge = document.getElementById(`w-badge-${idx}`);
+        const checkMeteo = analizzaFinestraMeteo(t.data);
 
-          for (let s = 0; s < numStep; s++) {
-            const frazione = s / (numStep - 1);
-            const geoIdx = Math.min(geo.length - 1, Math.round(frazione * (geo.length - 1)));
-            const minTrascorsi = Math.round(frazione * totMinutiGuida);
-            const kmTrascorsi = Math.round(frazione * kmToShow);
-
-            const lon = geo[geoIdx][0];
-            const lat = geo[geoIdx][1];
-
-            let nomePunto = "";
-            if (s === 0) nomePunto = t.partenza;
-            else if (s === numStep - 1) nomePunto = t.arrivo;
-            else nomePunto = await reverseGeocodeLocalita(lat, lon);
-
-            waypointsPercorso.push({
-              lat: lat,
-              lon: lon,
-              minOffset: minTrascorsi,
-              kmProg: kmTrascorsi,
-              name: nomePunto
-            });
-          }
-
-          let wHtml = "";
-          let modalitaTesto = "Previsione Live";
-          for (const wp of waypointsPercorso) {
-            const totMin = bH * 60 + bM + wp.minOffset;
-            const h = Math.floor(totMin / 60) % 24;
-            const m = totMin % 60;
-            const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-            const w = await getSmartPointWeather(wp.lat, wp.lon, t.data, h);
-            if (w.isHistorical) modalitaTesto = "Media Storica Periodo";
-
-            wHtml += `
-              <div class="weather-cell">
-                <div class="w-time">${timeStr}</div>
-                <div class="w-km">+${wp.kmProg} km</div>
-                <div class="w-icon">${w.icon}</div>
-                <div class="w-temp">${w.temp}°C</div>
-                <div class="w-rain">💧${w.rain}%</div>
-                <div class="w-name" title="${wp.name}">${wp.name}</div>
+        if (wBadge && wLine) {
+          // CASO 1: Data passata (precedente alla data attuale)
+          if (checkMeteo.stato === "obsoleto") {
+            wBadge.className = "weather-badge-status status-obsoleto";
+            wBadge.innerText = "DATO OBSOLETO";
+            wLine.innerHTML = `
+              <div style="padding:14px; text-align:center; color:#fda4af; font-size:12px; font-weight:700; width:100%;">
+                ⏳ Data antecedente a oggi: il meteo storico è archiviato.
               </div>
             `;
+            return;
           }
-          if (wMode) wMode.innerText = modalitaTesto;
-          wLine.innerHTML = wHtml;
+
+          // CASO 2: Data oltre 10 giorni nel futuro
+          if (checkMeteo.stato === "futuro") {
+            wBadge.className = "weather-badge-status status-future";
+            wBadge.innerText = "DATO NON ANCORA DISPONIBILE";
+            wLine.innerHTML = `
+              <div style="padding:14px; text-align:center; color:#fef08a; font-size:12px; font-weight:700; width:100%;">
+                📡 Data oltre 10 giorni: previsioni live disponibili in prossimità del viaggio.
+              </div>
+            `;
+            return;
+          }
+
+          // CASO 3: Data prossima (tra oggi e +10 giorni) -> MASSIMA PRIORITÀ E VELOCITÀ
+          wBadge.className = "weather-badge-status status-live";
+          wBadge.innerText = `LIVE (Tra ${checkMeteo.diffDays} gg)`;
+
+          if (stats.fullGeometry && stats.fullGeometry.length > 0) {
+            const totMin = Math.max(20, stats.timeMin);
+            const numStep = Math.max(2, Math.floor(totMin / 45) + 1);
+            const geo = stats.fullGeometry;
+            let wHtml = "";
+
+            for (let s = 0; s < numStep; s++) {
+              const frazione = s / (numStep - 1);
+              const geoIdx = Math.min(geo.length - 1, Math.round(frazione * (geo.length - 1)));
+              const minProg = Math.round(frazione * totMin);
+              const kmProg = Math.round(frazione * kmToShow);
+
+              const lon = geo[geoIdx][0];
+              const lat = geo[geoIdx][1];
+
+              let nomePunto = "";
+              if (s === 0) nomePunto = t.partenza;
+              else if (s === numStep - 1) nomePunto = t.arrivo;
+              else nomePunto = `Tratta +${kmProg}km`;
+
+              const passMin = bH * 60 + bM + minProg;
+              const h = Math.floor(passMin / 60) % 24;
+              const m = passMin % 60;
+              const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+
+              const w = await getForecastLiveFast(lat, lon, checkMeteo.isoDate, h);
+
+              wHtml += `
+                <div class="weather-cell">
+                  <div class="w-time">${timeStr}</div>
+                  <div class="w-km">+${kmProg} km</div>
+                  <div class="w-icon">${w.icon}</div>
+                  <div class="w-temp">${w.temp}°C</div>
+                  <div class="w-rain">💧${w.rain}%</div>
+                  <div class="w-name" title="${nomePunto}">${nomePunto}</div>
+                </div>
+              `;
+            }
+            wLine.innerHTML = wHtml;
+          }
         }
       }
     }
@@ -1171,25 +1221,6 @@
         }
       } catch(e){}
       return null;
-    }
-
-    // REVERSE GEOCODING PER DARE IL NOME ALLA LOCALITÀ ATTRAVERSATA A METÀ STRADA
-    async function reverseGeocodeLocalita(lat, lon) {
-      const key = `${lat.toFixed(2)},${lon.toFixed(2)}`;
-      if (REVERSE_CACHE[key]) return REVERSE_CACHE[key];
-      try {
-        const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=11&accept-language=it`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.address) {
-          const loc = data.address.city || data.address.town || data.address.village || data.address.municipality || data.address.county || "Lungo rotta";
-          REVERSE_CACHE[key] = loc;
-          return loc;
-        }
-      } catch(e) {}
-      const fallback = `Km ${lat.toFixed(1)}°N`;
-      REVERSE_CACHE[key] = fallback;
-      return fallback;
     }
 
     async function getRouteAndElevationHD(coords) {
@@ -1240,6 +1271,23 @@
       }
     }
 
+    async function getForecastLiveFast(lat, lon, isoDate, h) {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code&start_date=${isoDate}&end_date=${isoDate}&timezone=auto`;
+        const res = await fetch(url);
+        const j = await res.json();
+        if (j && j.hourly && j.hourly.temperature_2m) {
+          const code = j.hourly.weather_code[h] || 0;
+          return {
+            temp: Math.round(j.hourly.temperature_2m[h] ?? 20),
+            rain: j.hourly.precipitation_probability[h] ?? 0,
+            icon: code > 50 ? "🌧️" : (code > 2 ? "⛅" : "☀️")
+          };
+        }
+      } catch(e) {}
+      return { temp: "--", rain: 0, icon: "🌤️" };
+    }
+
     async function getHistoricalTempRange(lat, lon, dataStr) {
       try {
         let m = "05", d = "15";
@@ -1257,55 +1305,6 @@
         }
       } catch(e){}
       return "";
-    }
-
-    async function getSmartPointWeather(lat, lon, dataStr, h) {
-      try {
-        let targetDate = null;
-        let m = "05", d = "15";
-        if (dataStr && dataStr.includes("/")) {
-          const p = dataStr.split("/");
-          d = String(p[0]).padStart(2, "0");
-          m = String(p[1]).padStart(2, "0");
-          const y = p[2] || "2026";
-          targetDate = new Date(`${y}-${m}-${d}T12:00:00`);
-        }
-
-        const now = new Date();
-        const diffDays = targetDate ? (targetDate - now) / (1000 * 3600 * 24) : 999;
-
-        if (diffDays >= -1 && diffDays <= 14) {
-          const isoDate = targetDate.toISOString().split("T")[0];
-          const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code&start_date=${isoDate}&end_date=${isoDate}&timezone=auto`;
-          const res = await fetch(url);
-          const j = await res.json();
-          if (j && j.hourly && j.hourly.temperature_2m) {
-            const code = j.hourly.weather_code[h] || 0;
-            return {
-              temp: Math.round(j.hourly.temperature_2m[h] ?? 20),
-              rain: j.hourly.precipitation_probability[h] ?? 0,
-              icon: code > 50 ? "🌧️" : (code > 2 ? "⛅" : "☀️"),
-              isHistorical: false
-            };
-          }
-        }
-
-        const archiveDate = `2024-${m}-${d}`;
-        const urlArch = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${archiveDate}&end_date=${archiveDate}&hourly=temperature_2m,precipitation,weather_code&timezone=auto`;
-        const resA = await fetch(urlArch);
-        const jA = await resA.json();
-        if (jA && jA.hourly && jA.hourly.temperature_2m) {
-          const code = jA.hourly.weather_code[h] || 0;
-          const prec = jA.hourly.precipitation[h] || 0;
-          return {
-            temp: Math.round(jA.hourly.temperature_2m[h] ?? 20),
-            rain: prec > 0.2 ? 60 : 10,
-            icon: prec > 0.2 ? "🌦️" : (code > 2 ? "⛅" : "☀️"),
-            isHistorical: true
-          };
-        }
-      } catch(e){}
-      return { temp: "--", rain: 0, icon: "🌤️", isHistorical: false };
     }
 
     function calcolaDataSuccessiva(dataStr) {
