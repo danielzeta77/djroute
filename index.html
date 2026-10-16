@@ -4,12 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>djRoute Master Roadbook</title>
+  <title>djRoute MASTER</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@600;700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   
   <style>
     :root {
@@ -33,162 +31,151 @@
       color: var(--text);
       font-family: 'Inter', sans-serif;
       padding: 12px;
-      padding-bottom: 110px;
+      padding-bottom: 100px;
       -webkit-font-smoothing: antialiased;
     }
 
+    /* HEADER PULITO CON TASTI GEMELLI PROPORZIONATI */
     header {
       background: linear-gradient(145deg, #162032, #0d131f);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 14px;
-      margin-bottom: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
-    .top-row {
+    .header-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
     }
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-home {
-      background: #1e293b;
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
       border: 1px solid var(--border);
+      background: #1a2438;
       color: var(--cyan);
-      font-size: 16px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
+      font-size: 19px;
       display: flex;
       align-items: center;
       justify-content: center;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.2s;
     }
-    .btn-home:active { transform: scale(0.95); }
-
+    .icon-btn:active {
+      transform: scale(0.93);
+      background: #24324d;
+    }
+    .icon-btn.sync-btn {
+      background: linear-gradient(135deg, #059669, #10b981);
+      border-color: #34d399;
+      color: #fff;
+    }
     .logo {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 19px;
+      font-size: 20px;
       font-weight: 800;
       color: var(--cyan);
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
+      text-align: center;
     }
     .logo span { color: #fff; }
-    
-    .btn-sync {
-      background: linear-gradient(135deg, #059669, #10b981);
-      color: #fff;
-      border: none;
-      padding: 9px 14px;
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 12px;
-      font-weight: 800;
-      border-radius: 8px;
-      cursor: pointer;
-    }
-    .btn-sync:active { transform: scale(0.96); }
 
-    .current-trip-badge {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #0d1422;
-      border: 1px solid var(--border);
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-bottom: 8px;
-    }
-    .current-trip-name {
+    /* VISTA HOME: SOLO SCHEDE VIAGGI E CREA NUOVO */
+    #vistaHome { display: block; }
+    .home-header-label {
       font-family: 'Chakra Petch', sans-serif;
       font-size: 14px;
-      font-weight: 700;
-      color: var(--cyan);
-    }
-    .btn-rename {
-      background: transparent;
-      border: none;
+      font-weight: 800;
       color: var(--text-muted);
-      cursor: pointer;
-      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      padding-left: 4px;
     }
-
-    .status-row {
+    .trips-list {
       display: flex;
-      justify-content: space-between;
-      font-size: 12px;
-      color: var(--text-muted);
-      border-top: 1px solid var(--border);
-      padding-top: 8px;
+      flex-direction: column;
+      gap: 12px;
     }
-    .km-badge {
-      color: var(--cyan);
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 700;
-    }
-
-    /* HOME MODAL: ELENCO SCHEDE VIAGGIO */
-    .home-view {
-      display: none;
+    .trip-item {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 18px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+      transition: border-color 0.2s, transform 0.15s;
     }
-    .home-view-title {
+    .trip-item:active {
+      transform: scale(0.98);
+      border-color: var(--cyan);
+    }
+    .trip-item-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 17px;
+      font-weight: 800;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .trip-item-arrow {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--cyan);
+      background: rgba(0, 229, 255, 0.1);
+      padding: 6px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+    .btn-create-sheet {
+      width: 100%;
+      margin-top: 16px;
+      padding: 16px;
+      background: rgba(0, 229, 255, 0.06);
+      border: 1px dashed var(--cyan);
+      border-radius: 14px;
+      color: var(--cyan);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+    .btn-create-sheet:active { background: rgba(0, 229, 255, 0.15); }
+
+    /* VISTA DETTAGLIO VIAGGIO */
+    #vistaViaggio { display: none; }
+    .trip-banner {
+      background: #0f1624;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .trip-banner-name {
       font-family: 'Chakra Petch', sans-serif;
       font-size: 16px;
       font-weight: 800;
       color: var(--cyan);
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
     }
-    .trips-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 10px;
-    }
-    .trip-card {
-      background: #0f1624;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-    .trip-card.active {
-      border-color: var(--cyan);
-      background: #14233a;
-    }
-    .trip-card-name {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-    }
-    .btn-add-sheet {
-      width: 100%;
-      background: #1e293b;
-      border: 1px dashed var(--cyan);
-      color: var(--cyan);
-      padding: 12px;
-      border-radius: 10px;
+    .trip-banner-stats {
       font-family: 'Chakra Petch', sans-serif;
       font-size: 13px;
       font-weight: 700;
-      cursor: pointer;
-      margin-top: 10px;
+      color: #fff;
     }
 
-    /* CARD DELLA TAPPA */
+    /* CARD TAPPA */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -197,7 +184,6 @@
       box-shadow: 0 6px 16px rgba(0,0,0,0.4);
       overflow: hidden;
     }
-
     .card-head {
       background: #0f1624;
       padding: 10px 14px;
@@ -205,11 +191,6 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--border);
-    }
-    .card-head-left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
     .card-title {
       font-family: 'Chakra Petch', sans-serif;
@@ -222,52 +203,35 @@
       font-size: 12px;
       font-weight: 700;
       background: #1e293b;
-      padding: 2px 7px;
-      border-radius: 5px;
+      padding: 3px 8px;
+      border-radius: 6px;
       border: 1px solid #334155;
       color: #fff;
+      margin-left: 8px;
     }
-
-    .card-head-actions {
-      display: flex;
-      gap: 6px;
-    }
-    .btn-card-ctrl {
+    .card-actions { display: flex; gap: 6px; }
+    .btn-card {
       border: none;
-      padding: 5px 8px;
+      padding: 6px 10px;
       border-radius: 6px;
       font-size: 12px;
       cursor: pointer;
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 700;
-      display: flex;
-      align-items: center;
-      gap: 4px;
     }
-    .btn-card-edit {
-      background: #1e3a8a;
-      color: #93c5fd;
-      border: 1px solid #3b82f6;
-    }
-    .btn-card-del {
-      background: rgba(244, 63, 94, 0.2);
-      color: #fca5a5;
-      border: 1px solid #f43f5e;
-    }
+    .btn-edit { background: #1e3a8a; color: #93c5fd; border: 1px solid #3b82f6; }
+    .btn-del { background: rgba(244,63,94,0.2); color: #fca5a5; border: 1px solid #f43f5e; }
 
     .card-body { padding: 14px; }
 
-    /* TIMELINE */
+    /* TIMELINE PERCORSO */
     .route-box {
       border-left: 2px solid #334155;
       margin-left: 8px;
       padding-left: 16px;
       margin-bottom: 14px;
     }
-    .route-point {
-      position: relative;
-      margin-bottom: 10px;
-    }
+    .route-point { position: relative; margin-bottom: 10px; }
     .route-point:last-child { margin-bottom: 0; }
     .route-point::before {
       content: '';
@@ -282,53 +246,61 @@
     .route-point.dep::before { background: var(--green); box-shadow: 0 0 6px var(--green); }
     .route-point.arr::before { background: var(--red); box-shadow: 0 0 6px var(--red); }
     .route-point.via::before { background: var(--orange); }
-
     .point-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
     .point-city { font-size: 16px; font-weight: 700; color: #fff; }
 
-    /* TELEMETRIA & TEMPERATURE MEDIE STORICHE */
+    /* CRUSCOTTO TELEMETRIA & TEMPERATURE STORICHE */
     .road-telemetry {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1.3fr;
       gap: 6px;
-      margin-bottom: 14px;
+      margin-bottom: 10px;
       background: #0d1422;
       border: 1px solid var(--border);
       border-radius: 10px;
       padding: 8px;
     }
-    .tele-item {
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .tele-item:not(:last-child) {
-      border-right: 1px solid #1e2a3f;
-    }
-    .tele-label {
-      font-size: 9px;
-      text-transform: uppercase;
-      color: var(--text-muted);
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .tele-val {
-      font-family: 'Chakra Petch', sans-serif;
-      font-size: 14px;
-      font-weight: 800;
-      color: var(--cyan);
-    }
-
-    .temp-hot { color: #f43f5e !important; text-shadow: 0 0 8px rgba(244, 63, 94, 0.4); }
-    .temp-cold { color: #38bdf8 !important; text-shadow: 0 0 8px rgba(56, 189, 248, 0.4); }
+    .tele-item { text-align: center; display: flex; flex-direction: column; justify-content: center; }
+    .tele-item:not(:last-child) { border-right: 1px solid #1e2a3f; }
+    .tele-label { font-size: 9px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .tele-val { font-family: 'Chakra Petch', sans-serif; font-size: 14px; font-weight: 800; color: var(--cyan); }
+    
+    .temp-hot { color: #f43f5e !important; text-shadow: 0 0 8px rgba(244,63,94,0.4); }
+    .temp-cold { color: #38bdf8 !important; text-shadow: 0 0 8px rgba(56,189,248,0.4); }
     .temp-mild { color: #10b981 !important; }
 
-    /* ALLOGGIO E SPESE */
+    /* TASTO E PANNELLO PROFILO ALTIMETRICO */
+    .btn-elevation {
+      width: 100%;
+      background: #141e30;
+      border: 1px solid #283a56;
+      color: var(--cyan);
+      padding: 8px;
+      border-radius: 8px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .ele-box {
+      display: none;
+      background: #0a0f18;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    /* ALLOGGIO, PAGAMENTI, ACCONTI */
     .grid-info {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 6px;
+      gap: 8px;
       background: var(--card-alt);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -339,7 +311,7 @@
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
     .grid-info div strong { color: #f1f5f9; font-size: 13px; }
 
-    /* METEO ROTTA 45 MIN */
+    /* METEO 45 MIN */
     .weather-box {
       background: var(--card-alt);
       border: 1px solid var(--border);
@@ -356,12 +328,7 @@
       display: flex;
       justify-content: space-between;
     }
-    .weather-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
+    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .weather-cell {
       flex: 0 0 auto;
       background: #141c2c;
@@ -369,13 +336,13 @@
       border-radius: 8px;
       padding: 6px 10px;
       text-align: center;
-      min-width: 78px;
+      min-width: 82px;
     }
     .w-time { font-family: 'Chakra Petch', sans-serif; font-size: 11px; color: var(--orange); font-weight: 700; }
     .w-icon { font-size: 18px; margin: 2px 0; }
     .w-temp { font-size: 14px; font-weight: 800; color: #fff; }
     .w-rain { font-size: 10px; color: #60a5fa; }
-    .w-name { font-size: 10px; color: var(--text-muted); max-width: 70px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .w-name { font-size: 10px; color: var(--text-muted); max-width: 74px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
     .btn-myroute {
       display: block;
@@ -389,11 +356,12 @@
       font-family: 'Chakra Petch', sans-serif;
       font-size: 13px;
       font-weight: 800;
-      letter-spacing: 0.5px;
       border: 1px solid #60a5fa;
     }
 
+    /* TASTO FLUTTUANTE NUOVA TAPPA (NASCOSTO IN HOME) */
     .fab-btn {
+      display: none;
       position: fixed;
       bottom: 20px;
       right: 20px;
@@ -408,50 +376,38 @@
       box-shadow: 0 4px 20px rgba(0, 229, 255, 0.4);
       cursor: pointer;
       z-index: 99;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
-    /* MODALE CREAZIONE / MODIFICA */
+    /* MODALE COMPLETO CON AUTOCOMPLETE E FINANZA */
     .modal-overlay {
       display: none;
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,0.85);
       z-index: 100;
-      padding: 16px;
+      padding: 14px;
       overflow-y: auto;
     }
     .modal-box {
       background: #141c2b;
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 18px;
+      padding: 16px;
       max-width: 480px;
-      margin: 15px auto;
-      position: relative;
+      margin: 10px auto 30px auto;
     }
     .modal-title {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
       color: var(--cyan);
-      margin-bottom: 14px;
+      margin-bottom: 12px;
     }
-    .form-group {
-      margin-bottom: 10px;
-      position: relative;
-    }
-    .form-group label {
-      display: block;
-      font-size: 11px;
-      text-transform: uppercase;
-      font-weight: 700;
-      color: var(--text-muted);
-      margin-bottom: 4px;
-    }
-    .form-group input {
+    .form-group { margin-bottom: 10px; position: relative; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
+    .form-group input, .form-group select {
       width: 100%;
       background: #090e17;
       border: 1px solid var(--border);
@@ -462,166 +418,167 @@
     }
     .suggest-list {
       position: absolute;
-      top: 100%;
-      left: 0; right: 0;
+      top: 100%; left: 0; right: 0;
       background: #1b263b;
-      border: 1px solid #334155;
+      border: 1px solid #3b82f6;
       border-radius: 6px;
-      z-index: 120;
+      z-index: 150;
       max-height: 160px;
       overflow-y: auto;
       display: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.7);
     }
     .suggest-item {
-      padding: 8px 12px;
+      padding: 9px 12px;
       font-size: 13px;
       color: #e2e8f0;
       border-bottom: 1px solid #24324d;
       cursor: pointer;
     }
-    .suggest-item:hover, .suggest-item:active {
-      background: #2563eb;
-      color: #fff;
-    }
-    .modal-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .btn-save {
-      flex: 1;
-      background: var(--green);
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 800;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .btn-cancel {
-      flex: 1;
-      background: #334155;
-      color: #fff;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      font-family: 'Chakra Petch', sans-serif;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-    }
+    .suggest-item:active, .suggest-item:hover { background: #2563eb; color: #fff; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .btn-save { flex: 1; background: var(--green); color: #fff; border: none; padding: 12px; border-radius: 8px; font-family: 'Chakra Petch', sans-serif; font-weight: 800; cursor: pointer; }
+    .btn-cancel { flex: 1; background: #334155; color: #fff; border: none; padding: 12px; border-radius: 8px; font-family: 'Chakra Petch', sans-serif; font-weight: 700; cursor: pointer; }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
+  <!-- HEADER ESSENZIALE: SOLO HOME, TITOLO E AGGIORNA PROPORZIONATI -->
   <header>
-    <div class="top-row">
-      <div class="header-left">
-        <button class="btn-home" onclick="toggleHomeView()" title="Elenco Viaggi / Home">🏠</button>
-        <div class="logo">djRoute <span>MASTER</span></div>
-      </div>
-      <button id="btnSyncCloud" class="btn-sync" onclick="sincronizzaCloud()">
-        🔄 AGGIORNA
-      </button>
-    </div>
-
-    <!-- NOME DEL VIAGGIO ATTIVO -->
-    <div class="current-trip-badge">
-      <span class="current-trip-name" id="currentTripNameDisplay">Caricamento...</span>
-      <button class="btn-rename" onclick="rinominaViaggioAttivo()" title="Rinomina Foglio">✏️ Rinomina</button>
-    </div>
-
-    <div class="status-row">
-      <span id="syncStatus">Pronto</span>
-      <span id="stageCounter">0 tappe</span>
-      <span id="totalKmHeader" class="km-badge">Totale: 0 km</span>
+    <div class="header-bar">
+      <button class="icon-btn" onclick="mostraHome()" title="Home Viaggi">🏠</button>
+      <div class="logo">djRoute <span>MASTER</span></div>
+      <button class="icon-btn sync-btn" id="btnSync" onclick="sincronizzaVistaAttiva()" title="Aggiorna">🔄</button>
     </div>
   </header>
 
-  <!-- HOME VIEW: ELENCO FOGLI ATTIVI -->
-  <section id="homeView" class="home-view">
-    <div class="home-view-title">
-      <span>📁 SCHEDE VIAGGI ATTIVE</span>
-      <span style="font-size:12px; color:var(--text-muted); cursor:pointer;" onclick="toggleHomeView()">Chiudi ✕</span>
+  <!-- VISTA 1: HOME (SOLO SCHEDE VIAGGI ATTIVE E TASTO CREA NUOVO) -->
+  <main id="vistaHome">
+    <div class="home-header-label">📁 Schede Viaggi Attive</div>
+    <div class="trips-list" id="listaSchedeViaggi">
+      <div style="text-align:center; padding:30px; color:var(--text-muted);">Caricamento schede viaggio...</div>
     </div>
-    <div class="trips-grid" id="tripsGrid"></div>
-    <button class="btn-add-sheet" onclick="creaNuovoFoglioViaggio()">+ CREA NUOVO FOGLIO VIAGGIO</button>
-  </section>
-
-  <!-- CONTENITORE TAPPE -->
-  <main id="tappeContainer">
-    <div style="text-align:center; padding:50px 20px; color:#94a3b8;">
-      Tocca <strong>AGGIORNA</strong> in alto per scaricare le tappe del viaggio attivo.
-    </div>
+    <button class="btn-create-sheet" onclick="creaNuovoFoglioViaggio()">+ CREA NUOVO FOGLIO DI VIAGGIO</button>
   </main>
 
-  <!-- PULSANTE NUOVA TAPPA -->
-  <button class="fab-btn" onclick="apriModaleNuovaTappa()">
-    ➕ NUOVA TAPPA
-  </button>
+  <!-- VISTA 2: DETTAGLIO DEL VIAGGIO SELEZIONATO -->
+  <main id="vistaViaggio">
+    <div class="trip-banner">
+      <div class="trip-banner-name" id="nomeViaggioAttivo">Viaggio</div>
+      <div class="trip-banner-stats" id="riepilogoKmViaggio">0 tappe • 0 km</div>
+    </div>
 
-  <!-- MODALE CREAZIONE / MODIFICA TAPPA -->
+    <div id="contenitoreTappe"></div>
+  </main>
+
+  <!-- PULSANTE NUOVA TAPPA (VISIBILE SOLO DENTRO UN VIAGGIO) -->
+  <button class="fab-btn" id="fabNuovaTappa" onclick="apriModaleNuovaTappa()">➕ NUOVA TAPPA</button>
+
+  <!-- MODALE CREA / MODIFICA TAPPA COMPLETO -->
   <div id="modalTappa" class="modal-overlay">
     <div class="modal-box">
-      <div class="modal-title" id="modalTitle">🏍️ Inserisci Nuova Tappa</div>
-      <input type="hidden" id="editIndex" value="-1">
+      <div class="modal-title" id="modalTitle">🏍️ Nuova Tappa</div>
       <input type="hidden" id="editRowId" value="">
-      
-      <div class="form-group">
-        <label>Data Tappa (GG/MM/AAAA)</label>
-        <input type="text" id="inpData" placeholder="es. 15/05/2026" maxlength="10">
-      </div>
+      <input type="hidden" id="editKm" value="0">
+      <input type="hidden" id="editTempMedie" value="">
 
-      <div style="display:flex; gap:10px;">
-        <div class="form-group" style="flex:1;">
-          <label>Orario Partenza</label>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Data (GG/MM/AAAA)</label>
+          <input type="text" id="inpData" placeholder="17/10/2026" maxlength="10">
+        </div>
+        <div class="form-group">
+          <label>Ora Partenza</label>
           <input type="time" id="inpOra" value="08:30">
         </div>
-        <div class="form-group" style="flex:1;">
-          <label>Costo Alloggio (€)</label>
-          <input type="number" id="inpSpesa" placeholder="0" step="1">
-        </div>
       </div>
 
       <div class="form-group">
-        <label>Città di Partenza</label>
-        <input type="text" id="inpPartenza" placeholder="es. Tione di Trento" autocomplete="off">
+        <label>Città di Partenza (Autocompletamento Mappe)</label>
+        <input type="text" id="inpPartenza" placeholder="Digita città..." autocomplete="off">
         <div id="sugPartenza" class="suggest-list"></div>
       </div>
 
       <div class="form-group">
-        <label>Passaggi / Valichi intermedi</label>
+        <label>Passaggi / Valichi Intermedi (separati da virgola)</label>
         <input type="text" id="inpPassaggio" placeholder="es. Passo Tonale, Edolo" autocomplete="off">
         <div id="sugPassaggio" class="suggest-list"></div>
       </div>
 
       <div class="form-group">
-        <label>Città di Arrivo</label>
-        <input type="text" id="inpArrivo" placeholder="es. Mantova" autocomplete="off">
+        <label>Città di Arrivo (Autocompletamento Mappe)</label>
+        <input type="text" id="inpArrivo" placeholder="Digita città..." autocomplete="off">
         <div id="sugArrivo" class="suggest-list"></div>
       </div>
 
-      <div class="form-group">
-        <label>Nome Alloggio / Hotel</label>
-        <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Alloggio / Struttura</label>
+          <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
+        </div>
+        <div class="form-group">
+          <label>Piattaforma</label>
+          <select id="inpPiattaforma">
+            <option value="">-- Seleziona --</option>
+            <option value="Booking">Booking</option>
+            <option value="Airbnb">Airbnb</option>
+            <option value="Expedia">Expedia</option>
+            <option value="Pren. Diretta">Pren. Diretta</option>
+            <option value="Tenda / Libero">Tenda / Libero</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Spesa Totale (€)</label>
+          <input type="number" id="inpSpesa" placeholder="0" oninput="aggiornaCalcoloPagamenti()">
+        </div>
+        <div class="form-group">
+          <label>Stato Pagamento</label>
+          <select id="inpPagamento" onchange="aggiornaCalcoloPagamenti()">
+            <option value="Da pagare">Da pagare</option>
+            <option value="Acconto">Acconto</option>
+            <option value="Pagato">Pagato</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Importo Pagato / Acconto (€)</label>
+          <input type="number" id="inpPagato" placeholder="0" oninput="aggiornaCalcoloPagamenti()">
+        </div>
+        <div class="form-group">
+          <label>Residuo Da Pagare (€)</label>
+          <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--cyan); font-weight:700;">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Metodo di Pagamento</label>
+          <input type="text" id="inpMetodo" placeholder="es. Revolut, N26, Contanti">
+        </div>
+        <div class="form-group">
+          <label>Parcheggio Moto</label>
+          <input type="text" id="inpParcheggio" placeholder="es. Garage coperto">
+        </div>
       </div>
 
       <div class="form-group">
-        <label>Link MyRoute-app / Percorso</label>
+        <label>Link MyRoute-app / Traccia GPX</label>
         <input type="url" id="inpMyRoute" placeholder="https://www.myrouteapp.com/...">
       </div>
 
       <div class="form-group">
-        <label>Note Roadbook</label>
-        <input type="text" id="inpNote" placeholder="es. Sosta pranzo">
+        <label>Note Tappa</label>
+        <input type="text" id="inpNote" placeholder="es. Visita monasteri, imbarco...">
       </div>
 
       <div class="modal-actions">
-        <button class="btn-cancel" onclick="chiudiModaleNuovaTappa()">ANNULLA</button>
-        <button class="btn-save" id="btnSaveModal" onclick="salvaTappa()">💾 SALVA TAPPA</button>
+        <button class="btn-cancel" onclick="chiudiModale()">ANNULLA</button>
+        <button class="btn-save" id="btnSalvaTappa" onclick="salvaTappa()">💾 SALVA</button>
       </div>
     </div>
   </div>
@@ -629,356 +586,265 @@
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
     
-    let activeSheetName = localStorage.getItem("djRoute_active_sheet") || "ROADBOOK_APP";
-    let activeSheetsList = JSON.parse(localStorage.getItem("djRoute_sheets_list") || '["ROADBOOK_APP"]');
-
+    let schedeViaggi = [];
+    let schedaAttiva = "";
+    let tappeCorrenti = [];
     const GEO_CACHE = {};
     const ROUTE_CACHE = {};
 
-    function toggleHomeView() {
-      const hv = document.getElementById("homeView");
-      if (hv.style.display === "block") {
-        hv.style.display = "none";
-      } else {
-        renderHomeTrips();
-        hv.style.display = "block";
-      }
-    }
-
-    function renderHomeTrips() {
-      const grid = document.getElementById("tripsGrid");
-      grid.innerHTML = "";
-      activeSheetsList.forEach(name => {
-        const card = document.createElement("div");
-        card.className = `trip-card ${name === activeSheetName ? 'active' : ''}`;
-        card.innerHTML = `
-          <span class="trip-card-name">🏍️ ${name}</span>
-          <span style="font-size:12px; color:${name === activeSheetName ? 'var(--cyan)' : 'var(--text-muted)'}">
-            ${name === activeSheetName ? 'ATTIVO ✓' : 'Apri ➔'}
-          </span>
-        `;
-        card.onclick = () => {
-          activeSheetName = name;
-          localStorage.setItem("djRoute_active_sheet", activeSheetName);
-          document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
-          document.getElementById("homeView").style.display = "none";
-          sincronizzaCloud();
-        };
-        grid.appendChild(card);
-      });
-    }
-
-    async function creaNuovoFoglioViaggio() {
-      const nome = prompt("Nome del nuovo viaggio (es. Alpi 2026 o Kurdistan 2027):");
-      if (!nome || !nome.trim()) return;
-      const cleanName = nome.trim();
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "createSheet", newSheetName: cleanName })
-        });
-        if (!activeSheetsList.includes(cleanName)) activeSheetsList.push(cleanName);
-        localStorage.setItem("djRoute_sheets_list", JSON.stringify(activeSheetsList));
-        activeSheetName = cleanName;
-        localStorage.setItem("djRoute_active_sheet", activeSheetName);
-        document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
-        document.getElementById("homeView").style.display = "none";
-        renderRoadbook([]);
-        alert(`✅ Foglio "${cleanName}" creato sul foglio Google e pronto!`);
-      } catch (e) {
-        alert("Errore durante la creazione del nuovo foglio.");
-      }
-    }
-
-    async function rinominaViaggioAttivo() {
-      const nuovo = prompt("Nuovo nome per questo viaggio:", activeSheetName);
-      if (!nuovo || !nuovo.trim() || nuovo.trim() === activeSheetName) return;
-      const cleanNew = nuovo.trim();
-      const vecchio = activeSheetName;
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "renameSheet", oldSheetName: vecchio, newSheetName: cleanNew })
-        });
-        const idx = activeSheetsList.indexOf(vecchio);
-        if (idx !== -1) activeSheetsList[idx] = cleanNew;
-        localStorage.setItem("djRoute_sheets_list", JSON.stringify(activeSheetsList));
-        activeSheetName = cleanNew;
-        localStorage.setItem("djRoute_active_sheet", activeSheetName);
-        document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
-        alert(`✅ Viaggio rinominato in "${cleanNew}"!`);
-      } catch (e) {
-        alert("Errore durante la ridenominazione.");
-      }
-    }
-
-    // FORMATTAZIONE DATA GG/MM/AAAA
-    const inpData = document.getElementById("inpData");
-    inpData.addEventListener("input", (e) => {
-      let v = e.target.value.replace(/\D/g, "");
-      if (v.length > 2 && v.length <= 4) {
-        e.target.value = v.slice(0,2) + "/" + v.slice(2);
-      } else if (v.length > 4) {
-        e.target.value = v.slice(0,2) + "/" + v.slice(2,4) + "/" + v.slice(4,8);
-      }
+    window.addEventListener("DOMContentLoaded", () => {
+      mostraHome();
     });
 
-    // AUTOCOMPLETAMENTO
-    function setupAutocomplete(inputId, suggestBoxId) {
-      const input = document.getElementById(inputId);
-      const box = document.getElementById(suggestBoxId);
+    // FORMATTAZIONE DATA AUTOMATICA GG/MM/AAAA
+    document.getElementById("inpData").addEventListener("input", (e) => {
+      let v = e.target.value.replace(/\D/g, "");
+      if (v.length > 2 && v.length <= 4) e.target.value = v.slice(0,2) + "/" + v.slice(2);
+      else if (v.length > 4) e.target.value = v.slice(0,2) + "/" + v.slice(2,4) + "/" + v.slice(4,8);
+    });
+
+    // CALCOLO AUTOMATICO ACCONTO / PAGATO / DA PAGARE NEL MODALE
+    function aggiornaCalcoloPagamenti() {
+      const spesa = parseFloat(document.getElementById("inpSpesa").value) || 0;
+      const stato = document.getElementById("inpPagamento").value;
+      const inpPagato = document.getElementById("inpPagato");
+      const inpDaPagare = document.getElementById("inpDaPagare");
+
+      if (stato === "Pagato") {
+        inpPagato.value = spesa;
+        inpDaPagare.value = 0;
+      } else if (stato === "Da pagare") {
+        inpPagato.value = 0;
+        inpDaPagare.value = spesa;
+      } else {
+        const pagato = parseFloat(inpPagato.value) || 0;
+        inpDaPagare.value = Math.max(0, Math.round((spesa - pagato) * 100) / 100);
+      }
+    }
+
+    // AUTOCOMPLETAMENTO CITTA TRAMITE MAPPE OPENSTREETMAP
+    function attivaAutocompleteMappa(inputId, boxId, multiplo = false) {
+      const inp = document.getElementById(inputId);
+      const box = document.getElementById(boxId);
       let timer = null;
 
-      input.addEventListener("input", () => {
+      inp.addEventListener("input", () => {
         clearTimeout(timer);
-        const q = input.value.trim();
-        if (q.length < 3) { box.style.display = "none"; return; }
+        let raw = inp.value;
+        let query = multiplo ? raw.split(",").pop().trim() : raw.trim();
+        if (query.length < 3) { box.style.display = "none"; return; }
 
         timer = setTimeout(async () => {
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=5&addressdetails=1`);
-            const items = await res.json();
-            if (!items || items.length === 0) { box.style.display = "none"; return; }
+            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it`;
+            const res = await fetch(url);
+            const list = await res.json();
+            if (!list || list.length === 0) { box.style.display = "none"; return; }
 
             box.innerHTML = "";
-            items.forEach(it => {
+            list.forEach(item => {
               const div = document.createElement("div");
               div.className = "suggest-item";
-              div.innerText = it.display_name.split(",").slice(0, 3).join(",");
+              const parti = item.display_name.split(",");
+              const nomeBreve = parti.slice(0, 3).join(",");
+              div.innerText = "📍 " + nomeBreve;
               div.onclick = () => {
-                input.value = it.display_name.split(",")[0].trim();
-                GEO_CACHE[input.value.toLowerCase()] = { lat: parseFloat(it.lat), lon: parseFloat(it.lon) };
+                const cittaScelta = parti[0].trim();
+                if (multiplo && raw.includes(",")) {
+                  const precedenti = raw.split(",").slice(0, -1).map(s => s.trim()).join(", ");
+                  inp.value = precedenti + ", " + cittaScelta;
+                } else {
+                  inp.value = cittaScelta;
+                }
+                GEO_CACHE[cittaScelta.toLowerCase()] = { lat: parseFloat(item.lat), lon: parseFloat(item.lon), name: cittaScelta };
                 box.style.display = "none";
               };
               box.appendChild(div);
             });
             box.style.display = "block";
-          } catch(e) { box.style.display = "none"; }
-        }, 300);
+          } catch (e) { box.style.display = "none"; }
+        }, 280);
       });
 
       document.addEventListener("click", (e) => {
-        if (!input.contains(e.target) && !box.contains(e.target)) box.style.display = "none";
+        if (!inp.contains(e.target) && !box.contains(e.target)) box.style.display = "none";
       });
     }
 
-    setupAutocomplete("inpPartenza", "sugPartenza");
-    setupAutocomplete("inpPassaggio", "sugPassaggio");
-    setupAutocomplete("inpArrivo", "sugArrivo");
+    attivaAutocompleteMappa("inpPartenza", "sugPartenza", false);
+    attivaAutocompleteMappa("inpPassaggio", "sugPassaggio", true);
+    attivaAutocompleteMappa("inpArrivo", "sugArrivo", false);
 
-    async function geocode(location) {
-      if (!location) return null;
-      const key = location.trim().toLowerCase();
-      if (GEO_CACHE[key]) return GEO_CACHE[key];
-
-      try {
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(location)}&limit=1`);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          const coords = { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-          GEO_CACHE[key] = coords;
-          return coords;
-        }
-      } catch (e) {}
-      return null;
+    // NAVIGAZIONE VISTE (HOME vs DETTAGLIO)
+    async function mostraHome() {
+      schedaAttiva = "";
+      document.getElementById("vistaViaggio").style.display = "none";
+      document.getElementById("fabNuovaTappa").style.display = "none";
+      document.getElementById("vistaHome").style.display = "block";
+      await scaricaSchedeViaggi();
     }
 
-    async function getRouteStats(pts) {
-      if (pts.length < 2) return { km: 0, timeMin: 0, maxEle: 0 };
-      const coordStr = pts.map(p => `${p.lon},${p.lat}`).join(";");
-      if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
+    async function sincronizzaVistaAttiva() {
+      const btn = document.getElementById("btnSync");
+      btn.innerText = "⏳";
+      if (schedaAttiva) {
+        await apriSchedaViaggio(schedaAttiva);
+      } else {
+        await scaricaSchedeViaggi();
+      }
+      btn.innerText = "🔄";
+    }
 
+    async function scaricaSchedeViaggi() {
+      const cont = document.getElementById("listaSchedeViaggi");
       try {
-        const osrmUrl = `https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=false`;
-        const res = await fetch(osrmUrl);
-        const data = await res.json();
-        
-        let km = 0;
-        let timeMin = 0;
-        if (data.routes && data.routes.length > 0) {
-          km = Math.round(data.routes[0].distance / 1000);
-          timeMin = Math.round(data.routes[0].duration / 60);
+        const res = await fetch(`${SCRIPT_URL}?action=getSheets&_t=${Date.now()}`);
+        const fogli = await res.json();
+        if (Array.isArray(fogli)) {
+          schedeViaggi = fogli;
+          cont.innerHTML = "";
+          fogli.forEach(nome => {
+            const div = document.createElement("div");
+            div.className = "trip-item";
+            div.innerHTML = `
+              <div class="trip-item-title">🏍️ ${nome}</div>
+              <div class="trip-item-arrow">Apri ➔</div>
+            `;
+            div.onclick = () => apriSchedaViaggio(nome);
+            cont.appendChild(div);
+          });
         }
-
-        let maxEle = 0;
-        const lats = pts.map(p => p.lat).join(",");
-        const lons = pts.map(p => p.lon).join(",");
-        const eleRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lats}&longitude=${lons}`);
-        const eleData = await eleRes.json();
-        if (eleData && eleData.elevation) {
-          maxEle = Math.round(Math.max(...eleData.elevation));
-        }
-
-        const stats = { km, timeMin, maxEle };
-        ROUTE_CACHE[coordStr] = stats;
-        return stats;
       } catch (e) {
-        return { km: 0, timeMin: 0, maxEle: 0 };
+        cont.innerHTML = `<div style="text-align:center; padding:25px; color:var(--red);">Impossibile leggere i fogli. Tocca 🔄 in alto.</div>`;
       }
     }
 
-    function getTempClass(tempStr) {
-      if (!tempStr) return "temp-mild";
-      const matches = tempStr.match(/-?\d+/g);
-      if (!matches) return "temp-mild";
-      const nums = matches.map(Number);
-      const minT = Math.min(...nums);
-      const maxT = Math.max(...nums);
+    async function creaNuovoFoglioViaggio() {
+      const nome = prompt("Inserisci il nome del nuovo viaggio (es. Marocco 2027):");
+      if (!nome || !nome.trim()) return;
+      const clean = nome.trim();
 
-      if (maxT > 28) return "temp-hot";
-      if (minT < 15) return "temp-cold";
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "createSheet", newSheetName: clean })
+      });
+
+      setTimeout(() => scaricaSchedeViaggi(), 1200);
+    }
+
+    async function apriSchedaViaggio(nomeFoglio) {
+      schedaAttiva = nomeFoglio;
+      document.getElementById("vistaHome").style.display = "none";
+      document.getElementById("vistaViaggio").style.display = "block";
+      document.getElementById("fabNuovaTappa").style.display = "block";
+      document.getElementById("nomeViaggioAttivo").innerText = "🏍️ " + nomeFoglio;
+
+      const cont = document.getElementById("contenitoreTappe");
+      cont.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">Caricamento tappe di "${nomeFoglio}"...</div>`;
+
+      try {
+        const res = await fetch(`${SCRIPT_URL}?sheetName=${encodeURIComponent(nomeFoglio)}&_t=${Date.now()}`);
+        tappeCorrenti = await res.json();
+        renderTappeViaggio(tappeCorrenti);
+      } catch (e) {
+        cont.innerHTML = `<div style="text-align:center; padding:30px; color:var(--red);">Errore caricamento tappe.</div>`;
+      }
+    }
+
+    function getTempColorClass(tempStr) {
+      if (!tempStr) return "temp-mild";
+      const nums = (tempStr.match(/-?\d+/g) || []).map(Number);
+      if (nums.length === 0) return "temp-mild";
+      if (Math.max(...nums) > 28) return "temp-hot";
+      if (Math.min(...nums) < 15) return "temp-cold";
       return "temp-mild";
     }
 
-    function getWmoInfo(code) {
-      if (code === 0) return { icon: "☀️" };
-      if ([1, 2].includes(code)) return { icon: "🌤️" };
-      if (code === 3) return { icon: "☁️" };
-      if ([45, 48].includes(code)) return { icon: "🌫️" };
-      if ([51, 53, 55].includes(code)) return { icon: "🌦️" };
-      if ([61, 63, 65].includes(code)) return { icon: "🌧️" };
-      if ([71, 73, 75].includes(code)) return { icon: "🌨️" };
-      if ([80, 81, 82].includes(code)) return { icon: "🌦️" };
-      if ([95, 96, 99].includes(code)) return { icon: "⛈️" };
-      return { icon: "🌡️" };
+    function toggleProfiloAltimetrico(idx) {
+      const box = document.getElementById(`ele-box-${idx}`);
+      if (box) box.style.display = (box.style.display === "block") ? "none" : "block";
     }
 
-    async function getPointWeather(lat, lon, hourInt) {
-      try {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code&timezone=auto&forecast_days=14`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data && data.hourly) {
-          const idx = hourInt;
-          const temp = Math.round(data.hourly.temperature_2m[idx] || 20);
-          const rain = data.hourly.precipitation_probability[idx] || 0;
-          const code = data.hourly.weather_code[idx] || 0;
-          return { temp, rain, icon: getWmoInfo(code).icon };
-        }
-      } catch (e) {}
-      return { temp: "--", rain: 0, icon: "🌤️" };
+    // DISEGNA IL PROFILO ALTIMETRICO SVG
+    function generaSvgAltimetria(puntiQuote) {
+      if (!puntiQuote || puntiQuote.length < 2) return `<div style="font-size:11px; color:var(--text-muted);">Dati altimetrici non sufficienti</div>`;
+      const W = 320, H = 95;
+      const maxE = Math.max(...puntiQuote.map(p => p.ele), 100);
+      const stepX = (W - 40) / (puntiQuote.length - 1);
+
+      const coords = puntiQuote.map((p, idx) => {
+        const x = 20 + idx * stepX;
+        const y = H - 22 - ((p.ele / maxE) * (H - 42));
+        return { x, y, ele: p.ele, name: p.name };
+      });
+
+      const polyPoints = `${coords[0].x},${H-20} ` + coords.map(c => `${c.x},${c.y}`).join(" ") + ` ${coords[coords.length-1].x},${H-20}`;
+      const linePoints = coords.map(c => `${c.x},${c.y}`).join(" ");
+
+      let dotsHtml = "";
+      coords.forEach(c => {
+        dotsHtml += `
+          <circle cx="${c.x}" cy="${c.y}" r="3.5" fill="#00e5ff" />
+          <text x="${c.x}" y="${c.y - 6}" fill="#fff" font-size="9" font-family="Chakra Petch" font-weight="700" text-anchor="middle">${c.ele}m</text>
+          <text x="${c.x}" y="${H - 6}" fill="#94a3b8" font-size="8" text-anchor="middle">${c.name.slice(0,9)}</text>
+        `;
+      });
+
+      return `
+        <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto;">
+          <polygon points="${polyPoints}" fill="rgba(0, 229, 255, 0.15)" />
+          <polyline points="${linePoints}" fill="none" stroke="#00e5ff" stroke-width="2" />
+          ${dotsHtml}
+        </svg>
+      `;
     }
 
-    // CARICAMENTO INIZIALE
-    window.addEventListener("DOMContentLoaded", () => {
-      document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
-      caricaTappeLocali();
-      scaricaElencoFogli();
-    });
+    // RENDER SCHEDE TAPPA
+    async function renderTappeViaggio(tappe) {
+      const cont = document.getElementById("contenitoreTappe");
+      const statsHeader = document.getElementById("riepilogoKmViaggio");
+      cont.innerHTML = "";
 
-    async function scaricaElencoFogli() {
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getSheets&_t=${Date.now()}`);
-        const sheets = await res.json();
-        if (Array.isArray(sheets) && sheets.length > 0) {
-          activeSheetsList = sheets;
-          localStorage.setItem("djRoute_sheets_list", JSON.stringify(activeSheetsList));
-          if (!activeSheetsList.includes(activeSheetName)) {
-            activeSheetName = activeSheetsList[0];
-            localStorage.setItem("djRoute_active_sheet", activeSheetName);
-            document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
-          }
-        }
-      } catch (e) {}
-    }
-
-    function caricaTappeLocali() {
-      const storageKey = `djRoute_tappe_${activeSheetName}`;
-      const cached = localStorage.getItem(storageKey);
-      if (cached) {
-        try {
-          renderRoadbook(JSON.parse(cached));
-          return;
-        } catch(e) {}
-      }
-      renderRoadbook([]);
-    }
-
-    async function sincronizzaCloud() {
-      const btn = document.getElementById("btnSyncCloud");
-      const status = document.getElementById("syncStatus");
-      btn.disabled = true;
-      btn.innerHTML = "⏳ CARICO...";
-      status.innerText = "Download tappe...";
-
-      try {
-        await scaricaElencoFogli();
-        const url = `${SCRIPT_URL}?sheetName=${encodeURIComponent(activeSheetName)}&_nocache=${Date.now()}`;
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("Errore API");
-
-        const tappe = await response.json();
-        const storageKey = `djRoute_tappe_${activeSheetName}`;
-        localStorage.setItem(storageKey, JSON.stringify(tappe));
-        status.innerText = "Calcolo percorsi...";
-        await renderRoadbook(tappe);
-        status.innerText = `Aggiornato: ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
-      } catch (err) {
-        alert("Errore sincronizzazione con Google Sheets.");
-        status.innerText = "Errore connessione";
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = "🔄 AGGIORNA";
-      }
-    }
-
-    async function renderRoadbook(tappe) {
-      const container = document.getElementById("tappeContainer");
-      const counter = document.getElementById("stageCounter");
-      const totalKmHeader = document.getElementById("totalKmHeader");
-
-      container.innerHTML = "";
-      counter.innerText = `${tappe.length} tappe`;
-
-      if (tappe.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:50px 20px; color:#94a3b8;">Nessuna tappa nel viaggio "${activeSheetName}".<br>Tocca <strong>AGGIORNA</strong> o <strong>➕ NUOVA TAPPA</strong>.</div>`;
-        totalKmHeader.innerText = "Totale: 0 km";
+      if (!tappe || tappe.length === 0) {
+        statsHeader.innerText = "0 tappe • 0 km";
+        cont.innerHTML = `<div style="text-align:center; padding:45px 20px; color:var(--text-muted);">Nessuna tappa in questo viaggio.<br>Tocca <strong>➕ NUOVA TAPPA</strong> in basso a destra.</div>`;
         return;
       }
 
-      let totalTripKm = 0;
+      let sommaKm = 0;
 
       for (let i = 0; i < tappe.length; i++) {
         const t = tappe[i];
+        sommaKm += (parseFloat(t.km) || 0);
+
         const card = document.createElement("article");
         card.className = "card";
 
-        let btnRouteHtml = "";
-        if (t.myRouteUrl && t.myRouteUrl.trim().startsWith("http")) {
-          btnRouteHtml = `<a href="${t.myRouteUrl.trim()}" target="_blank" class="btn-myroute">🚀 APRI IN MYROUTE-APP</a>`;
-        } else {
-          const gmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza)}&destination=${encodeURIComponent(t.arrivo)}${t.passaggio ? '&waypoints=' + encodeURIComponent(t.passaggio) : ''}`;
-          btnRouteHtml = `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ APRI IN MAPPA</a>`;
-        }
+        const gmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza)}&destination=${encodeURIComponent(t.arrivo)}${t.passaggio ? '&waypoints=' + encodeURIComponent(t.passaggio) : ''}`;
+        const btnRouteHtml = (t.myRouteUrl && t.myRouteUrl.startsWith("http"))
+          ? `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute">🚀 APRI IN MYROUTE-APP</a>`
+          : `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ APRI PERCORSO IN MAPPA</a>`;
 
-        const baseOra = t.ora ? parseInt(t.ora.split(":")[0]) || 8 : 8;
-        const baseMin = t.ora ? parseInt(t.ora.split(":")[1]) || 30 : 30;
-        const tempClass = getTempClass(t.tempMedie);
-
-        // Prezzo visualizzato rigorosamente pulito
-        const spesaDisplay = t.spesa ? `${Math.round(t.spesa)} €` : '-';
-        const daPagareVal = Math.round(t.daPagare || 0);
-        const daPagareDisplay = daPagareVal > 0 ? `${daPagareVal} €` : 'Saldato';
+        const tClass = getTempColorClass(t.tempMedie);
+        const bH = t.ora ? parseInt(t.ora.split(":")[0]) || 8 : 8;
+        const bM = t.ora ? parseInt(t.ora.split(":")[1]) || 30 : 30;
 
         card.innerHTML = `
           <div class="card-head">
-            <div class="card-head-left">
+            <div>
               <span class="card-title">TAPPA #${i + 1}</span>
               <span class="card-date">${t.data || 'DATA N/D'}</span>
             </div>
-            <div class="card-head-actions">
-              <button class="btn-card-ctrl btn-card-edit" onclick="modificaTappa(${i})" title="Modifica Tappa">✏️ Modifica</button>
-              <button class="btn-card-ctrl btn-card-del" onclick="eliminaTappa(${i})" title="Elimina Tappa">🗑️</button>
+            <div class="card-actions">
+              <button class="btn-card btn-edit" onclick="apriModaleModifica(${i})">✏️ Modifica</button>
+              <button class="btn-card btn-del" onclick="eliminaTappa(${t.id})">🗑️</button>
             </div>
           </div>
 
           <div class="card-body">
+            <!-- PERCORSO -->
             <div class="route-box">
               <div class="route-point dep">
                 <div class="point-label">Partenza (Ore ${t.ora || '08:30'})</div>
@@ -995,7 +861,7 @@
               </div>
             </div>
 
-            <!-- CRUSCOTTO SU STRADA -->
+            <!-- TELEMETRIA & TEMPERATURE STORICHE -->
             <div class="road-telemetry">
               <div class="tele-item">
                 <div class="tele-label">Distanza</div>
@@ -1011,25 +877,34 @@
               </div>
               <div class="tele-item">
                 <div class="tele-label">Temp Medie</div>
-                <div class="tele-val ${tempClass}" id="temp-val-${i}">${t.tempMedie || '--° / --°'}</div>
+                <div class="tele-val ${tClass}" id="temp-val-${i}">${t.tempMedie || '--° / --°'}</div>
               </div>
             </div>
 
-            <!-- ALLOGGIO E SPESE PULITE -->
-            <div class="grid-info">
-              <div><span>Alloggio</span><strong>${t.alloggio || 'Libero / Tenda'}</strong></div>
-              <div><span>Parcheggio</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
-              <div><span>Spesa Prevista</span><strong>${spesaDisplay}</strong></div>
-              <div><span>Residuo</span><strong style="color:${daPagareVal > 0 ? '#f43f5e' : '#10b981'}">${daPagareDisplay}</strong></div>
+            <!-- TASTO PROFILO ALTIMETRICO -->
+            <button class="btn-elevation" onclick="toggleProfiloAltimetrico(${i})">
+              ⛰️ PROFILO ALTIMETRICO E QUOTE TAPPA ▾
+            </button>
+            <div class="ele-box" id="ele-box-${i}">
+              <div style="font-size:11px; color:var(--text-muted); text-align:center;">Calcolo curva altimetrica in corso...</div>
             </div>
 
-            <!-- METEO STEP 45 MIN -->
+            <!-- ALLOGGIO, PAGAMENTI, ACCONTO, METODO -->
+            <div class="grid-info">
+              <div><span>Alloggio</span><strong>${t.alloggio || 'Non spec.'} ${t.piattaforma ? '('+t.piattaforma+')' : ''}</strong></div>
+              <div><span>Parcheggio</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
+              <div><span>Spesa / Stato</span><strong>${t.spesa ? t.spesa + ' €' : '0 €'} (${t.pagamento || 'Da pagare'})</strong></div>
+              <div><span>Pagato / Da Pagare</span><strong>${t.pagato || 0} € / <b style="color:${t.daPagare > 0 ? '#f43f5e' : '#10b981'}">${t.daPagare > 0 ? t.daPagare + ' €' : 'Saldato'}</b></strong></div>
+              <div style="grid-column: span 2;"><span>Metodo di Pagamento</span><strong>${t.metodoPagamento || 'Non specificato'}</strong></div>
+            </div>
+
+            <!-- METEO ROTTA OGNI 45 MIN -->
             <div class="weather-box">
               <div class="weather-head">
-                <span>METEO ROTTA (STEP 45 MIN)</span>
-                <span style="color:#94a3b8;">Open-Meteo HD</span>
+                <span>METEO ROTTA & TEMPERATURE</span>
+                <span style="color:#94a3b8;">Step 45 min</span>
               </div>
-              <div class="weather-scroll" id="weather-timeline-${i}">
+              <div class="weather-scroll" id="weather-line-${i}">
                 <div class="weather-cell"><div class="w-time">--:--</div><div class="w-icon">⏳</div><div class="w-temp">Calcolo...</div></div>
               </div>
             </div>
@@ -1040,242 +915,312 @@
           </div>
         `;
 
-        container.appendChild(card);
+        cont.appendChild(card);
 
-        // CALCOLO OSRM + ELEVATION + METEO
-        (async (idx, tappaData, bH, bM) => {
-          const locList = [];
-          if (tappaData.partenza) locList.push({ name: tappaData.partenza, delta: 0 });
-          if (tappaData.passaggio) {
-            tappaData.passaggio.split(",").forEach((p, pIdx) => {
-              locList.push({ name: p.trim(), delta: (pIdx + 1) * 45 });
-            });
+        // CALCOLO REALTIME KM, ALTIMETRIA, TEMPERATURE STORICHE E METEO
+        calcolaTelemetriaCard(i, t, bH, bM);
+      }
+
+      statsHeader.innerText = `${tappe.length} tappe • ${Math.round(sommaKm)} km`;
+    }
+
+    async function calcolaTelemetriaCard(idx, t, bH, bM) {
+      const locs = [];
+      if (t.partenza) locs.push({ name: t.partenza, delta: 0 });
+      if (t.passaggio) {
+        t.passaggio.split(",").forEach((p, pIdx) => {
+          if (p.trim()) locs.push({ name: p.trim(), delta: (pIdx + 1) * 45 });
+        });
+      }
+      if (t.arrivo) {
+        const lastDelta = locs.length > 1 ? locs[locs.length - 1].delta + 45 : 90;
+        locs.push({ name: t.arrivo, delta: lastDelta });
+      }
+
+      const coords = [];
+      for (const item of locs) {
+        const c = await geocode(item.name);
+        if (c) coords.push({ ...c, name: item.name, delta: item.delta });
+      }
+
+      if (coords.length >= 2) {
+        const stats = await getRouteAndElevation(coords);
+        const kmEl = document.getElementById(`km-val-${idx}`);
+        const timeEl = document.getElementById(`time-val-${idx}`);
+        const eleEl = document.getElementById(`ele-val-${idx}`);
+        const eleBox = document.getElementById(`ele-box-${idx}`);
+
+        const kmToShow = t.km > 0 ? t.km : stats.km;
+        if (kmEl) kmEl.innerText = `${Math.round(kmToShow)} km`;
+        if (timeEl) timeEl.innerText = `${Math.floor(stats.timeMin/60)}h ${stats.timeMin%60}m`;
+        if (eleEl) eleEl.innerText = `${stats.maxEle} m`;
+        if (eleBox) eleBox.innerHTML = generaSvgAltimetria(stats.puntiQuote);
+
+        // Se manca la Temp Media storica nel foglio, la calcola al volo
+        const tempEl = document.getElementById(`temp-val-${idx}`);
+        if ((!t.tempMedie || t.tempMedie === "") && tempEl) {
+          const dest = coords[coords.length - 1];
+          const tStorica = await getHistoricalTemp(dest.lat, dest.lon, t.data);
+          if (tStorica) {
+            tempEl.innerText = tStorica;
+            tempEl.className = "tele-val " + getTempColorClass(tStorica);
           }
-          if (tappaData.arrivo) {
-            const lastDelta = locList.length > 1 ? locList[locList.length - 1].delta + 45 : 90;
-            locList.push({ name: tappaData.arrivo, delta: lastDelta });
-          }
+        }
+      }
 
-          const resolvedCoords = [];
-          for (const item of locList) {
-            const c = await geocode(item.name);
-            if (c) resolvedCoords.push(c);
-          }
+      // Popola Meteo Rotta 45 min
+      const wLine = document.getElementById(`weather-line-${idx}`);
+      if (!wLine) return;
+      let wHtml = "";
+      for (const c of coords) {
+        const totMin = bH * 60 + bM + c.delta;
+        const h = Math.floor(totMin / 60) % 24;
+        const m = totMin % 60;
+        const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+        const w = await getPointWeather(c.lat, c.lon, h);
+        wHtml += `
+          <div class="weather-cell">
+            <div class="w-time">${timeStr}</div>
+            <div class="w-icon">${w.icon}</div>
+            <div class="w-temp">${w.temp}°C</div>
+            <div class="w-rain">💧${w.rain}%</div>
+            <div class="w-name">${c.name}</div>
+          </div>
+        `;
+      }
+      if (wHtml) wLine.innerHTML = wHtml;
+    }
 
-          if (resolvedCoords.length >= 2) {
-            const stats = await getRouteStats(resolvedCoords);
-            const kmEl = document.getElementById(`km-val-${idx}`);
-            const timeEl = document.getElementById(`time-val-${idx}`);
-            const eleEl = document.getElementById(`ele-val-${idx}`);
+    async function geocode(loc) {
+      if (!loc) return null;
+      const k = loc.trim().toLowerCase();
+      if (GEO_CACHE[k]) return GEO_CACHE[k];
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(loc)}&limit=1`);
+        const d = await r.json();
+        if (d && d.length > 0) {
+          const c = { lat: parseFloat(d[0].lat), lon: parseFloat(d[0].lon) };
+          GEO_CACHE[k] = c;
+          return c;
+        }
+      } catch(e){}
+      return null;
+    }
 
-            const kmFinal = tappaData.km > 0 ? tappaData.km : stats.km;
-            if (kmEl) kmEl.innerText = `${Math.round(kmFinal)} km`;
-            if (timeEl) {
-              const h = Math.floor(stats.timeMin / 60);
-              const m = stats.timeMin % 60;
-              timeEl.innerText = `${h}h ${m}m`;
-            }
-            if (eleEl) eleEl.innerText = `${stats.maxEle} m`;
+    async function getRouteAndElevation(coords) {
+      const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";");
+      if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
+      try {
+        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=false`);
+        const data = await res.json();
+        let km = 0, timeMin = 0;
+        if (data.routes && data.routes.length > 0) {
+          km = Math.round(data.routes[0].distance / 1000);
+          timeMin = Math.round(data.routes[0].duration / 60);
+        }
 
-            totalTripKm += kmFinal;
-            totalKmHeader.innerText = `Totale: ${Math.round(totalTripKm)} km`;
-          }
+        const lats = coords.map(p => p.lat).join(",");
+        const lons = coords.map(p => p.lon).join(",");
+        const eleRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lats}&longitude=${lons}`);
+        const eleData = await eleRes.json();
+        let maxEle = 0;
+        const puntiQuote = [];
+        if (eleData && eleData.elevation) {
+          maxEle = Math.round(Math.max(...eleData.elevation));
+          coords.forEach((c, idx) => {
+            puntiQuote.push({ name: c.name, ele: Math.round(eleData.elevation[idx] || 0) });
+          });
+        }
 
-          const wCont = document.getElementById(`weather-timeline-${idx}`);
-          if (!wCont) return;
-
-          let stepsHtml = "";
-          for (const item of locList) {
-            const totMin = bH * 60 + bM + item.delta;
-            const h = Math.floor(totMin / 60) % 24;
-            const m = totMin % 60;
-            const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-
-            const coords = await geocode(item.name);
-            let w = { icon: "🌤️", temp: "--", rain: 0 };
-            if (coords) w = await getPointWeather(coords.lat, coords.lon, h);
-
-            stepsHtml += `
-              <div class="weather-cell">
-                <div class="w-time">${timeStr}</div>
-                <div class="w-icon">${w.icon}</div>
-                <div class="w-temp">${w.temp}°C</div>
-                <div class="w-rain">💧${w.rain}%</div>
-                <div class="w-name">${item.name}</div>
-              </div>
-            `;
-          }
-          wCont.innerHTML = stepsHtml || `<div style="font-size:11px; color:#64748b;">Meteo non disponibile</div>`;
-        })(i, t, baseOra, baseMin);
+        const out = { km, timeMin, maxEle, puntiQuote };
+        ROUTE_CACHE[coordStr] = out;
+        return out;
+      } catch(e){
+        return { km: 0, timeMin: 0, maxEle: 0, puntiQuote: [] };
       }
     }
 
-    function modificaTappa(index) {
-      const storageKey = `djRoute_tappe_${activeSheetName}`;
-      const tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
-      const t = tappe[index];
-      if (!t) return;
+    async function getHistoricalTemp(lat, lon, dataStr) {
+      try {
+        let m = "05", d = "15";
+        if (dataStr && dataStr.includes("/")) {
+          const parts = dataStr.split("/");
+          d = String(parts[0]).padStart(2, "0");
+          m = String(parts[1]).padStart(2, "0");
+        }
+        const refDate = `2024-${m}-${d}`;
+        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${refDate}&end_date=${refDate}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+        const res = await fetch(url);
+        const j = await res.json();
+        if (j && j.daily && j.daily.temperature_2m_min) {
+          return `${Math.round(j.daily.temperature_2m_min[0])}° / ${Math.round(j.daily.temperature_2m_max[0])}°`;
+        }
+      } catch(e){}
+      return "";
+    }
 
-      document.getElementById("modalTitle").innerText = `✏️ Modifica Tappa #${index + 1}`;
-      document.getElementById("btnSaveModal").innerText = "💾 SALVA MODIFICHE";
-      document.getElementById("editIndex").value = index;
-      document.getElementById("editRowId").value = t.id || "";
+    async function getPointWeather(lat, lon, h) {
+      try {
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code&timezone=auto`);
+        const d = await res.json();
+        if (d && d.hourly) {
+          return {
+            temp: Math.round(d.hourly.temperature_2m[h] || 20),
+            rain: d.hourly.precipitation_probability[h] || 0,
+            icon: d.hourly.weather_code[h] > 50 ? "🌧️" : "🌤️"
+          };
+        }
+      } catch(e){}
+      return { temp: "--", rain: 0, icon: "🌤️" };
+    }
+
+    // GESTIONE MODALE NUOVA / MODIFICA TAPPA
+    function apriModaleNuovaTappa() {
+      document.getElementById("modalTitle").innerText = `🏍️ Nuova Tappa (${schedaAttiva})`;
+      document.getElementById("editRowId").value = "";
+      document.getElementById("editKm").value = "0";
+      document.getElementById("editTempMedie").value = "";
+
+      const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null;
+      document.getElementById("inpData").value = "";
+      document.getElementById("inpOra").value = "08:30";
+      document.getElementById("inpPartenza").value = ultima ? (ultima.arrivo || "") : "";
+      document.getElementById("inpPassaggio").value = "";
+      document.getElementById("inpArrivo").value = "";
+      document.getElementById("inpAlloggio").value = "";
+      document.getElementById("inpPiattaforma").value = "";
+      document.getElementById("inpSpesa").value = "";
+      document.getElementById("inpPagamento").value = "Da pagare";
+      document.getElementById("inpPagato").value = "0";
+      document.getElementById("inpDaPagare").value = "0";
+      document.getElementById("inpMetodo").value = "";
+      document.getElementById("inpParcheggio").value = "";
+      document.getElementById("inpMyRoute").value = "";
+      document.getElementById("inpNote").value = "";
+
+      document.getElementById("modalTappa").style.display = "block";
+    }
+
+    function apriModaleModifica(idx) {
+      const t = tappeCorrenti[idx];
+      if (!t) return;
+      document.getElementById("modalTitle").innerText = `✏️ Modifica Tappa #${idx + 1}`;
+      document.getElementById("editRowId").value = t.id;
+      document.getElementById("editKm").value = t.km || 0;
+      document.getElementById("editTempMedie").value = t.tempMedie || "";
 
       document.getElementById("inpData").value = t.data || "";
       document.getElementById("inpOra").value = t.ora || "08:30";
-      document.getElementById("inpSpesa").value = Math.round(t.spesa || 0);
       document.getElementById("inpPartenza").value = t.partenza || "";
       document.getElementById("inpPassaggio").value = t.passaggio || "";
       document.getElementById("inpArrivo").value = t.arrivo || "";
       document.getElementById("inpAlloggio").value = t.alloggio || "";
+      document.getElementById("inpPiattaforma").value = t.piattaforma || "";
+      document.getElementById("inpSpesa").value = t.spesa || 0;
+      document.getElementById("inpPagamento").value = t.pagamento || "Da pagare";
+      document.getElementById("inpPagato").value = t.pagato || 0;
+      document.getElementById("inpDaPagare").value = t.daPagare || 0;
+      document.getElementById("inpMetodo").value = t.metodoPagamento || "";
+      document.getElementById("inpParcheggio").value = t.parcheggio || "";
       document.getElementById("inpMyRoute").value = t.myRouteUrl || "";
       document.getElementById("inpNote").value = t.note || "";
 
       document.getElementById("modalTappa").style.display = "block";
     }
 
-    async function eliminaTappa(index) {
-      const storageKey = `djRoute_tappe_${activeSheetName}`;
-      let tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
-      const tappa = tappe[index];
-      if (!tappa) return;
-
-      if (!confirm(`Vuoi eliminare la Tappa #${index + 1} (${tappa.partenza} ➔ ${tappa.arrivo})?`)) {
-        return;
-      }
-
-      tappe.splice(index, 1);
-      localStorage.setItem(storageKey, JSON.stringify(tappe));
-      renderRoadbook(tappe);
-
-      try {
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "delete", sheetName: activeSheetName, rowId: tappa.id })
-        });
-      } catch (e) {}
-    }
-
-    function apriModaleNuovaTappa() {
-      document.getElementById("modalTitle").innerText = "🏍️ Inserisci Nuova Tappa";
-      document.getElementById("btnSaveModal").innerText = "💾 SALVA TAPPA";
-      document.getElementById("editIndex").value = "-1";
-      document.getElementById("editRowId").value = "";
-
-      document.getElementById("inpData").value = "";
-      document.getElementById("inpOra").value = "08:30";
-      document.getElementById("inpSpesa").value = "";
-      document.getElementById("inpPassaggio").value = "";
-      document.getElementById("inpArrivo").value = "";
-      document.getElementById("inpAlloggio").value = "";
-      document.getElementById("inpMyRoute").value = "";
-      document.getElementById("inpNote").value = "";
-
-      const storageKey = `djRoute_tappe_${activeSheetName}`;
-      const cached = localStorage.getItem(storageKey);
-      if (cached) {
-        try {
-          const tappe = JSON.parse(cached);
-          if (tappe.length > 0) {
-            const ultima = tappe[tappe.length - 1];
-            if (ultima.arrivo) document.getElementById("inpPartenza").value = ultima.arrivo;
-          }
-        } catch(e) {}
-      }
-      document.getElementById("modalTappa").style.display = "block";
-    }
-
-    function chiudiModaleNuovaTappa() {
+    function chiudiModale() {
       document.getElementById("modalTappa").style.display = "none";
     }
 
+    async function eliminaTappa(rowId) {
+      if (!confirm("Confermi l'eliminazione di questa tappa?")) return;
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action: "delete", sheetName: schedaAttiva, rowId: rowId })
+      });
+      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1000);
+    }
+
+    // SALVA TAPPA CON CALCOLO AUTOMATICO KM E TEMPERATURE PRIMA DI INVIARE AL FOGLIO
     async function salvaTappa() {
+      const dep = document.getElementById("inpPartenza").value.trim();
+      const via = document.getElementById("inpPassaggio").value.trim();
+      const arr = document.getElementById("inpArrivo").value.trim();
       const dataStr = document.getElementById("inpData").value.trim();
-      const partenza = document.getElementById("inpPartenza").value.trim();
-      const arrivo = document.getElementById("inpArrivo").value.trim();
-      const editIdx = parseInt(document.getElementById("editIndex").value);
       const rowId = document.getElementById("editRowId").value;
 
-      if (!partenza || !arrivo) {
-        alert("Inserisci almeno Partenza e Arrivo!");
+      if (!dep || !arr) {
+        alert("Inserisci Città di Partenza e Arrivo!");
         return;
       }
 
-      const storageKey = `djRoute_tappe_${activeSheetName}`;
-      let tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
-      const spesaVal = Math.round(parseFloat(document.getElementById("inpSpesa").value) || 0);
+      const btn = document.getElementById("btnSalvaTappa");
+      btn.innerText = "⏳ CALCOLO E SALVO...";
+      btn.disabled = true;
 
-      if (editIdx >= 0 && editIdx < tappe.length) {
-        const existing = tappe[editIdx];
-        existing.data = dataStr || existing.data;
-        existing.ora = document.getElementById("inpOra").value || existing.ora;
-        existing.partenza = partenza;
-        existing.passaggio = document.getElementById("inpPassaggio").value.trim();
-        existing.arrivo = arrivo;
-        existing.alloggio = document.getElementById("inpAlloggio").value.trim();
-        existing.spesa = spesaVal;
-        existing.daPagare = spesaVal;
-        existing.note = document.getElementById("inpNote").value.trim();
-        existing.myRouteUrl = document.getElementById("inpMyRoute").value.trim();
+      // Calcola automaticamente KM e Temp Medie da salvare anche sul foglio Excel
+      let kmCalc = parseFloat(document.getElementById("editKm").value) || 0;
+      let tempCalc = document.getElementById("editTempMedie").value || "";
 
-        localStorage.setItem(storageKey, JSON.stringify(tappe));
-        chiudiModaleNuovaTappa();
-        renderRoadbook(tappe);
+      try {
+        const nomi = [dep];
+        if (via) via.split(",").forEach(p => { if (p.trim()) nomi.push(p.trim()); });
+        nomi.push(arr);
 
-        try {
-          await fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "update",
-              sheetName: activeSheetName,
-              rowId: rowId,
-              ...existing
-            })
-          });
-        } catch (err) {}
-      } else {
-        const nuovaTappa = {
-          data: dataStr || "Data N/D",
-          ora: document.getElementById("inpOra").value || "08:30",
-          partenza: partenza,
-          passaggio: document.getElementById("inpPassaggio").value.trim(),
-          arrivo: arrivo,
-          km: 0,
-          tempMedie: "",
-          alloggio: document.getElementById("inpAlloggio").value.trim(),
-          piattaforma: "",
-          spesa: spesaVal,
-          pagamento: "Da pagare",
-          pagato: 0,
-          daPagare: spesaVal,
-          metodoPagamento: "",
-          parcheggio: "",
-          note: document.getElementById("inpNote").value.trim(),
-          myRouteUrl: document.getElementById("inpMyRoute").value.trim()
-        };
+        const pts = [];
+        for (const n of nomi) {
+          const c = await geocode(n);
+          if (c) pts.push({ ...c, name: n });
+        }
+        if (pts.length >= 2) {
+          const st = await getRouteAndElevation(pts);
+          if (st.km > 0) kmCalc = st.km;
+          const dest = pts[pts.length - 1];
+          const tSt = await getHistoricalTemp(dest.lat, dest.lon, dataStr);
+          if (tSt) tempCalc = tSt;
+        }
+      } catch (e) {}
 
-        tappe.push(nuovaTappa);
-        localStorage.setItem(storageKey, JSON.stringify(tappe));
-        chiudiModaleNuovaTappa();
-        renderRoadbook(tappe);
+      const spesa = parseFloat(document.getElementById("inpSpesa").value) || 0;
+      const pagato = parseFloat(document.getElementById("inpPagato").value) || 0;
+      const daPagare = parseFloat(document.getElementById("inpDaPagare").value) || 0;
 
-        try {
-          await fetch(SCRIPT_URL, {
-            method: "POST",
-            mode: "no-cors",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "create",
-              sheetName: activeSheetName,
-              ...nuovaTappa
-            })
-          });
-        } catch (err) {}
-      }
+      const payload = {
+        sheetName: schedaAttiva,
+        action: rowId ? "update" : "create",
+        rowId: rowId || undefined,
+        data: dataStr,
+        ora: document.getElementById("inpOra").value || "08:30",
+        partenza: dep,
+        passaggio: via,
+        arrivo: arr,
+        km: kmCalc,
+        tempMedie: tempCalc,
+        alloggio: document.getElementById("inpAlloggio").value.trim(),
+        piattaforma: document.getElementById("inpPiattaforma").value,
+        spesa: spesa,
+        pagamento: document.getElementById("inpPagamento").value,
+        pagato: pagato,
+        daPagare: daPagare,
+        metodoPagamento: document.getElementById("inpMetodo").value.trim(),
+        parcheggio: document.getElementById("inpParcheggio").value.trim(),
+        note: document.getElementById("inpNote").value.trim(),
+        myRouteUrl: document.getElementById("inpMyRoute").value.trim()
+      };
+
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      btn.innerText = "💾 SALVA";
+      btn.disabled = false;
+      chiudiModale();
+      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1100);
     }
   </script>
 </body>
