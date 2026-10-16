@@ -33,23 +33,24 @@
       color: var(--text);
       font-family: 'Inter', sans-serif;
       padding: 12px;
-      padding-bottom: 100px;
+      padding-bottom: 110px;
       -webkit-font-smoothing: antialiased;
     }
 
+    /* BARRA SUPERIORE / CRUSCOTTO */
     header {
       background: linear-gradient(145deg, #162032, #0d131f);
       border: 1px solid var(--border);
       border-radius: 14px;
       padding: 14px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       box-shadow: 0 4px 20px rgba(0,0,0,0.5);
     }
     .top-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .logo {
       font-family: 'Chakra Petch', sans-serif;
@@ -71,6 +72,39 @@
       border-radius: 8px;
       cursor: pointer;
     }
+    .btn-sync:active { transform: scale(0.96); }
+
+    /* SELETTORE VIAGGI / HOMEPAGE MULTI-SCHEDA */
+    .trips-bar {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+      scrollbar-width: none;
+    }
+    .trips-bar::-webkit-scrollbar { display: none; }
+    .trip-tab {
+      flex: 0 0 auto;
+      background: #0f1726;
+      border: 1px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+    .trip-tab.active {
+      background: var(--cyan);
+      color: #0b0f17;
+      border-color: var(--cyan);
+    }
+    .trip-tab.add-tab {
+      background: #1e293b;
+      color: #cbd5e1;
+    }
 
     .status-row {
       display: flex;
@@ -86,13 +120,38 @@
       font-weight: 700;
     }
 
+    /* SWIPE CONTAINER PER ELIMINAZIONE */
+    .swipe-container {
+      position: relative;
+      margin-bottom: 16px;
+      overflow: hidden;
+      border-radius: 14px;
+    }
+    .swipe-delete-bg {
+      position: absolute;
+      top: 0; bottom: 0; right: 0;
+      width: 100px;
+      background: var(--red);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 800;
+      font-size: 13px;
+      cursor: pointer;
+      z-index: 1;
+    }
+
+    /* CARD DELLA TAPPA */
     .card {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      margin-bottom: 16px;
       box-shadow: 0 6px 16px rgba(0,0,0,0.4);
-      overflow: hidden;
+      position: relative;
+      z-index: 2;
+      transition: transform 0.2s ease-out;
     }
 
     .card-head {
@@ -151,25 +210,28 @@
     .point-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
     .point-city { font-size: 16px; font-weight: 700; color: #fff; }
 
-    /* TELEMETRIA STRADA (TRA ARRIVO E ALLOGGIO) */
+    /* CRUSCOTTO SU STRADA (TRA ARRIVO E ALLOGGIO) */
     .road-telemetry {
-      display: flex;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1.3fr;
+      gap: 6px;
       margin-bottom: 14px;
       background: #0d1422;
       border: 1px solid var(--border);
       border-radius: 10px;
-      padding: 8px 10px;
+      padding: 8px;
     }
     .tele-item {
-      flex: 1;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
     .tele-item:not(:last-child) {
       border-right: 1px solid #1e2a3f;
     }
     .tele-label {
-      font-size: 10px;
+      font-size: 9px;
       text-transform: uppercase;
       color: var(--text-muted);
       font-weight: 700;
@@ -177,9 +239,22 @@
     }
     .tele-val {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 16px;
+      font-size: 14px;
       font-weight: 800;
       color: var(--cyan);
+    }
+
+    /* BADGE TEMPERATURE MEDIE STORICHE */
+    .temp-hot {
+      color: #f43f5e !important;
+      text-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
+    }
+    .temp-cold {
+      color: #38bdf8 !important;
+      text-shadow: 0 0 8px rgba(56, 189, 248, 0.4);
+    }
+    .temp-mild {
+      color: #10b981 !important;
     }
 
     /* ALLOGGIO E LOGISTICA */
@@ -197,7 +272,7 @@
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
     .grid-info div strong { color: #f1f5f9; font-size: 13px; }
 
-    /* METEO ROTTA */
+    /* METEO ROTTA OGNI 45 MIN */
     .weather-box {
       background: var(--card-alt);
       border: 1px solid var(--border);
@@ -271,7 +346,7 @@
       gap: 8px;
     }
 
-    /* MODALE E SUGGERIMENTI AUTOCOMPLETE */
+    /* MODALE CREAZIONE TAPPA */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -321,8 +396,7 @@
     .suggest-list {
       position: absolute;
       top: 100%;
-      left: 0;
-      right: 0;
+      left: 0; right: 0;
       background: #1b263b;
       border: 1px solid #334155;
       border-radius: 6px;
@@ -375,13 +449,18 @@
 </head>
 <body>
 
+  <!-- HEADER -->
   <header>
     <div class="top-row">
-      <div class="logo">🏍️ djRoute <span>2026</span></div>
+      <div class="logo">🏍️ djRoute <span>ROADBOOK</span></div>
       <button id="btnSyncCloud" class="btn-sync" onclick="sincronizzaCloud()">
         🔄 AGGIORNA
       </button>
     </div>
+
+    <!-- HOMEPAGE MULTI-SCHEDA (SELEZIONE VIAGGIO) -->
+    <div class="trips-bar" id="tripsBar"></div>
+
     <div class="status-row">
       <span id="syncStatus">Pronto</span>
       <span id="stageCounter">0 tappe</span>
@@ -389,12 +468,14 @@
     </div>
   </header>
 
+  <!-- CONTENITORE TAPPE -->
   <main id="tappeContainer">
     <div style="text-align:center; padding:50px 20px; color:#94a3b8;">
       Tocca <strong>AGGIORNA</strong> in alto oppure <strong>➕ NUOVA TAPPA</strong> per iniziare.
     </div>
   </main>
 
+  <!-- PULSANTE AGGIUNGI TAPPA -->
   <button class="fab-btn" onclick="apriModaleNuovaTappa()">
     ➕ NUOVA TAPPA
   </button>
@@ -461,11 +542,62 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
+    // GESTIONE MULTI-VIAGGIO
+    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
+    
+    let tourList = JSON.parse(localStorage.getItem("djRoute_tours") || "[]");
+    if (tourList.length === 0) {
+      tourList = [
+        { id: "tour_2026", name: "Grecia & Turchia 2026", url: DEFAULT_SCRIPT_URL },
+        { id: "tour_kurdistan", name: "Iraqi Kurdistan 2027", url: DEFAULT_SCRIPT_URL }
+      ];
+      localStorage.setItem("djRoute_tours", JSON.stringify(tourList));
+    }
+
+    let activeTourId = localStorage.getItem("djRoute_active_tour_id") || tourList[0].id;
+    function getActiveTour() {
+      return tourList.find(t => t.id === activeTourId) || tourList[0];
+    }
+
     const GEO_CACHE = {};
     const ROUTE_CACHE = {};
 
-    // 1. FORMATTAZIONE DATA GG/MM/AAAA
+    // RENDER DELLE SCHEDE DEI VIAGGI
+    function renderTripsBar() {
+      const bar = document.getElementById("tripsBar");
+      bar.innerHTML = "";
+      tourList.forEach(t => {
+        const tab = document.createElement("div");
+        tab.className = `trip-tab ${t.id === activeTourId ? 'active' : ''}`;
+        tab.innerText = t.name;
+        tab.onclick = () => {
+          activeTourId = t.id;
+          localStorage.setItem("djRoute_active_tour_id", activeTourId);
+          renderTripsBar();
+          caricaTappeAttive();
+        };
+        bar.appendChild(tab);
+      });
+
+      const addBtn = document.createElement("div");
+      addBtn.className = "trip-tab add-tab";
+      addBtn.innerText = "+ Nuovo Tour";
+      addBtn.onclick = () => {
+        const nome = prompt("Inserisci il nome del nuovo tour (es. Alpi 2026):");
+        if (nome && nome.trim()) {
+          const newId = "tour_" + Date.now();
+          tourList.push({ id: newId, name: nome.trim(), url: DEFAULT_SCRIPT_URL });
+          localStorage.setItem("djRoute_tours", JSON.stringify(tourList));
+          activeTourId = newId;
+          localStorage.setItem("djRoute_active_tour_id", activeTourId);
+          renderTripsBar();
+          caricaTappeAttive();
+        }
+      };
+      bar.appendChild(addBtn);
+    }
+
+    // FORMATTAZIONE DATA AUTOMATICA GG/MM/AAAA
     const inpData = document.getElementById("inpData");
     inpData.addEventListener("input", (e) => {
       let v = e.target.value.replace(/\D/g, "");
@@ -476,7 +608,7 @@
       }
     });
 
-    // 2. AUTOCOMPLETAMENTO CITTA CON NOMINATIM
+    // AUTOCOMPLETAMENTO CITTA
     function setupAutocomplete(inputId, suggestBoxId) {
       const input = document.getElementById(inputId);
       const box = document.getElementById(suggestBoxId);
@@ -519,7 +651,7 @@
     setupAutocomplete("inpPassaggio", "sugPassaggio");
     setupAutocomplete("inpArrivo", "sugArrivo");
 
-    // 3. GEOCODIFICA E CALCOLO OSRM (KM E QUOTA)
+    // GEOCODIFICA E OSRM ROUTE
     async function geocode(location) {
       if (!location) return null;
       const key = location.trim().toLowerCase();
@@ -554,13 +686,14 @@
           timeMin = Math.round(data.routes[0].duration / 60);
         }
 
+        // ALTIMETRIA PRECISA MEDIANTE OPEN-METEO
         let maxEle = 0;
         const lats = pts.map(p => p.lat).join(",");
         const lons = pts.map(p => p.lon).join(",");
         const eleRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${lats}&longitude=${lons}`);
         const eleData = await eleRes.json();
         if (eleData && eleData.elevation) {
-          maxEle = Math.max(...eleData.elevation);
+          maxEle = Math.round(Math.max(...eleData.elevation));
         }
 
         const stats = { km, timeMin, maxEle };
@@ -571,7 +704,22 @@
       }
     }
 
-    // 4. METEO A STEP DI 45 MIN
+    // CLASSIFICAZIONE COLORE TEMPERATURE MEDIE STORICHE
+    function getTempClass(tempStr) {
+      if (!tempStr) return "temp-mild";
+      // Cerca numeri nella stringa (es. "11° / 29°")
+      const matches = tempStr.match(/-?\d+/g);
+      if (!matches) return "temp-mild";
+      const nums = matches.map(Number);
+      const minT = Math.min(...nums);
+      const maxT = Math.max(...nums);
+
+      if (maxT > 28) return "temp-hot";
+      if (minT < 15) return "temp-cold";
+      return "temp-mild";
+    }
+
+    // METEO ROTTA
     function getWmoInfo(code) {
       if (code === 0) return { icon: "☀️" };
       if ([1, 2].includes(code)) return { icon: "🌤️" };
@@ -601,14 +749,25 @@
       return { temp: "--", rain: 0, icon: "🌤️" };
     }
 
-    // 5. RENDERING PRINCIPALE
+    // CARICAMENTO INIZIALE
     window.addEventListener("DOMContentLoaded", () => {
-      const cached = localStorage.getItem("djRoute_tappe_attive");
-      if (cached) {
-        try { renderRoadbook(JSON.parse(cached)); } catch(e){}
-      }
+      renderTripsBar();
+      caricaTappeAttive();
     });
 
+    function caricaTappeAttive() {
+      const storageKey = `djRoute_tappe_${activeTourId}`;
+      const cached = localStorage.getItem(storageKey);
+      if (cached) {
+        try {
+          renderRoadbook(JSON.parse(cached));
+          return;
+        } catch(e) {}
+      }
+      renderRoadbook([]);
+    }
+
+    // SINCRONIZZAZIONE CON GOOGLE SHEETS
     async function sincronizzaCloud() {
       const btn = document.getElementById("btnSyncCloud");
       const status = document.getElementById("syncStatus");
@@ -616,24 +775,21 @@
       btn.innerHTML = "⏳ CARICO...";
       status.innerText = "Download tappe...";
 
+      const tour = getActiveTour();
+
       try {
-        const url = SCRIPT_URL + "?_nocache=" + new Date().getTime();
+        const url = tour.url + "?_nocache=" + new Date().getTime();
         const response = await fetch(url);
         if (!response.ok) throw new Error("Errore API");
 
         const tappe = await response.json();
-        if (!Array.isArray(tappe) || tappe.length === 0) {
-          alert("Nessuna tappa trovata nel foglio.");
-          status.innerText = "Nessuna tappa";
-          return;
-        }
-
-        localStorage.setItem("djRoute_tappe_attive", JSON.stringify(tappe));
-        status.innerText = "Calcolo percorsi e meteo...";
+        const storageKey = `djRoute_tappe_${activeTourId}`;
+        localStorage.setItem(storageKey, JSON.stringify(tappe));
+        status.innerText = "Calcolo percorsi...";
         await renderRoadbook(tappe);
         status.innerText = `Aggiornato: ${new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}`;
       } catch (err) {
-        alert("Errore di sincronizzazione con Google Sheets.");
+        alert("Errore sincronizzazione con Google Sheets.");
         status.innerText = "Errore connessione";
       } finally {
         btn.disabled = false;
@@ -641,6 +797,7 @@
       }
     }
 
+    // RENDERING DEL ROADBOOK CON SWIPE PER ELIMINARE
     async function renderRoadbook(tappe) {
       const container = document.getElementById("tappeContainer");
       const counter = document.getElementById("stageCounter");
@@ -649,13 +806,55 @@
       container.innerHTML = "";
       counter.innerText = `${tappe.length} tappe`;
 
+      if (tappe.length === 0) {
+        container.innerHTML = `<div style="text-align:center; padding:50px 20px; color:#94a3b8;">Nessuna tappa presente per questo tour.<br>Tocca <strong>AGGIORNA</strong> o <strong>➕ NUOVA TAPPA</strong>.</div>`;
+        totalKmHeader.innerText = "Totale: 0 km";
+        return;
+      }
+
       let totalTripKm = 0;
 
       for (let i = 0; i < tappe.length; i++) {
         const t = tappe[i];
+        
+        const swipeWrapper = document.createElement("div");
+        swipeWrapper.className = "swipe-container";
+
+        // Tasto Elimina sotto lo swipe
+        const deleteBg = document.createElement("div");
+        deleteBg.className = "swipe-delete-bg";
+        deleteBg.innerText = "🗑️ ELIMINA";
+        deleteBg.onclick = () => eliminaTappa(i, t);
+
         const card = document.createElement("article");
         card.className = "card";
 
+        // GESTIONE SWIPE TOUCH MOBILE
+        let startX = 0;
+        let currentX = 0;
+
+        card.addEventListener("touchstart", (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        card.addEventListener("touchmove", (e) => {
+          currentX = e.touches[0].clientX;
+          const diff = currentX - startX;
+          if (diff < 0 && diff > -110) {
+            card.style.transform = `translateX(${diff}px)`;
+          }
+        }, { passive: true });
+
+        card.addEventListener("touchend", () => {
+          const diff = currentX - startX;
+          if (diff < -60) {
+            card.style.transform = "translateX(-100px)";
+          } else {
+            card.style.transform = "translateX(0px)";
+          }
+        });
+
+        // Tasto Navigazione MyRoute-app
         let btnRouteHtml = "";
         if (t.myRouteUrl && t.myRouteUrl.trim().startsWith("http")) {
           btnRouteHtml = `<a href="${t.myRouteUrl.trim()}" target="_blank" class="btn-myroute">🚀 APRI IN MYROUTE-APP</a>`;
@@ -666,6 +865,7 @@
 
         const baseOra = t.ora ? parseInt(t.ora.split(":")[0]) || 8 : 8;
         const baseMin = t.ora ? parseInt(t.ora.split(":")[1]) || 30 : 30;
+        const tempClass = getTempClass(t.tempMedie);
 
         card.innerHTML = `
           <div class="card-head">
@@ -691,11 +891,11 @@
               </div>
             </div>
 
-            <!-- 2. CRUSCOTTO SU STRADA: SUBITO DOPO L'ARRIVO E PRIMA DELL'ALLOGGIO -->
+            <!-- 2. CRUSCOTTO TELEMETRIA & TEMPERATURE MEDIE STORICHE -->
             <div class="road-telemetry">
               <div class="tele-item">
                 <div class="tele-label">Distanza</div>
-                <div class="tele-val" id="km-val-${i}">-- km</div>
+                <div class="tele-val" id="km-val-${i}">${t.km ? t.km + ' km' : '-- km'}</div>
               </div>
               <div class="tele-item">
                 <div class="tele-label">Tempo Guida</div>
@@ -705,9 +905,13 @@
                 <div class="tele-label">Quota Max</div>
                 <div class="tele-val" id="ele-val-${i}">-- m</div>
               </div>
+              <div class="tele-item">
+                <div class="tele-label">Temp Medie</div>
+                <div class="tele-val ${tempClass}" id="temp-val-${i}">${t.tempMedie || '--° / --°'}</div>
+              </div>
             </div>
 
-            <!-- 3. LOGISTICA ALLOGGIO E SPESE -->
+            <!-- 3. ALLOGGIO E SPESE -->
             <div class="grid-info">
               <div><span>Alloggio</span><strong>${t.alloggio || 'Libero / Tenda'}</strong></div>
               <div><span>Parcheggio</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
@@ -715,7 +919,7 @@
               <div><span>Residuo</span><strong style="color:${t.daPagare > 0 ? '#f43f5e' : '#10b981'}">${t.daPagare > 0 ? t.daPagare + ' €' : 'Saldato'}</strong></div>
             </div>
 
-            <!-- 4. METEO STEP 45 MIN -->
+            <!-- 4. METEO ROTTA (OGNI 45 MIN) -->
             <div class="weather-box">
               <div class="weather-head">
                 <span>METEO ROTTA (STEP 45 MIN)</span>
@@ -732,9 +936,11 @@
           </div>
         `;
 
-        container.appendChild(card);
+        swipeWrapper.appendChild(deleteBg);
+        swipeWrapper.appendChild(card);
+        container.appendChild(swipeWrapper);
 
-        // CALCOLO SU STRADA (OSRM + ELEVATION + WEATHER 45 MIN)
+        // CALCOLO SU STRADA (OSRM + ALTIMETRIA + METEO)
         (async (idx, tappaData, bH, bM) => {
           const locList = [];
           if (tappaData.partenza) locList.push({ name: tappaData.partenza, delta: 0 });
@@ -754,14 +960,14 @@
             if (c) resolvedCoords.push(c);
           }
 
-          // 1. STATISTICHE ROTTA
           if (resolvedCoords.length >= 2) {
             const stats = await getRouteStats(resolvedCoords);
             const kmEl = document.getElementById(`km-val-${idx}`);
             const timeEl = document.getElementById(`time-val-${idx}`);
             const eleEl = document.getElementById(`ele-val-${idx}`);
 
-            if (kmEl) kmEl.innerText = `${stats.km} km`;
+            const kmFinal = tappaData.km > 0 ? tappaData.km : stats.km;
+            if (kmEl) kmEl.innerText = `${kmFinal} km`;
             if (timeEl) {
               const h = Math.floor(stats.timeMin / 60);
               const m = stats.timeMin % 60;
@@ -769,11 +975,11 @@
             }
             if (eleEl) eleEl.innerText = `${stats.maxEle} m`;
 
-            totalTripKm += stats.km;
+            totalTripKm += kmFinal;
             totalKmHeader.innerText = `Totale: ${totalTripKm} km`;
           }
 
-          // 2. METEO STEP 45 MIN
+          // METEO ROTTA A PASSI DI 45 MIN
           const wCont = document.getElementById(`weather-timeline-${idx}`);
           if (!wCont) return;
 
@@ -803,9 +1009,37 @@
       }
     }
 
-    // 6. GESTIONE MODALE NUOVA TAPPA
+    // ELIMINAZIONE TAPPA TRAMITE SWIPE
+    async function eliminaTappa(index, tappa) {
+      if (!confirm(`Vuoi davvero eliminare la Tappa #${index + 1} (${tappa.partenza} ➔ ${tappa.arrivo})?`)) {
+        renderRoadbook(JSON.parse(localStorage.getItem(`djRoute_tappe_${activeTourId}`) || "[]"));
+        return;
+      }
+
+      const storageKey = `djRoute_tappe_${activeTourId}`;
+      let tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
+      tappe.splice(index, 1);
+      localStorage.setItem(storageKey, JSON.stringify(tappe));
+      renderRoadbook(tappe);
+
+      // Eliminazione remota sul foglio Google
+      const tour = getActiveTour();
+      try {
+        await fetch(tour.url, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "delete", rowId: tappa.id })
+        });
+      } catch (e) {
+        console.warn("Cancellazione cloud differita");
+      }
+    }
+
+    // GESTIONE MODALE AGGIUNGI TAPPA
     function apriModaleNuovaTappa() {
-      const cached = localStorage.getItem("djRoute_tappe_attive");
+      const storageKey = `djRoute_tappe_${activeTourId}`;
+      const cached = localStorage.getItem(storageKey);
       if (cached) {
         try {
           const tappe = JSON.parse(cached);
@@ -838,6 +1072,8 @@
         partenza: partenza,
         passaggio: document.getElementById("inpPassaggio").value.trim(),
         arrivo: arrivo,
+        km: 0,
+        tempMedie: "",
         alloggio: document.getElementById("inpAlloggio").value.trim(),
         piattaforma: "",
         spesa: parseFloat(document.getElementById("inpSpesa").value) || 0,
@@ -850,25 +1086,23 @@
         myRouteUrl: document.getElementById("inpMyRoute").value.trim()
       };
 
-      let tappe = [];
-      const cached = localStorage.getItem("djRoute_tappe_attive");
-      if (cached) {
-        try { tappe = JSON.parse(cached); } catch(e){}
-      }
+      const storageKey = `djRoute_tappe_${activeTourId}`;
+      let tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
       tappe.push(nuovaTappa);
-      localStorage.setItem("djRoute_tappe_attive", JSON.stringify(tappe));
+      localStorage.setItem(storageKey, JSON.stringify(tappe));
       chiudiModaleNuovaTappa();
       renderRoadbook(tappe);
 
+      const tour = getActiveTour();
       try {
-        await fetch(SCRIPT_URL, {
+        await fetch(tour.url, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(nuovaTappa)
         });
       } catch (err) {
-        console.warn("Invio foglio non riuscito:", err);
+        console.warn("Invio foglio differito:", err);
       }
     }
   </script>
