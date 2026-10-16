@@ -90,11 +90,8 @@
       font-style: italic;
       letter-spacing: 1.5px;
       color: #fff;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
     }
-    .brand-logo span {
-      color: var(--yellow);
-    }
+    .brand-logo span { color: var(--yellow); }
 
     #vistaHome { display: block; }
     .section-tag {
@@ -109,18 +106,9 @@
       justify-content: space-between;
       align-items: center;
     }
-    .section-tag small {
-      color: var(--text-muted);
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: none;
-    }
+    .section-tag small { color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: none; }
 
-    .trips-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .trips-list { display: flex; flex-direction: column; gap: 12px; }
     .swipe-wrapper {
       position: relative;
       border-radius: 14px;
@@ -154,17 +142,8 @@
       cursor: pointer;
       transition: transform 0.22s ease;
     }
-    .trip-item.swiped {
-      transform: translateX(-105px);
-    }
-    .trip-item-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+    .trip-item.swiped { transform: translateX(-105px); }
+    .trip-item-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
     .trip-item-badge {
       font-size: 12px;
       font-weight: 800;
@@ -189,7 +168,6 @@
       cursor: pointer;
       text-transform: uppercase;
     }
-    .btn-create-sheet:active { background: rgba(250, 204, 21, 0.18); }
 
     #vistaViaggio { display: none; }
     .trip-banner {
@@ -203,17 +181,8 @@
       justify-content: space-between;
       align-items: center;
     }
-    .trip-banner-name {
-      font-size: 17px;
-      font-weight: 800;
-      color: var(--yellow);
-      text-transform: uppercase;
-    }
-    .trip-banner-stats {
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--cyan);
-    }
+    .trip-banner-name { font-size: 17px; font-weight: 800; color: var(--yellow); text-transform: uppercase; }
+    .trip-banner-stats { font-size: 13px; font-weight: 700; color: var(--cyan); }
 
     .card {
       background: var(--card);
@@ -231,11 +200,7 @@
       align-items: center;
       border-bottom: 1px solid var(--border);
     }
-    .card-title {
-      font-size: 15px;
-      font-weight: 800;
-      color: var(--yellow);
-    }
+    .card-title { font-size: 15px; font-weight: 800; color: var(--yellow); }
     .card-date {
       font-size: 12px;
       font-weight: 700;
@@ -407,6 +372,7 @@
       text-transform: uppercase;
     }
 
+    /* MODALE CON TASTI SELEZIONE TIPO BOTTONE */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -431,11 +397,11 @@
       margin-bottom: 12px;
       text-transform: uppercase;
     }
-    .form-group { margin-bottom: 10px; position: relative; }
+    .form-group { margin-bottom: 12px; position: relative; }
     .form-row { display: flex; gap: 10px; }
     .form-row .form-group { flex: 1; }
-    .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; }
-    .form-group input, .form-group select {
+    .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    .form-group input {
       width: 100%;
       background: #080b11;
       border: 1px solid var(--border);
@@ -445,10 +411,32 @@
       font-size: 14px;
       font-weight: 600;
     }
-    .form-group input:focus, .form-group select:focus {
-      outline: none;
-      border-color: var(--yellow);
+    .form-group input:focus { outline: none; border-color: var(--yellow); }
+
+    /* GRIGLIA PULSANTI SELEZIONE (BOTTONI BADGE) */
+    .btn-select-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
     }
+    .opt-btn {
+      background: #162032;
+      border: 1px solid #2d3f5e;
+      color: #cbd5e1;
+      padding: 7px 11px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .opt-btn.active {
+      background: var(--yellow);
+      color: #080b11;
+      border-color: #fef08a;
+      box-shadow: 0 0 10px var(--yellow-glow);
+    }
+
     .suggest-list {
       position: absolute;
       top: 100%; left: 0; right: 0;
@@ -468,7 +456,7 @@
       cursor: pointer;
     }
     .suggest-item:active, .suggest-item:hover { background: var(--yellow); color: #080b11; font-weight: 700; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
     .btn-save { flex: 1; background: var(--yellow); color: #080b11; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
     .btn-cancel { flex: 1; background: #263349; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; }
   </style>
@@ -522,6 +510,7 @@
 
   <button class="fab-btn" id="fabNuovaTappa" onclick="apriModaleNuovaTappa()">➕ Nuova Tappa</button>
 
+  <!-- MODALE CON BOTTONI BADGE -->
   <div id="modalTappa" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-title" id="modalTitle">🏍️ Nuova Tappa</div>
@@ -530,6 +519,12 @@
       <input type="hidden" id="editOre" value="">
       <input type="hidden" id="editAltMax" value="0">
       <input type="hidden" id="editTempMedie" value="">
+
+      <!-- Campi nascosti valorizzati dai bottoni -->
+      <input type="hidden" id="valPiattaforma" value="Booking">
+      <input type="hidden" id="valPagamento" value="Da pagare">
+      <input type="hidden" id="valMetodo" value="Revolut Daniel">
+      <input type="hidden" id="valParcheggio" value="Garage coperto">
 
       <div class="form-row">
         <div class="form-group">
@@ -560,74 +555,72 @@
         <div id="sugArrivo" class="suggest-list"></div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Nome Alloggio</label>
-          <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
+      <div class="form-group">
+        <label>Nome Alloggio</label>
+        <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
+      </div>
+
+      <!-- BOTTONI PIATTAFORMA -->
+      <div class="form-group">
+        <label>Piattaforma Prenotazione</label>
+        <div class="btn-select-grid" id="gridPiattaforma">
+          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Booking')">Booking</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Airbnb')">Airbnb</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Expedia')">Expedia</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Pren. Diretta')">Pren. Diretta</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Tenda / Libero')">Tenda / Libero</button>
         </div>
-        <div class="form-group">
-          <label>Piattaforma Prenotazione</label>
-          <select id="inpPiattaforma">
-            <option value="">-- Seleziona --</option>
-            <option value="Booking">Booking</option>
-            <option value="Airbnb">Airbnb</option>
-            <option value="Expedia">Expedia</option>
-            <option value="Pren. Diretta">Pren. Diretta</option>
-            <option value="Tenda / Libero">Tenda / Libero</option>
-          </select>
+      </div>
+
+      <!-- BOTTONI STATO PAGAMENTO -->
+      <div class="form-group">
+        <label>Stato Pagamento</label>
+        <div class="btn-select-grid" id="gridPagamento">
+          <button type="button" class="opt-btn active" onclick="selezionaStatoPagamento('Da pagare')">Da pagare</button>
+          <button type="button" class="opt-btn" onclick="selezionaStatoPagamento('Acconto')">Acconto</button>
+          <button type="button" class="opt-btn" onclick="selezionaStatoPagamento('Pagato')">Pagato</button>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
           <label>Prezzo Camera / Spesa (€)</label>
-          <input type="number" id="inpSpesa" placeholder="0" oninput="ricalcolaPagamentiModale('spesa')">
+          <input type="number" id="inpSpesa" placeholder="0" oninput="ricalcolaPagamentiDaInput('spesa')">
         </div>
-        <div class="form-group">
-          <label>Stato Pagamento</label>
-          <select id="inpPagamento" onchange="ricalcolaPagamentiModale('stato')">
-            <option value="Da pagare">Da pagare</option>
-            <option value="Acconto">Acconto</option>
-            <option value="Pagato">Pagato</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-row">
         <div class="form-group">
           <label>Importo Pagato / Acconto (€)</label>
-          <input type="number" id="inpPagato" placeholder="0" oninput="ricalcolaPagamentiModale('pagato')">
-        </div>
-        <div class="form-group">
-          <label>Residuo Da Pagare (€)</label>
-          <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--yellow); font-weight:800;">
+          <input type="number" id="inpPagato" placeholder="0" oninput="ricalcolaPagamentiDaInput('pagato')">
         </div>
       </div>
 
-      <div class="form-row">
-        <div class="form-group">
-          <label>Metodo di Pagamento</label>
-          <select id="inpMetodo">
-            <option value="">-- Seleziona --</option>
-            <option value="Revolut Daniel">Revolut Daniel</option>
-            <option value="N26 Daniel">N26 Daniel</option>
-            <option value="Carta Emanuela">Carta Emanuela</option>
-            <option value="Paypal Emanuela">Paypal Emanuela</option>
-            <option value="Bonifico">Bonifico</option>
-            <option value="Contanti in struttura">Contanti in struttura</option>
-          </select>
+      <div class="form-group">
+        <label>Residuo Da Pagare (€)</label>
+        <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--yellow); font-weight:800;">
+      </div>
+
+      <!-- BOTTONI METODO PAGAMENTO -->
+      <div class="form-group">
+        <label>Metodo di Pagamento</label>
+        <div class="btn-select-grid" id="gridMetodo">
+          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel')">Revolut Daniel</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'N26 Daniel')">N26 Daniel</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Carta Emanuela')">Carta Emanuela</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Emanuela')">Paypal Emanuela</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Bonifico')">Bonifico</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Contanti in struttura')">Contanti</button>
         </div>
-        <div class="form-group">
-          <label>Parcheggio Moto</label>
-          <select id="inpParcheggio">
-            <option value="">-- Seleziona --</option>
-            <option value="Garage coperto">Garage coperto</option>
-            <option value="Coperto in Struttura">Coperto in Struttura</option>
-            <option value="Parcheggio custodito">Parcheggio custodito</option>
-            <option value="Cortile privato">Cortile privato</option>
-            <option value="Esterno struttura">Esterno struttura</option>
-            <option value="Strada / Libero">Strada / Libero</option>
-          </select>
+      </div>
+
+      <!-- BOTTONI PARCHEGGIO MOTO -->
+      <div class="form-group">
+        <label>Parcheggio Moto</label>
+        <div class="btn-select-grid" id="gridParcheggio">
+          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage coperto')">Garage coperto</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Coperto in Struttura')">Coperto in Struttura</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Parcheggio custodito')">Custodito</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Cortile privato')">Cortile</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Esterno struttura')">Esterno</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Strada / Libero')">Strada</button>
         </div>
       </div>
 
@@ -661,38 +654,67 @@
       mostraHome();
     });
 
+    // GESTIONE SELEZIONE PULSANTI TIPO BOTTONE
+    function selezionaPulsante(containerId, hiddenInputId, valore) {
+      document.getElementById(hiddenInputId).value = valore;
+      const btns = document.getElementById(containerId).querySelectorAll('.opt-btn');
+      btns.forEach(btn => {
+        if (btn.innerText.trim().toLowerCase() === valore.trim().toLowerCase() ||
+            valore.trim().toLowerCase().startsWith(btn.innerText.trim().toLowerCase())) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    function selezionaStatoPagamento(stato) {
+      selezionaPulsante('gridPagamento', 'valPagamento', stato);
+      const spesa = parseFloat(document.getElementById("inpSpesa").value) || 0;
+      const inpPagato = document.getElementById("inpPagato");
+      const inpDaPagare = document.getElementById("inpDaPagare");
+
+      if (stato === "Pagato") {
+        inpPagato.value = spesa;
+        inpDaPagare.value = 0;
+      } else if (stato === "Da pagare") {
+        inpPagato.value = 0;
+        inpDaPagare.value = spesa;
+      } else {
+        const p = parseFloat(inpPagato.value) || 0;
+        inpDaPagare.value = Math.max(0, Math.round((spesa - p) * 100) / 100);
+      }
+    }
+
+    function ricalcolaPagamentiDaInput(origine) {
+      const spesa = parseFloat(document.getElementById("inpSpesa").value) || 0;
+      const inpPagato = document.getElementById("inpPagato");
+      const inpDaPagare = document.getElementById("inpDaPagare");
+      let p = parseFloat(inpPagato.value) || 0;
+
+      if (origine === 'spesa') {
+        const stato = document.getElementById("valPagamento").value;
+        if (stato === "Pagato") {
+          inpPagato.value = spesa;
+          p = spesa;
+        }
+      } else if (origine === 'pagato') {
+        if (p >= spesa && spesa > 0) selezionaPulsante('gridPagamento', 'valPagamento', 'Pagato');
+        else if (p > 0 && p < spesa) selezionaPulsante('gridPagamento', 'valPagamento', 'Acconto');
+        else selezionaPulsante('gridPagamento', 'valPagamento', 'Da pagare');
+      }
+
+      inpDaPagare.value = Math.max(0, Math.round((spesa - p) * 100) / 100);
+    }
+
+    // FORMATTAZIONE DATA GG/MM/AAAA
     document.getElementById("inpData").addEventListener("input", (e) => {
       let v = e.target.value.replace(/\D/g, "");
       if (v.length > 2 && v.length <= 4) e.target.value = v.slice(0,2) + "/" + v.slice(2);
       else if (v.length > 4) e.target.value = v.slice(0,2) + "/" + v.slice(2,4) + "/" + v.slice(4,8);
     });
 
-    function ricalcolaPagamentiModale(origine) {
-      const spesa = parseFloat(document.getElementById("inpSpesa").value) || 0;
-      const selStato = document.getElementById("inpPagamento");
-      const inpPagato = document.getElementById("inpPagato");
-      const inpDaPagare = document.getElementById("inpDaPagare");
-
-      if (origine === "stato") {
-        if (selStato.value === "Pagato") {
-          inpPagato.value = spesa;
-        } else if (selStato.value === "Da pagare") {
-          inpPagato.value = 0;
-        }
-      } else if (origine === "pagato") {
-        const p = parseFloat(inpPagato.value) || 0;
-        if (p >= spesa && spesa > 0) selStato.value = "Pagato";
-        else if (p > 0 && p < spesa) selStato.value = "Acconto";
-        else selStato.value = "Da pagare";
-      } else if (origine === "spesa") {
-        if (selStato.value === "Pagato") inpPagato.value = spesa;
-        else if (selStato.value === "Da pagare") inpPagato.value = 0;
-      }
-
-      const pagatoFinale = parseFloat(inpPagato.value) || 0;
-      inpDaPagare.value = Math.max(0, Math.round((spesa - pagatoFinale) * 100) / 100);
-    }
-
+    // AUTOCOMPLETAMENTO MAPPE
     function attivaAutocompleteMappa(inputId, boxId, multiplo = false) {
       const inp = document.getElementById(inputId);
       const box = document.getElementById(boxId);
@@ -1269,15 +1291,16 @@
       document.getElementById("inpPassaggio").value = "";
       document.getElementById("inpArrivo").value = "";
       document.getElementById("inpAlloggio").value = "";
-      document.getElementById("inpPiattaforma").value = "";
       document.getElementById("inpSpesa").value = "";
-      document.getElementById("inpPagamento").value = "Da pagare";
       document.getElementById("inpPagato").value = "0";
       document.getElementById("inpDaPagare").value = "0";
-      document.getElementById("inpMetodo").value = "";
-      document.getElementById("inpParcheggio").value = "";
       document.getElementById("inpMyRoute").value = "";
       document.getElementById("inpNote").value = "";
+
+      selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Booking');
+      selezionaStatoPagamento('Da pagare');
+      selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel');
+      selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage coperto');
 
       document.getElementById("modalTappa").style.display = "block";
     }
@@ -1298,15 +1321,16 @@
       document.getElementById("inpPassaggio").value = t.passaggio || "";
       document.getElementById("inpArrivo").value = t.arrivo || "";
       document.getElementById("inpAlloggio").value = t.alloggio || "";
-      document.getElementById("inpPiattaforma").value = t.piattaforma || "";
       document.getElementById("inpSpesa").value = t.spesa || 0;
-      document.getElementById("inpPagamento").value = t.pagamento || "Da pagare";
       document.getElementById("inpPagato").value = t.pagato || 0;
       document.getElementById("inpDaPagare").value = t.daPagare || 0;
-      document.getElementById("inpMetodo").value = t.metodoPagamento || "";
-      document.getElementById("inpParcheggio").value = t.parcheggio || "";
       document.getElementById("inpMyRoute").value = t.myRouteUrl || "";
       document.getElementById("inpNote").value = t.note || "";
+
+      selezionaPulsante('gridPiattaforma', 'valPiattaforma', t.piattaforma || 'Booking');
+      selezionaStatoPagamento(t.pagamento || 'Da pagare');
+      selezionaPulsante('gridMetodo', 'valMetodo', t.metodoPagamento || 'Revolut Daniel');
+      selezionaPulsante('gridParcheggio', 'valParcheggio', t.parcheggio || 'Garage coperto');
 
       document.getElementById("modalTappa").style.display = "block";
     }
@@ -1386,13 +1410,13 @@
         altMax: altMaxCalc,
         tempMedie: tempCalc,
         alloggio: document.getElementById("inpAlloggio").value.trim(),
-        piattaforma: document.getElementById("inpPiattaforma").value,
+        piattaforma: document.getElementById("valPiattaforma").value,
         spesa: spesa,
-        pagamento: document.getElementById("inpPagamento").value,
+        pagamento: document.getElementById("valPagamento").value,
         pagato: pagato,
         daPagare: daPagare,
-        metodoPagamento: document.getElementById("inpMetodo").value,
-        parcheggio: document.getElementById("inpParcheggio").value,
+        metodoPagamento: document.getElementById("valMetodo").value,
+        parcheggio: document.getElementById("valParcheggio").value,
         note: document.getElementById("inpNote").value.trim(),
         myRouteUrl: document.getElementById("inpMyRoute").value.trim()
       };
