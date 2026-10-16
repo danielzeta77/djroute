@@ -1,650 +1,4 @@
-<!DOCTYPE html>
-<html lang="it">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <title>djROUTE</title>
-  
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,600;0,700;0,800;1,700&display=swap" rel="stylesheet">
-  
-  <style>
-    :root {
-      --bg: #080b11;
-      --card: #111723;
-      --card-alt: #0c111a;
-      --yellow: #facc15;
-      --yellow-glow: rgba(250, 204, 21, 0.25);
-      --cyan: #00e5ff;
-      --green: #10b981;
-      --orange: #f97316;
-      --red: #f43f5e;
-      --border: #222f46;
-      --text: #f8fafc;
-      --text-muted: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Chakra Petch', sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-    
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      padding: 12px;
-      padding-bottom: 105px;
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
-    }
-
-    header {
-      background: linear-gradient(145deg, #151e2e, #0b1019);
-      border: 1px solid var(--border);
-      border-bottom: 2px solid var(--yellow);
-      border-radius: 16px;
-      padding: 12px 14px;
-      margin-bottom: 18px;
-      box-shadow: 0 6px 24px rgba(0,0,0,0.6);
-    }
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .nav-btn {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      border: 1px solid #334155;
-      background: #162032;
-      color: var(--yellow);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.1);
-      transition: all 0.15s ease;
-    }
-    .nav-btn:active {
-      transform: scale(0.92);
-      border-color: var(--yellow);
-      box-shadow: 0 0 12px var(--yellow-glow);
-    }
-    .nav-btn.sync-btn {
-      background: linear-gradient(135deg, #facc15, #eab308);
-      color: #080b11;
-      border-color: #fef08a;
-      box-shadow: 0 0 14px rgba(250, 204, 21, 0.35);
-    }
-    .spin { animation: rotazione 0.9s linear infinite; }
-    @keyframes rotazione { 100% { transform: rotate(360deg); } }
-
-    .brand-logo {
-      font-size: 24px;
-      font-weight: 800;
-      font-style: italic;
-      letter-spacing: 1.5px;
-      color: #fff;
-    }
-    .brand-logo span { color: var(--yellow); }
-
-    #vistaHome { display: block; }
-    .section-tag {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--yellow);
-      text-transform: uppercase;
-      letter-spacing: 1.2px;
-      margin-bottom: 12px;
-      padding-left: 4px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .section-tag small { color: var(--text-muted); font-size: 11px; font-weight: 600; text-transform: none; }
-
-    .trips-list { display: flex; flex-direction: column; gap: 12px; }
-    .swipe-wrapper {
-      position: relative;
-      border-radius: 14px;
-      overflow: hidden;
-      background: #991b1b;
-      border: 1px solid var(--border);
-    }
-    .swipe-delete-bg {
-      position: absolute;
-      top: 0; bottom: 0; right: 0;
-      width: 110px;
-      background: linear-gradient(90deg, #dc2626, #e11d48);
-      color: #fff;
-      font-weight: 800;
-      font-size: 13px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      z-index: 1;
-    }
-    .trip-item {
-      position: relative;
-      z-index: 2;
-      background: var(--card);
-      padding: 18px 16px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: transform 0.22s ease;
-    }
-    .trip-item.swiped { transform: translateX(-105px); }
-    .trip-item-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
-    .trip-item-badge {
-      font-size: 12px;
-      font-weight: 800;
-      color: #080b11;
-      background: var(--yellow);
-      padding: 5px 12px;
-      border-radius: 20px;
-      text-transform: uppercase;
-    }
-
-    .btn-create-sheet {
-      width: 100%;
-      margin-top: 18px;
-      padding: 16px;
-      background: rgba(250, 204, 21, 0.08);
-      border: 1.5px dashed var(--yellow);
-      border-radius: 14px;
-      color: var(--yellow);
-      font-size: 15px;
-      font-weight: 800;
-      letter-spacing: 0.8px;
-      cursor: pointer;
-      text-transform: uppercase;
-    }
-
-    #vistaViaggio { display: none; }
-    .trip-banner {
-      background: linear-gradient(90deg, #131c2e, #0e1522);
-      border: 1px solid var(--border);
-      border-left: 4px solid var(--yellow);
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .trip-banner-name { font-size: 17px; font-weight: 800; color: var(--yellow); text-transform: uppercase; }
-    .trip-banner-stats { font-size: 13px; font-weight: 700; color: var(--cyan); }
-
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      margin-bottom: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.45);
-      overflow: hidden;
-    }
-    .card-head {
-      background: #0d131f;
-      padding: 11px 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-    }
-    .card-title { font-size: 15px; font-weight: 800; color: var(--yellow); }
-    .card-date {
-      font-size: 12px;
-      font-weight: 700;
-      background: #1e293b;
-      padding: 3px 9px;
-      border-radius: 6px;
-      border: 1px solid #334155;
-      color: #fff;
-      margin-left: 8px;
-    }
-    .card-actions { display: flex; gap: 6px; }
-    .btn-card {
-      border: none;
-      padding: 6px 10px;
-      border-radius: 7px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .btn-edit { background: #1e293b; color: var(--yellow); border: 1px solid var(--yellow); }
-    .btn-del { background: rgba(244,63,94,0.18); color: #fda4af; border: 1px solid #f43f5e; }
-
-    .card-body { padding: 14px; }
-
-    .route-box {
-      border-left: 2px solid var(--yellow);
-      margin-left: 8px;
-      padding-left: 16px;
-      margin-bottom: 14px;
-    }
-    .route-point { position: relative; margin-bottom: 10px; }
-    .route-point:last-child { margin-bottom: 0; }
-    .route-point::before {
-      content: '';
-      position: absolute;
-      left: -22px;
-      top: 5px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-    }
-    .route-point.dep::before { background: var(--green); box-shadow: 0 0 8px var(--green); }
-    .route-point.via::before { background: var(--yellow); box-shadow: 0 0 8px var(--yellow); }
-    .route-point.arr::before { background: var(--red); box-shadow: 0 0 8px var(--red); }
-    .point-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
-    .point-city { font-size: 17px; font-weight: 800; color: #fff; }
-
-    .road-telemetry {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr 1.25fr;
-      gap: 6px;
-      margin-bottom: 10px;
-      background: var(--card-alt);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 9px 6px;
-    }
-    .tele-item { text-align: center; display: flex; flex-direction: column; justify-content: center; }
-    .tele-item:not(:last-child) { border-right: 1px solid #1e2a3f; }
-    .tele-label { font-size: 9px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
-    .tele-val { font-size: 15px; font-weight: 800; color: var(--yellow); }
-    
-    .temp-hot { color: #f43f5e !important; }
-    .temp-cold { color: #38bdf8 !important; }
-    .temp-mild { color: #10b981 !important; }
-
-    .btn-elevation {
-      width: 100%;
-      background: #151f32;
-      border: 1px solid #2d3f5e;
-      color: var(--yellow);
-      padding: 9px;
-      border-radius: 9px;
-      font-size: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      text-transform: uppercase;
-    }
-    .ele-box {
-      display: none;
-      background: #090d15;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 12px 10px;
-      margin-bottom: 12px;
-    }
-
-    .grid-info {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      background: var(--card-alt);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 11px;
-      margin-bottom: 12px;
-      font-size: 12px;
-    }
-    .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-    .grid-info div strong { color: #fff; font-size: 14px; font-weight: 700; }
-
-    /* METEO ROTTA AD ALTA VELOCITÀ */
-    .weather-box {
-      background: var(--card-alt);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px;
-      margin-bottom: 12px;
-    }
-    .weather-head {
-      font-size: 11px;
-      font-weight: 800;
-      color: var(--yellow);
-      margin-bottom: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      text-transform: uppercase;
-    }
-    .weather-badge-status {
-      font-size: 10px;
-      font-weight: 800;
-      padding: 3px 8px;
-      border-radius: 5px;
-      letter-spacing: 0.5px;
-    }
-    .status-obsoleto { background: rgba(244, 63, 94, 0.15); color: #fda4af; border: 1px solid rgba(244, 63, 94, 0.4); }
-    .status-future { background: rgba(250, 204, 21, 0.15); color: #fef08a; border: 1px solid rgba(250, 204, 21, 0.4); }
-    .status-live { background: rgba(16, 185, 129, 0.15); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.4); }
-
-    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
-    .weather-cell {
-      flex: 0 0 auto;
-      background: #131c2c;
-      border: 1px solid #24344d;
-      border-radius: 8px;
-      padding: 7px 10px;
-      text-align: center;
-      min-width: 86px;
-    }
-    .w-time { font-size: 11px; color: var(--yellow); font-weight: 800; }
-    .w-km { font-size: 9px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
-    .w-icon { font-size: 18px; margin: 2px 0; }
-    .w-temp { font-size: 14px; font-weight: 800; color: #fff; }
-    .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
-    .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
-
-    .btn-myroute {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(135deg, #facc15, #eab308);
-      color: #080b11;
-      text-align: center;
-      border-radius: 9px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .fab-btn {
-      display: none;
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: linear-gradient(135deg, #facc15, #eab308);
-      color: #080b11;
-      border: 2px solid #fef08a;
-      padding: 14px 22px;
-      border-radius: 30px;
-      font-size: 14px;
-      font-weight: 800;
-      box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45);
-      cursor: pointer;
-      z-index: 99;
-      text-transform: uppercase;
-    }
-
-    /* MODALE */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.88);
-      z-index: 100;
-      padding: 12px;
-      overflow-y: auto;
-    }
-    .modal-box {
-      background: #121927;
-      border: 1px solid var(--yellow);
-      border-radius: 16px;
-      padding: 16px;
-      max-width: 480px;
-      margin: 10px auto 30px auto;
-    }
-    .modal-title {
-      font-size: 18px;
-      font-weight: 800;
-      color: var(--yellow);
-      margin-bottom: 12px;
-      text-transform: uppercase;
-    }
-    .form-group { margin-bottom: 12px; position: relative; }
-    .form-row { display: flex; gap: 10px; }
-    .form-row .form-group { flex: 1; }
-    .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
-    .form-group input {
-      width: 100%;
-      background: #080b11;
-      border: 1px solid var(--border);
-      border-radius: 7px;
-      padding: 10px;
-      color: #fff;
-      font-size: 14px;
-      font-weight: 600;
-    }
-    .form-group input:focus { outline: none; border-color: var(--yellow); }
-
-    .btn-select-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-    .opt-btn {
-      background: #162032;
-      border: 1px solid #2d3f5e;
-      color: #cbd5e1;
-      padding: 7px 11px;
-      border-radius: 7px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .opt-btn.active {
-      background: var(--yellow);
-      color: #080b11;
-      border-color: #fef08a;
-      box-shadow: 0 0 10px var(--yellow-glow);
-    }
-
-    .suggest-list {
-      position: absolute;
-      top: 100%; left: 0; right: 0;
-      background: #1b263b;
-      border: 1px solid var(--yellow);
-      border-radius: 7px;
-      z-index: 150;
-      max-height: 160px;
-      overflow-y: auto;
-      display: none;
-    }
-    .suggest-item {
-      padding: 9px 12px;
-      font-size: 13px;
-      color: #fff;
-      border-bottom: 1px solid #24324d;
-      cursor: pointer;
-    }
-    .suggest-item:active, .suggest-item:hover { background: var(--yellow); color: #080b11; font-weight: 700; }
-    .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
-    .btn-save { flex: 1; background: var(--yellow); color: #080b11; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
-    .btn-cancel { flex: 1; background: #263349; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; }
-  </style>
-</head>
-<body>
-
-  <header>
-    <div class="header-bar">
-      <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <circle cx="5.5" cy="17.5" r="3.5"/>
-          <circle cx="18.5" cy="17.5" r="3.5"/>
-          <path d="M15 6h3l3 5v3h-2"/>
-          <path d="M5.5 17.5L9 11h6l2 6.5"/>
-          <path d="M9 11L7 7H4"/>
-        </svg>
-      </button>
-
-      <div class="brand-logo">dj<span>ROUTE</span></div>
-
-      <button class="nav-btn sync-btn" id="btnSync" onclick="sincronizzaVistaAttiva()" title="Sincronizza con Foglio">
-        <svg id="syncIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-          <path d="M3 3v5h5"/>
-          <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
-          <path d="M16 16h5v5"/>
-        </svg>
-      </button>
-    </div>
-  </header>
-
-  <main id="vistaHome">
-    <div class="section-tag">
-      <span>📁 Schede Viaggi Attive</span>
-      <small>⬅️ Scorri a sinistra per eliminare</small>
-    </div>
-    <div class="trips-list" id="listaSchedeViaggi">
-      <div style="text-align:center; padding:30px; color:var(--text-muted);">Sincronizzazione schede viaggio...</div>
-    </div>
-    <button class="btn-create-sheet" onclick="creaNuovoFoglioViaggio()">+ Crea Nuovo Foglio di Viaggio</button>
-  </main>
-
-  <main id="vistaViaggio">
-    <div class="trip-banner">
-      <div class="trip-banner-name" id="nomeViaggioAttivo">Viaggio</div>
-      <div class="trip-banner-stats" id="riepilogoKmViaggio">0 tappe • 0 km</div>
-    </div>
-
-    <div id="contenitoreTappe"></div>
-  </main>
-
-  <button class="fab-btn" id="fabNuovaTappa" onclick="apriModaleNuovaTappa()">➕ Nuova Tappa</button>
-
-  <div id="modalTappa" class="modal-overlay">
-    <div class="modal-box">
-      <div class="modal-title" id="modalTitle">🏍️ Nuova Tappa</div>
-      <input type="hidden" id="editRowId" value="">
-      <input type="hidden" id="editKm" value="0">
-      <input type="hidden" id="editOre" value="">
-      <input type="hidden" id="editAltMax" value="0">
-      <input type="hidden" id="editTempMedie" value="">
-
-      <input type="hidden" id="valPiattaforma" value="Booking">
-      <input type="hidden" id="valPagamento" value="Da pagare">
-      <input type="hidden" id="valMetodo" value="Revolut Daniel">
-      <input type="hidden" id="valParcheggio" value="Garage coperto">
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Data (GG/MM/AAAA)</label>
-          <input type="text" id="inpData" placeholder="18/10/2026" maxlength="10">
-        </div>
-        <div class="form-group">
-          <label>Ora Partenza</label>
-          <input type="time" id="inpOra" value="08:30">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Città di Partenza</label>
-        <input type="text" id="inpPartenza" placeholder="Digita città..." autocomplete="off">
-        <div id="sugPartenza" class="suggest-list"></div>
-      </div>
-
-      <div class="form-group">
-        <label>Passaggi / Valichi Intermedi (separati da virgola)</label>
-        <input type="text" id="inpPassaggio" placeholder="es. Passo Tonale, Edolo" autocomplete="off">
-        <div id="sugPassaggio" class="suggest-list"></div>
-      </div>
-
-      <div class="form-group">
-        <label>Città di Arrivo</label>
-        <input type="text" id="inpArrivo" placeholder="Digita città..." autocomplete="off">
-        <div id="sugArrivo" class="suggest-list"></div>
-      </div>
-
-      <div class="form-group">
-        <label>Nome Alloggio</label>
-        <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
-      </div>
-
-      <div class="form-group">
-        <label>Piattaforma Prenotazione</label>
-        <div class="btn-select-grid" id="gridPiattaforma">
-          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Booking')">Booking</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Airbnb')">Airbnb</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Expedia')">Expedia</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Pren. Diretta')">Pren. Diretta</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Tenda / Libero')">Tenda / Libero</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Stato Pagamento</label>
-        <div class="btn-select-grid" id="gridPagamento">
-          <button type="button" class="opt-btn active" onclick="selezionaStatoPagamento('Da pagare')">Da pagare</button>
-          <button type="button" class="opt-btn" onclick="selezionaStatoPagamento('Acconto')">Acconto</button>
-          <button type="button" class="opt-btn" onclick="selezionaStatoPagamento('Pagato')">Pagato</button>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <label>Prezzo Camera / Spesa (€)</label>
-          <input type="number" id="inpSpesa" placeholder="0" oninput="ricalcolaPagamentiDaInput('spesa')">
-        </div>
-        <div class="form-group">
-          <label>Importo Pagato / Acconto (€)</label>
-          <input type="number" id="inpPagato" placeholder="0" oninput="ricalcolaPagamentiDaInput('pagato')">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Residuo Da Pagare (€)</label>
-        <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--yellow); font-weight:800;">
-      </div>
-
-      <div class="form-group">
-        <label>Metodo di Pagamento</label>
-        <div class="btn-select-grid" id="gridMetodo">
-          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel')">Revolut Daniel</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'N26 Daniel')">N26 Daniel</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Carta Emanuela')">Carta Emanuela</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Emanuela')">Paypal Emanuela</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Bonifico')">Bonifico</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Contanti in struttura')">Contanti</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Parcheggio Moto</label>
-        <div class="btn-select-grid" id="gridParcheggio">
-          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage coperto')">Garage coperto</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Coperto in Struttura')">Coperto in Struttura</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Parcheggio custodito')">Custodito</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Cortile privato')">Cortile</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Esterno struttura')">Esterno</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Strada / Libero')">Strada</button>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Link MyRoute-app / Traccia GPX</label>
-        <input type="url" id="inpMyRoute" placeholder="https://www.myrouteapp.com/...">
-      </div>
-
-      <div class="form-group">
-        <label>Note Tappa</label>
-        <input type="text" id="inpNote" placeholder="es. Sosta pranzo, imbarco...">
-      </div>
-
-      <div class="modal-actions">
-        <button class="btn-cancel" onclick="chiudiModale()">Annulla</button>
-        <button class="btn-save" id="btnSalvaTappa" onclick="salvaTappa()">💾 Salva Tappa</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
+<script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
     
     let schedeViaggi = [];
@@ -728,8 +82,7 @@
 
         timer = setTimeout(async () => {
           try {
-            const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it`;
-            const res = await fetch(url);
+            const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it`, 3500);
             const list = await res.json();
             if (!list || list.length === 0) { box.style.display = "none"; return; }
 
@@ -766,6 +119,64 @@
     attivaAutocompleteMappa("inpPassaggio", "sugPassaggio", true);
     attivaAutocompleteMappa("inpArrivo", "sugArrivo", false);
 
+    // FETCH CON TIMEOUT (Evita blocchi infiniti)
+    async function fetchWithTimeout(resource, timeout = 4500) {
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(resource, { signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (error) {
+        clearTimeout(id);
+        throw error;
+      }
+    }
+
+    // PARSER UNIVERSALE DATE (Estrae giorno, mese, anno da qualsiasi stringa)
+    function analizzaFinestraMeteo(dataStr) {
+      if (!dataStr) return { stato: "invalid", diffDays: 999 };
+      
+      let d = null, m = null, y = null;
+      const str = String(dataStr).trim();
+
+      // Cerca pattern GG/MM/AAAA
+      const matchSlash = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (matchSlash) {
+        d = parseInt(matchSlash[1]);
+        m = parseInt(matchSlash[2]) - 1;
+        y = parseInt(matchSlash[3]);
+      } else {
+        // Cerca pattern AAAA-MM-GG
+        const matchIso = str.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+        if (matchIso) {
+          y = parseInt(matchIso[1]);
+          m = parseInt(matchIso[2]) - 1;
+          d = parseInt(matchIso[3]);
+        }
+      }
+
+      if (d === null || m === null || y === null) {
+        return { stato: "invalid", diffDays: 999 };
+      }
+
+      const target = new Date(y, m, d, 23, 59, 59);
+      const oggi = new Date();
+      oggi.setHours(0, 0, 0, 0);
+
+      const diffMs = target.getTime() - oggi.getTime();
+      const diffGiorni = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+      const isoDate = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+      if (diffGiorni < 0) {
+        return { stato: "obsoleto", diffDays: diffGiorni, isoDate };
+      } else if (diffGiorni > 10) {
+        return { stato: "futuro", diffDays: diffGiorni, isoDate };
+      } else {
+        return { stato: "disponibile", diffDays: diffGiorni, isoDate };
+      }
+    }
+
     async function mostraHome() {
       schedaAttiva = "";
       document.getElementById("vistaViaggio").style.display = "none";
@@ -788,7 +199,7 @@
     async function scaricaSchedeViaggi() {
       const cont = document.getElementById("listaSchedeViaggi");
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=getSheets&_t=${Date.now()}`);
+        const res = await fetchWithTimeout(`${SCRIPT_URL}?action=getSheets&_t=${Date.now()}`, 6000);
         const fogli = await res.json();
         if (Array.isArray(fogli)) {
           schedeViaggi = fogli;
@@ -844,7 +255,7 @@
           });
         }
       } catch (e) {
-        cont.innerHTML = `<div style="text-align:center; padding:25px; color:var(--red);">Connessione non riuscita. Tocca il tasto giallo Sync in alto.</div>`;
+        cont.innerHTML = `<div style="text-align:center; padding:25px; color:var(--red);">Connessione con Google Drive fallita. Tocca 🔄 in alto per riprovare.</div>`;
       }
     }
 
@@ -877,30 +288,6 @@
       setTimeout(() => scaricaSchedeViaggi(), 1200);
     }
 
-    // ANALISI TEMPORALE DELLA DATA PER IL METEO
-    function analizzaFinestraMeteo(dataStr) {
-      if (!dataStr || !dataStr.includes("/")) return { stato: "invalid", diffDays: 999 };
-      const p = dataStr.split("/");
-      const d = parseInt(p[0]);
-      const m = parseInt(p[1]) - 1;
-      const y = parseInt(p[2] || "2026");
-      const target = new Date(y, m, d, 23, 59, 59);
-
-      const oggi = new Date();
-      oggi.setHours(0, 0, 0, 0);
-
-      const diffMs = target.getTime() - oggi.getTime();
-      const diffGiorni = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-
-      if (diffGiorni < 0) {
-        return { stato: "obsoleto", diffDays: diffGiorni, isoDate: `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
-      } else if (diffGiorni > 10) {
-        return { stato: "futuro", diffDays: diffGiorni, isoDate: `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
-      } else {
-        return { stato: "disponibile", diffDays: diffGiorni, isoDate: `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}` };
-      }
-    }
-
     async function apriSchedaViaggio(nomeFoglio) {
       schedaAttiva = nomeFoglio;
       document.getElementById("vistaHome").style.display = "none";
@@ -912,11 +299,11 @@
       cont.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">Lettura tappe "${nomeFoglio}"...</div>`;
 
       try {
-        const res = await fetch(`${SCRIPT_URL}?sheetName=${encodeURIComponent(nomeFoglio)}&_t=${Date.now()}`);
+        const res = await fetchWithTimeout(`${SCRIPT_URL}?sheetName=${encodeURIComponent(nomeFoglio)}&_t=${Date.now()}`, 6000);
         tappeCorrenti = await res.json();
         renderTappeViaggio(tappeCorrenti);
       } catch (e) {
-        cont.innerHTML = `<div style="text-align:center; padding:30px; color:var(--red);">Errore lettura tappe.</div>`;
+        cont.innerHTML = `<div style="text-align:center; padding:30px; color:var(--red);">Errore lettura tappe o timeout connessione.</div>`;
       }
     }
 
@@ -1064,11 +451,10 @@
               <div style="grid-column: span 2;"><span>Metodo di Pagamento</span><strong>${t.metodoPagamento || 'Non specificato'}</strong></div>
             </div>
 
-            <!-- BOX METEO ROTTA INTELLIGENTE CON PRIORITÀ -->
             <div class="weather-box">
               <div class="weather-head">
                 <span>⛅ Meteo Percorso (Step 45 Min)</span>
-                <span id="w-badge-${i}" class="weather-badge-status">Controllo data...</span>
+                <span id="w-badge-${i}" class="weather-badge-status">Inizializzazione...</span>
               </div>
               <div class="weather-scroll" id="weather-line-${i}">
                 <div class="weather-cell"><div class="w-time">--:--</div><div class="w-icon">⏳</div><div class="w-temp">In attesa</div></div>
@@ -1089,6 +475,29 @@
     }
 
     async function calcolaTelemetriaCompletaCard(idx, t, bH, bM) {
+      const wLine = document.getElementById(`weather-line-${idx}`);
+      const wBadge = document.getElementById(`w-badge-${idx}`);
+
+      // CONTROLLO TEMPORALE IMMEDIATO SULLA DATA
+      const checkMeteo = analizzaFinestraMeteo(t.data);
+
+      if (wBadge && wLine) {
+        if (checkMeteo.stato === "obsoleto") {
+          wBadge.className = "weather-badge-status status-obsoleto";
+          wBadge.innerText = "DATO OBSOLETO";
+          wLine.innerHTML = `<div style="padding:10px; text-align:center; color:#fda4af; font-size:12px; font-weight:700; width:100%;">⏳ Tappa passata: previsioni meteo non più attive.</div>`;
+        } else if (checkMeteo.stato === "futuro") {
+          wBadge.className = "weather-badge-status status-future";
+          wBadge.innerText = "DATO NON ANCORA DISPONIBILE";
+          wLine.innerHTML = `<div style="padding:10px; text-align:center; color:#fef08a; font-size:12px; font-weight:700; width:100%;">📡 Oltre 10 giorni: dati previsionali disponibili all'avvicinarsi della data.</div>`;
+        } else if (checkMeteo.stato === "invalid") {
+          wBadge.className = "weather-badge-status status-obsoleto";
+          wBadge.innerText = "DATA NON VALIDA";
+          wLine.innerHTML = `<div style="padding:10px; text-align:center; color:#fda4af; font-size:12px; font-weight:700; width:100%;">Inserire data in formato GG/MM/AAAA.</div>`;
+        }
+      }
+
+      // Geocodifica e calcolo rotta
       const locNomi = [];
       if (t.partenza) locNomi.push(t.partenza);
       if (t.passaggio) {
@@ -1098,12 +507,20 @@
 
       const coords = [];
       for (const name of locNomi) {
-        const c = await geocode(name);
-        if (c) coords.push({ ...c, name: name });
+        try {
+          const c = await geocode(name);
+          if (c) coords.push({ ...c, name: name });
+        } catch(e) {}
       }
 
       if (coords.length >= 2) {
-        const stats = await getRouteAndElevationHD(coords);
+        let stats = { km: t.km || 0, timeMin: 180, oreStr: t.oreGuida || "3:00", maxEle: t.altMax || 0, elevationCurve: [], fullGeometry: [] };
+        try {
+          stats = await getRouteAndElevationHD(coords);
+        } catch (e) {
+          stats.fullGeometry = coords.map(p => [p.lon, p.lat]);
+        }
+
         const kmEl = document.getElementById(`km-val-${idx}`);
         const timeEl = document.getElementById(`time-val-${idx}`);
         const eleEl = document.getElementById(`ele-val-${idx}`);
@@ -1115,94 +532,53 @@
         if (kmEl) kmEl.innerText = `${Math.round(kmToShow)} km`;
         if (timeEl) timeEl.innerText = (t.oreGuida && t.oreGuida !== "0:00") ? t.oreGuida : stats.oreStr;
         if (eleEl) eleEl.innerText = `${Math.round(altToShow)} m`;
-        if (eleBox) eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(altToShow));
-
-        const tempEl = document.getElementById(`temp-val-${idx}`);
-        if ((!t.tempMedie || t.tempMedie === "") && tempEl) {
-          const dest = coords[coords.length - 1];
-          const tStorica = await getHistoricalTempRange(dest.lat, dest.lon, t.data);
-          if (tStorica) {
-            tempEl.innerText = tStorica;
-            tempEl.className = "tele-val " + getTempColorClass(tStorica);
-          }
+        if (eleBox && stats.elevationCurve.length > 0) {
+          eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(altToShow));
         }
 
-        // =========================================================================
-        // NUOVA LOGICA PRIORITARIA E STABILE PER IL METEO PERCORSO
-        // =========================================================================
-        const wLine = document.getElementById(`weather-line-${idx}`);
-        const wBadge = document.getElementById(`w-badge-${idx}`);
-        const checkMeteo = analizzaFinestraMeteo(t.data);
-
-        if (wBadge && wLine) {
-          // CASO 1: Data passata (precedente alla data attuale)
-          if (checkMeteo.stato === "obsoleto") {
-            wBadge.className = "weather-badge-status status-obsoleto";
-            wBadge.innerText = "DATO OBSOLETO";
-            wLine.innerHTML = `
-              <div style="padding:14px; text-align:center; color:#fda4af; font-size:12px; font-weight:700; width:100%;">
-                ⏳ Data antecedente a oggi: il meteo storico è archiviato.
-              </div>
-            `;
-            return;
-          }
-
-          // CASO 2: Data oltre 10 giorni nel futuro
-          if (checkMeteo.stato === "futuro") {
-            wBadge.className = "weather-badge-status status-future";
-            wBadge.innerText = "DATO NON ANCORA DISPONIBILE";
-            wLine.innerHTML = `
-              <div style="padding:14px; text-align:center; color:#fef08a; font-size:12px; font-weight:700; width:100%;">
-                📡 Data oltre 10 giorni: previsioni live disponibili in prossimità del viaggio.
-              </div>
-            `;
-            return;
-          }
-
-          // CASO 3: Data prossima (tra oggi e +10 giorni) -> MASSIMA PRIORITÀ E VELOCITÀ
+        // Se la data è nei prossimi 10 giorni calcola il meteo reale a step di 45 minuti
+        if (checkMeteo.stato === "disponibile" && wBadge && wLine) {
           wBadge.className = "weather-badge-status status-live";
-          wBadge.innerText = `LIVE (Tra ${checkMeteo.diffDays} gg)`;
+          wBadge.innerText = `PREVISIONE LIVE (${checkMeteo.diffDays === 0 ? 'OGGI' : 'tra ' + checkMeteo.diffDays + ' gg'})`;
 
-          if (stats.fullGeometry && stats.fullGeometry.length > 0) {
-            const totMin = Math.max(20, stats.timeMin);
-            const numStep = Math.max(2, Math.floor(totMin / 45) + 1);
-            const geo = stats.fullGeometry;
-            let wHtml = "";
+          const geo = (stats.fullGeometry && stats.fullGeometry.length > 0) ? stats.fullGeometry : coords.map(p => [p.lon, p.lat]);
+          const totMin = Math.max(20, stats.timeMin);
+          const numStep = Math.max(2, Math.floor(totMin / 45) + 1);
+          let wHtml = "";
 
-            for (let s = 0; s < numStep; s++) {
-              const frazione = s / (numStep - 1);
-              const geoIdx = Math.min(geo.length - 1, Math.round(frazione * (geo.length - 1)));
-              const minProg = Math.round(frazione * totMin);
-              const kmProg = Math.round(frazione * kmToShow);
+          for (let s = 0; s < numStep; s++) {
+            const frazione = s / (numStep - 1);
+            const geoIdx = Math.min(geo.length - 1, Math.round(frazione * (geo.length - 1)));
+            const minProg = Math.round(frazione * totMin);
+            const kmProg = Math.round(frazione * kmToShow);
 
-              const lon = geo[geoIdx][0];
-              const lat = geo[geoIdx][1];
+            const lon = geo[geoIdx][0];
+            const lat = geo[geoIdx][1];
 
-              let nomePunto = "";
-              if (s === 0) nomePunto = t.partenza;
-              else if (s === numStep - 1) nomePunto = t.arrivo;
-              else nomePunto = `Tratta +${kmProg}km`;
+            let nomePunto = "";
+            if (s === 0) nomePunto = t.partenza;
+            else if (s === numStep - 1) nomePunto = t.arrivo;
+            else nomePunto = `Tratta +${kmProg}km`;
 
-              const passMin = bH * 60 + bM + minProg;
-              const h = Math.floor(passMin / 60) % 24;
-              const m = passMin % 60;
-              const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+            const passMin = bH * 60 + bM + minProg;
+            const h = Math.floor(passMin / 60) % 24;
+            const m = passMin % 60;
+            const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
 
-              const w = await getForecastLiveFast(lat, lon, checkMeteo.isoDate, h);
+            const w = await getForecastLiveFast(lat, lon, checkMeteo.isoDate, h);
 
-              wHtml += `
-                <div class="weather-cell">
-                  <div class="w-time">${timeStr}</div>
-                  <div class="w-km">+${kmProg} km</div>
-                  <div class="w-icon">${w.icon}</div>
-                  <div class="w-temp">${w.temp}°C</div>
-                  <div class="w-rain">💧${w.rain}%</div>
-                  <div class="w-name" title="${nomePunto}">${nomePunto}</div>
-                </div>
-              `;
-            }
-            wLine.innerHTML = wHtml;
+            wHtml += `
+              <div class="weather-cell">
+                <div class="w-time">${timeStr}</div>
+                <div class="w-km">+${kmProg} km</div>
+                <div class="w-icon">${w.icon}</div>
+                <div class="w-temp">${w.temp}°C</div>
+                <div class="w-rain">💧${w.rain}%</div>
+                <div class="w-name" title="${nomePunto}">${nomePunto}</div>
+              </div>
+            `;
           }
+          wLine.innerHTML = wHtml;
         }
       }
     }
@@ -1212,7 +588,7 @@
       const k = loc.trim().toLowerCase();
       if (GEO_CACHE[k]) return GEO_CACHE[k];
       try {
-        const r = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(loc)}&limit=1`);
+        const r = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(loc)}&limit=1`, 3500);
         const d = await r.json();
         if (d && d.length > 0) {
           const c = { lat: parseFloat(d[0].lat), lon: parseFloat(d[0].lon) };
@@ -1227,7 +603,7 @@
       const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";");
       if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
       try {
-        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`);
+        const res = await fetchWithTimeout(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`, 4500);
         const data = await res.json();
         let km = 0, timeMin = 0, oreStr = "0:00";
         let sampleLats = [], sampleLons = [];
@@ -1242,7 +618,7 @@
           oreStr = `${h}:${m}`;
 
           fullGeometry = route.geometry.coordinates;
-          const numSamples = 18;
+          const numSamples = 14;
           for (let i = 0; i < numSamples; i++) {
             const idx = Math.min(fullGeometry.length - 1, Math.floor((i / (numSamples - 1)) * (fullGeometry.length - 1)));
             sampleLons.push(fullGeometry[idx][0].toFixed(4));
@@ -1254,7 +630,7 @@
           fullGeometry = coords.map(p => [p.lon, p.lat]);
         }
 
-        const eleRes = await fetch(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`);
+        const eleRes = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`, 3500);
         const eleData = await eleRes.json();
         let maxEle = 0;
         let elevationCurve = [];
@@ -1267,14 +643,14 @@
         ROUTE_CACHE[coordStr] = out;
         return out;
       } catch(e){
-        return { km: 0, timeMin: 0, oreStr: "0:00", maxEle: 0, elevationCurve: [], fullGeometry: [] };
+        return { km: 0, timeMin: 0, oreStr: "0:00", maxEle: 0, elevationCurve: [], fullGeometry: coords.map(p => [p.lon, p.lat]) };
       }
     }
 
     async function getForecastLiveFast(lat, lon, isoDate, h) {
       try {
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&hourly=temperature_2m,precipitation_probability,weather_code&start_date=${isoDate}&end_date=${isoDate}&timezone=auto`;
-        const res = await fetch(url);
+        const res = await fetchWithTimeout(url, 3500);
         const j = await res.json();
         if (j && j.hourly && j.hourly.temperature_2m) {
           const code = j.hourly.weather_code[h] || 0;
@@ -1288,30 +664,13 @@
       return { temp: "--", rain: 0, icon: "🌤️" };
     }
 
-    async function getHistoricalTempRange(lat, lon, dataStr) {
-      try {
-        let m = "05", d = "15";
-        if (dataStr && dataStr.includes("/")) {
-          const parts = dataStr.split("/");
-          d = String(parts[0]).padStart(2, "0");
-          m = String(parts[1]).padStart(2, "0");
-        }
-        const refDate = `2024-${m}-${d}`;
-        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${refDate}&end_date=${refDate}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
-        const res = await fetch(url);
-        const j = await res.json();
-        if (j && j.daily && j.daily.temperature_2m_min) {
-          return `${Math.round(j.daily.temperature_2m_min[0])}° / ${Math.round(j.daily.temperature_2m_max[0])}°`;
-        }
-      } catch(e){}
-      return "";
-    }
-
     function calcolaDataSuccessiva(dataStr) {
-      if (!dataStr || !dataStr.includes("/")) return "";
-      const p = dataStr.split("/");
-      if (p.length !== 3) return "";
-      const dt = new Date(parseInt(p[2]), parseInt(p[1]) - 1, parseInt(p[0]));
+      if (!dataStr) return "";
+      const m = analizzaFinestraMeteo(dataStr);
+      if (m.stato === "invalid") return "";
+      const p = dataStr.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if (!p) return "";
+      const dt = new Date(parseInt(p[3]), parseInt(p[2]) - 1, parseInt(p[1]));
       dt.setDate(dt.getDate() + 1);
       const gg = String(dt.getDate()).padStart(2, "0");
       const mm = String(dt.getMonth() + 1).padStart(2, "0");
@@ -1428,9 +787,6 @@
           if (st.km > 0) kmCalc = st.km;
           if (st.oreStr) oreCalc = st.oreStr;
           if (st.maxEle > 0) altMaxCalc = st.maxEle;
-          const dest = pts[pts.length - 1];
-          const tSt = await getHistoricalTempRange(dest.lat, dest.lon, dataStr);
-          if (tSt) tempCalc = tSt;
         }
       } catch (e) {}
 
@@ -1476,5 +832,3 @@
       setTimeout(() => apriSchedaViaggio(schedaAttiva), 1100);
     }
   </script>
-</body>
-</html>
