@@ -37,7 +37,6 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* BARRA SUPERIORE / CRUSCOTTO */
     header {
       background: linear-gradient(145deg, #162032, #0d131f);
       border: 1px solid var(--border);
@@ -93,36 +92,28 @@
     }
     .btn-sync:active { transform: scale(0.96); }
 
-    /* SELETTORE VIAGGI / MULTI-SCHEDA */
-    .trips-bar {
+    .current-trip-badge {
       display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 8px;
-      scrollbar-width: none;
-    }
-    .trips-bar::-webkit-scrollbar { display: none; }
-    .trip-tab {
-      flex: 0 0 auto;
-      background: #0f1726;
+      justify-content: space-between;
+      align-items: center;
+      background: #0d1422;
       border: 1px solid var(--border);
-      padding: 6px 12px;
-      border-radius: 20px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+    .current-trip-name {
       font-family: 'Chakra Petch', sans-serif;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 700;
+      color: var(--cyan);
+    }
+    .btn-rename {
+      background: transparent;
+      border: none;
       color: var(--text-muted);
       cursor: pointer;
-    }
-    .trip-tab.active {
-      background: var(--cyan);
-      color: #0b0f17;
-      border-color: var(--cyan);
-    }
-    .trip-tab.add-tab {
-      background: #1e293b;
-      color: #cbd5e1;
+      font-size: 13px;
     }
 
     .status-row {
@@ -137,6 +128,64 @@
       color: var(--cyan);
       font-family: 'Chakra Petch', sans-serif;
       font-weight: 700;
+    }
+
+    /* HOME MODAL: ELENCO SCHEDE VIAGGIO */
+    .home-view {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .home-view-title {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--cyan);
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .trips-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .trip-card {
+      background: #0f1624;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+    .trip-card.active {
+      border-color: var(--cyan);
+      background: #14233a;
+    }
+    .trip-card-name {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .btn-add-sheet {
+      width: 100%;
+      background: #1e293b;
+      border: 1px dashed var(--cyan);
+      color: var(--cyan);
+      padding: 12px;
+      border-radius: 10px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
     }
 
     /* CARD DELLA TAPPA */
@@ -205,11 +254,10 @@
       color: #fca5a5;
       border: 1px solid #f43f5e;
     }
-    .btn-card-ctrl:active { transform: scale(0.92); }
 
     .card-body { padding: 14px; }
 
-    /* TIMELINE PERCORSO */
+    /* TIMELINE */
     .route-box {
       border-left: 2px solid #334155;
       margin-left: 8px;
@@ -238,7 +286,7 @@
     .point-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; }
     .point-city { font-size: 16px; font-weight: 700; color: #fff; }
 
-    /* CRUSCOTTO SU STRADA */
+    /* TELEMETRIA & TEMPERATURE MEDIE STORICHE */
     .road-telemetry {
       display: grid;
       grid-template-columns: 1fr 1fr 1fr 1.3fr;
@@ -291,7 +339,7 @@
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
     .grid-info div strong { color: #f1f5f9; font-size: 13px; }
 
-    /* METEO ROTTA OGNI 45 MIN */
+    /* METEO ROTTA 45 MIN */
     .weather-box {
       background: var(--card-alt);
       border: 1px solid var(--border);
@@ -365,7 +413,7 @@
       gap: 8px;
     }
 
-    /* MODALE CREAZIONE / MODIFICA TAPPA */
+    /* MODALE CREAZIONE / MODIFICA */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -469,19 +517,22 @@
 <body>
 
   <!-- HEADER -->
-  <header id="mainHeader">
+  <header>
     <div class="top-row">
       <div class="header-left">
-        <button class="btn-home" onclick="vaiAllaHome()" title="Torna in Cima / Home">🏠</button>
-        <div class="logo">🏍️ djRoute <span>ROADBOOK</span></div>
+        <button class="btn-home" onclick="toggleHomeView()" title="Elenco Viaggi / Home">🏠</button>
+        <div class="logo">djRoute <span>MASTER</span></div>
       </div>
       <button id="btnSyncCloud" class="btn-sync" onclick="sincronizzaCloud()">
         🔄 AGGIORNA
       </button>
     </div>
 
-    <!-- SELETTORE DEI VIAGGI -->
-    <div class="trips-bar" id="tripsBar"></div>
+    <!-- NOME DEL VIAGGIO ATTIVO -->
+    <div class="current-trip-badge">
+      <span class="current-trip-name" id="currentTripNameDisplay">Caricamento...</span>
+      <button class="btn-rename" onclick="rinominaViaggioAttivo()" title="Rinomina Foglio">✏️ Rinomina</button>
+    </div>
 
     <div class="status-row">
       <span id="syncStatus">Pronto</span>
@@ -490,14 +541,24 @@
     </div>
   </header>
 
-  <!-- CONTENITORE PRINCIPALE TAPPE -->
+  <!-- HOME VIEW: ELENCO FOGLI ATTIVI -->
+  <section id="homeView" class="home-view">
+    <div class="home-view-title">
+      <span>📁 SCHEDE VIAGGI ATTIVE</span>
+      <span style="font-size:12px; color:var(--text-muted); cursor:pointer;" onclick="toggleHomeView()">Chiudi ✕</span>
+    </div>
+    <div class="trips-grid" id="tripsGrid"></div>
+    <button class="btn-add-sheet" onclick="creaNuovoFoglioViaggio()">+ CREA NUOVO FOGLIO VIAGGIO</button>
+  </section>
+
+  <!-- CONTENITORE TAPPE -->
   <main id="tappeContainer">
     <div style="text-align:center; padding:50px 20px; color:#94a3b8;">
-      Tocca <strong>AGGIORNA</strong> in alto oppure <strong>➕ NUOVA TAPPA</strong> per iniziare.
+      Tocca <strong>AGGIORNA</strong> in alto per scaricare le tappe del viaggio attivo.
     </div>
   </main>
 
-  <!-- PULSANTE AGGIUNGI TAPPA -->
+  <!-- PULSANTE NUOVA TAPPA -->
   <button class="fab-btn" onclick="apriModaleNuovaTappa()">
     ➕ NUOVA TAPPA
   </button>
@@ -521,7 +582,7 @@
         </div>
         <div class="form-group" style="flex:1;">
           <label>Costo Alloggio (€)</label>
-          <input type="number" id="inpSpesa" placeholder="0">
+          <input type="number" id="inpSpesa" placeholder="0" step="1">
         </div>
       </div>
 
@@ -566,61 +627,95 @@
   </div>
 
   <script>
-    const DEFAULT_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSg_iYdW33G7M2RDvckqApsOKZC614zho4-qTsk0ow_Bx3EmrN_kVusQIPyr8qeEC-5w/exec";
     
-    let tourList = JSON.parse(localStorage.getItem("djRoute_tours") || "[]");
-    if (tourList.length === 0) {
-      tourList = [
-        { id: "tour_2026", name: "Grecia & Turchia 2026", url: DEFAULT_SCRIPT_URL },
-        { id: "tour_kurdistan", name: "Iraqi Kurdistan 2027", url: DEFAULT_SCRIPT_URL }
-      ];
-      localStorage.setItem("djRoute_tours", JSON.stringify(tourList));
-    }
-
-    let activeTourId = localStorage.getItem("djRoute_active_tour_id") || tourList[0].id;
-    function getActiveTour() {
-      return tourList.find(t => t.id === activeTourId) || tourList[0];
-    }
+    let activeSheetName = localStorage.getItem("djRoute_active_sheet") || "ROADBOOK_APP";
+    let activeSheetsList = JSON.parse(localStorage.getItem("djRoute_sheets_list") || '["ROADBOOK_APP"]');
 
     const GEO_CACHE = {};
     const ROUTE_CACHE = {};
 
-    function vaiAllaHome() {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    function toggleHomeView() {
+      const hv = document.getElementById("homeView");
+      if (hv.style.display === "block") {
+        hv.style.display = "none";
+      } else {
+        renderHomeTrips();
+        hv.style.display = "block";
+      }
     }
 
-    function renderTripsBar() {
-      const bar = document.getElementById("tripsBar");
-      bar.innerHTML = "";
-      tourList.forEach(t => {
-        const tab = document.createElement("div");
-        tab.className = `trip-tab ${t.id === activeTourId ? 'active' : ''}`;
-        tab.innerText = t.name;
-        tab.onclick = () => {
-          activeTourId = t.id;
-          localStorage.setItem("djRoute_active_tour_id", activeTourId);
-          renderTripsBar();
-          caricaTappeAttive();
+    function renderHomeTrips() {
+      const grid = document.getElementById("tripsGrid");
+      grid.innerHTML = "";
+      activeSheetsList.forEach(name => {
+        const card = document.createElement("div");
+        card.className = `trip-card ${name === activeSheetName ? 'active' : ''}`;
+        card.innerHTML = `
+          <span class="trip-card-name">🏍️ ${name}</span>
+          <span style="font-size:12px; color:${name === activeSheetName ? 'var(--cyan)' : 'var(--text-muted)'}">
+            ${name === activeSheetName ? 'ATTIVO ✓' : 'Apri ➔'}
+          </span>
+        `;
+        card.onclick = () => {
+          activeSheetName = name;
+          localStorage.setItem("djRoute_active_sheet", activeSheetName);
+          document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
+          document.getElementById("homeView").style.display = "none";
+          sincronizzaCloud();
         };
-        bar.appendChild(tab);
+        grid.appendChild(card);
       });
+    }
 
-      const addBtn = document.createElement("div");
-      addBtn.className = "trip-tab add-tab";
-      addBtn.innerText = "+ Nuovo Tour";
-      addBtn.onclick = () => {
-        const nome = prompt("Inserisci il nome del nuovo tour:");
-        if (nome && nome.trim()) {
-          const newId = "tour_" + Date.now();
-          tourList.push({ id: newId, name: nome.trim(), url: DEFAULT_SCRIPT_URL });
-          localStorage.setItem("djRoute_tours", JSON.stringify(tourList));
-          activeTourId = newId;
-          localStorage.setItem("djRoute_active_tour_id", activeTourId);
-          renderTripsBar();
-          caricaTappeAttive();
-        }
-      };
-      bar.appendChild(addBtn);
+    async function creaNuovoFoglioViaggio() {
+      const nome = prompt("Nome del nuovo viaggio (es. Alpi 2026 o Kurdistan 2027):");
+      if (!nome || !nome.trim()) return;
+      const cleanName = nome.trim();
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "createSheet", newSheetName: cleanName })
+        });
+        if (!activeSheetsList.includes(cleanName)) activeSheetsList.push(cleanName);
+        localStorage.setItem("djRoute_sheets_list", JSON.stringify(activeSheetsList));
+        activeSheetName = cleanName;
+        localStorage.setItem("djRoute_active_sheet", activeSheetName);
+        document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
+        document.getElementById("homeView").style.display = "none";
+        renderRoadbook([]);
+        alert(`✅ Foglio "${cleanName}" creato sul foglio Google e pronto!`);
+      } catch (e) {
+        alert("Errore durante la creazione del nuovo foglio.");
+      }
+    }
+
+    async function rinominaViaggioAttivo() {
+      const nuovo = prompt("Nuovo nome per questo viaggio:", activeSheetName);
+      if (!nuovo || !nuovo.trim() || nuovo.trim() === activeSheetName) return;
+      const cleanNew = nuovo.trim();
+      const vecchio = activeSheetName;
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: "renameSheet", oldSheetName: vecchio, newSheetName: cleanNew })
+        });
+        const idx = activeSheetsList.indexOf(vecchio);
+        if (idx !== -1) activeSheetsList[idx] = cleanNew;
+        localStorage.setItem("djRoute_sheets_list", JSON.stringify(activeSheetsList));
+        activeSheetName = cleanNew;
+        localStorage.setItem("djRoute_active_sheet", activeSheetName);
+        document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
+        alert(`✅ Viaggio rinominato in "${cleanNew}"!`);
+      } catch (e) {
+        alert("Errore durante la ridenominazione.");
+      }
     }
 
     // FORMATTAZIONE DATA GG/MM/AAAA
@@ -634,7 +729,7 @@
       }
     });
 
-    // AUTOCOMPLETAMENTO CITTA
+    // AUTOCOMPLETAMENTO
     function setupAutocomplete(inputId, suggestBoxId) {
       const input = document.getElementById(inputId);
       const box = document.getElementById(suggestBoxId);
@@ -770,13 +865,31 @@
       return { temp: "--", rain: 0, icon: "🌤️" };
     }
 
+    // CARICAMENTO INIZIALE
     window.addEventListener("DOMContentLoaded", () => {
-      renderTripsBar();
-      caricaTappeAttive();
+      document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
+      caricaTappeLocali();
+      scaricaElencoFogli();
     });
 
-    function caricaTappeAttive() {
-      const storageKey = `djRoute_tappe_${activeTourId}`;
+    async function scaricaElencoFogli() {
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getSheets&_t=${Date.now()}`);
+        const sheets = await res.json();
+        if (Array.isArray(sheets) && sheets.length > 0) {
+          activeSheetsList = sheets;
+          localStorage.setItem("djRoute_sheets_list", JSON.stringify(activeSheetsList));
+          if (!activeSheetsList.includes(activeSheetName)) {
+            activeSheetName = activeSheetsList[0];
+            localStorage.setItem("djRoute_active_sheet", activeSheetName);
+            document.getElementById("currentTripNameDisplay").innerText = activeSheetName;
+          }
+        }
+      } catch (e) {}
+    }
+
+    function caricaTappeLocali() {
+      const storageKey = `djRoute_tappe_${activeSheetName}`;
       const cached = localStorage.getItem(storageKey);
       if (cached) {
         try {
@@ -794,15 +907,14 @@
       btn.innerHTML = "⏳ CARICO...";
       status.innerText = "Download tappe...";
 
-      const tour = getActiveTour();
-
       try {
-        const url = tour.url + "?_nocache=" + new Date().getTime();
+        await scaricaElencoFogli();
+        const url = `${SCRIPT_URL}?sheetName=${encodeURIComponent(activeSheetName)}&_nocache=${Date.now()}`;
         const response = await fetch(url);
         if (!response.ok) throw new Error("Errore API");
 
         const tappe = await response.json();
-        const storageKey = `djRoute_tappe_${activeTourId}`;
+        const storageKey = `djRoute_tappe_${activeSheetName}`;
         localStorage.setItem(storageKey, JSON.stringify(tappe));
         status.innerText = "Calcolo percorsi...";
         await renderRoadbook(tappe);
@@ -825,7 +937,7 @@
       counter.innerText = `${tappe.length} tappe`;
 
       if (tappe.length === 0) {
-        container.innerHTML = `<div style="text-align:center; padding:50px 20px; color:#94a3b8;">Nessuna tappa presente per questo tour.<br>Tocca <strong>AGGIORNA</strong> o <strong>➕ NUOVA TAPPA</strong>.</div>`;
+        container.innerHTML = `<div style="text-align:center; padding:50px 20px; color:#94a3b8;">Nessuna tappa nel viaggio "${activeSheetName}".<br>Tocca <strong>AGGIORNA</strong> o <strong>➕ NUOVA TAPPA</strong>.</div>`;
         totalKmHeader.innerText = "Totale: 0 km";
         return;
       }
@@ -849,6 +961,11 @@
         const baseMin = t.ora ? parseInt(t.ora.split(":")[1]) || 30 : 30;
         const tempClass = getTempClass(t.tempMedie);
 
+        // Prezzo visualizzato rigorosamente pulito
+        const spesaDisplay = t.spesa ? `${Math.round(t.spesa)} €` : '-';
+        const daPagareVal = Math.round(t.daPagare || 0);
+        const daPagareDisplay = daPagareVal > 0 ? `${daPagareVal} €` : 'Saldato';
+
         card.innerHTML = `
           <div class="card-head">
             <div class="card-head-left">
@@ -862,7 +979,6 @@
           </div>
 
           <div class="card-body">
-            <!-- 1. TIMELINE PERCORSO -->
             <div class="route-box">
               <div class="route-point dep">
                 <div class="point-label">Partenza (Ore ${t.ora || '08:30'})</div>
@@ -879,11 +995,11 @@
               </div>
             </div>
 
-            <!-- 2. CRUSCOTTO TELEMETRIA & TEMPERATURE MEDIE STORICHE -->
+            <!-- CRUSCOTTO SU STRADA -->
             <div class="road-telemetry">
               <div class="tele-item">
                 <div class="tele-label">Distanza</div>
-                <div class="tele-val" id="km-val-${i}">${t.km ? t.km + ' km' : '-- km'}</div>
+                <div class="tele-val" id="km-val-${i}">${t.km ? Math.round(t.km) + ' km' : '-- km'}</div>
               </div>
               <div class="tele-item">
                 <div class="tele-label">Tempo Guida</div>
@@ -899,15 +1015,15 @@
               </div>
             </div>
 
-            <!-- 3. ALLOGGIO E SPESE -->
+            <!-- ALLOGGIO E SPESE PULITE -->
             <div class="grid-info">
               <div><span>Alloggio</span><strong>${t.alloggio || 'Libero / Tenda'}</strong></div>
               <div><span>Parcheggio</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
-              <div><span>Spesa Prevista</span><strong>${t.spesa ? t.spesa + ' €' : '-'}</strong></div>
-              <div><span>Residuo</span><strong style="color:${t.daPagare > 0 ? '#f43f5e' : '#10b981'}">${t.daPagare > 0 ? t.daPagare + ' €' : 'Saldato'}</strong></div>
+              <div><span>Spesa Prevista</span><strong>${spesaDisplay}</strong></div>
+              <div><span>Residuo</span><strong style="color:${daPagareVal > 0 ? '#f43f5e' : '#10b981'}">${daPagareDisplay}</strong></div>
             </div>
 
-            <!-- 4. METEO ROTTA (OGNI 45 MIN) -->
+            <!-- METEO STEP 45 MIN -->
             <div class="weather-box">
               <div class="weather-head">
                 <span>METEO ROTTA (STEP 45 MIN)</span>
@@ -926,7 +1042,7 @@
 
         container.appendChild(card);
 
-        // CALCOLO SU STRADA (OSRM + ALTIMETRIA + METEO)
+        // CALCOLO OSRM + ELEVATION + METEO
         (async (idx, tappaData, bH, bM) => {
           const locList = [];
           if (tappaData.partenza) locList.push({ name: tappaData.partenza, delta: 0 });
@@ -953,7 +1069,7 @@
             const eleEl = document.getElementById(`ele-val-${idx}`);
 
             const kmFinal = tappaData.km > 0 ? tappaData.km : stats.km;
-            if (kmEl) kmEl.innerText = `${kmFinal} km`;
+            if (kmEl) kmEl.innerText = `${Math.round(kmFinal)} km`;
             if (timeEl) {
               const h = Math.floor(stats.timeMin / 60);
               const m = stats.timeMin % 60;
@@ -962,7 +1078,7 @@
             if (eleEl) eleEl.innerText = `${stats.maxEle} m`;
 
             totalTripKm += kmFinal;
-            totalKmHeader.innerText = `Totale: ${totalTripKm} km`;
+            totalKmHeader.innerText = `Totale: ${Math.round(totalTripKm)} km`;
           }
 
           const wCont = document.getElementById(`weather-timeline-${idx}`);
@@ -994,9 +1110,8 @@
       }
     }
 
-    // MODIFICA TAPPA ESISTENTE
     function modificaTappa(index) {
-      const storageKey = `djRoute_tappe_${activeTourId}`;
+      const storageKey = `djRoute_tappe_${activeSheetName}`;
       const tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
       const t = tappe[index];
       if (!t) return;
@@ -1008,7 +1123,7 @@
 
       document.getElementById("inpData").value = t.data || "";
       document.getElementById("inpOra").value = t.ora || "08:30";
-      document.getElementById("inpSpesa").value = t.spesa || "";
+      document.getElementById("inpSpesa").value = Math.round(t.spesa || 0);
       document.getElementById("inpPartenza").value = t.partenza || "";
       document.getElementById("inpPassaggio").value = t.passaggio || "";
       document.getElementById("inpArrivo").value = t.arrivo || "";
@@ -1019,14 +1134,13 @@
       document.getElementById("modalTappa").style.display = "block";
     }
 
-    // ELIMINAZIONE TAPPA CON TASTINO DEDICATO
     async function eliminaTappa(index) {
-      const storageKey = `djRoute_tappe_${activeTourId}`;
+      const storageKey = `djRoute_tappe_${activeSheetName}`;
       let tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
       const tappa = tappe[index];
       if (!tappa) return;
 
-      if (!confirm(`Sei sicuro di voler eliminare la Tappa #${index + 1} (${tappa.partenza} ➔ ${tappa.arrivo})?`)) {
+      if (!confirm(`Vuoi eliminare la Tappa #${index + 1} (${tappa.partenza} ➔ ${tappa.arrivo})?`)) {
         return;
       }
 
@@ -1034,21 +1148,16 @@
       localStorage.setItem(storageKey, JSON.stringify(tappe));
       renderRoadbook(tappe);
 
-      // Eliminazione remota sul foglio Google
-      const tour = getActiveTour();
       try {
-        await fetch(tour.url, {
+        await fetch(SCRIPT_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ action: "delete", rowId: tappa.id })
+          body: JSON.stringify({ action: "delete", sheetName: activeSheetName, rowId: tappa.id })
         });
-      } catch (e) {
-        console.warn("Cancellazione remota differita");
-      }
+      } catch (e) {}
     }
 
-    // MODALE NUOVA TAPPA
     function apriModaleNuovaTappa() {
       document.getElementById("modalTitle").innerText = "🏍️ Inserisci Nuova Tappa";
       document.getElementById("btnSaveModal").innerText = "💾 SALVA TAPPA";
@@ -1064,7 +1173,7 @@
       document.getElementById("inpMyRoute").value = "";
       document.getElementById("inpNote").value = "";
 
-      const storageKey = `djRoute_tappe_${activeTourId}`;
+      const storageKey = `djRoute_tappe_${activeSheetName}`;
       const cached = localStorage.getItem(storageKey);
       if (cached) {
         try {
@@ -1082,7 +1191,6 @@
       document.getElementById("modalTappa").style.display = "none";
     }
 
-    // SALVA TAPPA (CREAZIONE O MODIFICA)
     async function salvaTappa() {
       const dataStr = document.getElementById("inpData").value.trim();
       const partenza = document.getElementById("inpPartenza").value.trim();
@@ -1095,13 +1203,11 @@
         return;
       }
 
-      const storageKey = `djRoute_tappe_${activeTourId}`;
+      const storageKey = `djRoute_tappe_${activeSheetName}`;
       let tappe = JSON.parse(localStorage.getItem(storageKey) || "[]");
-
-      const spesaVal = parseFloat(document.getElementById("inpSpesa").value) || 0;
+      const spesaVal = Math.round(parseFloat(document.getElementById("inpSpesa").value) || 0);
 
       if (editIdx >= 0 && editIdx < tappe.length) {
-        // MODIFICA ESISTENTE
         const existing = tappe[editIdx];
         existing.data = dataStr || existing.data;
         existing.ora = document.getElementById("inpOra").value || existing.ora;
@@ -1118,24 +1224,20 @@
         chiudiModaleNuovaTappa();
         renderRoadbook(tappe);
 
-        // Invia aggiornamento a Google Sheets
-        const tour = getActiveTour();
         try {
-          await fetch(tour.url, {
+          await fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
               action: "update",
+              sheetName: activeSheetName,
               rowId: rowId,
               ...existing
             })
           });
-        } catch (err) {
-          console.warn("Aggiornamento foglio differito:", err);
-        }
+        } catch (err) {}
       } else {
-        // NUOVA TAPPA
         const nuovaTappa = {
           data: dataStr || "Data N/D",
           ora: document.getElementById("inpOra").value || "08:30",
@@ -1161,17 +1263,18 @@
         chiudiModaleNuovaTappa();
         renderRoadbook(tappe);
 
-        const tour = getActiveTour();
         try {
-          await fetch(tour.url, {
+          await fetch(SCRIPT_URL, {
             method: "POST",
             mode: "no-cors",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(nuovaTappa)
+            body: JSON.stringify({
+              action: "create",
+              sheetName: activeSheetName,
+              ...nuovaTappa
+            })
           });
-        } catch (err) {
-          console.warn("Invio foglio differito:", err);
-        }
+        } catch (err) {}
       }
     }
   </script>
