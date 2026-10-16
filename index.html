@@ -119,7 +119,6 @@
     attivaAutocompleteMappa("inpPassaggio", "sugPassaggio", true);
     attivaAutocompleteMappa("inpArrivo", "sugArrivo", false);
 
-    // FETCH CON TIMEOUT (Evita blocchi infiniti)
     async function fetchWithTimeout(resource, timeout = 4500) {
       const controller = new AbortController();
       const id = setTimeout(() => controller.abort(), timeout);
@@ -133,21 +132,17 @@
       }
     }
 
-    // PARSER UNIVERSALE DATE (Estrae giorno, mese, anno da qualsiasi stringa)
     function analizzaFinestraMeteo(dataStr) {
       if (!dataStr) return { stato: "invalid", diffDays: 999 };
-      
       let d = null, m = null, y = null;
       const str = String(dataStr).trim();
 
-      // Cerca pattern GG/MM/AAAA
       const matchSlash = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
       if (matchSlash) {
         d = parseInt(matchSlash[1]);
         m = parseInt(matchSlash[2]) - 1;
         y = parseInt(matchSlash[3]);
       } else {
-        // Cerca pattern AAAA-MM-GG
         const matchIso = str.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
         if (matchIso) {
           y = parseInt(matchIso[1]);
@@ -156,9 +151,7 @@
         }
       }
 
-      if (d === null || m === null || y === null) {
-        return { stato: "invalid", diffDays: 999 };
-      }
+      if (d === null || m === null || y === null) return { stato: "invalid", diffDays: 999 };
 
       const target = new Date(y, m, d, 23, 59, 59);
       const oggi = new Date();
@@ -169,11 +162,11 @@
       const isoDate = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
 
       if (diffGiorni < 0) {
-        return { stato: "obsoleto", diffDays: diffGiorni, isoDate };
+        return { stato: "obsoleto", diffDays: diffGiorni, isoDate, d, m: m + 1 };
       } else if (diffGiorni > 10) {
-        return { stato: "futuro", diffDays: diffGiorni, isoDate };
+        return { stato: "futuro", diffDays: diffGiorni, isoDate, d, m: m + 1 };
       } else {
-        return { stato: "disponibile", diffDays: diffGiorni, isoDate };
+        return { stato: "disponibile", diffDays: diffGiorni, isoDate, d, m: m + 1 };
       }
     }
 
@@ -308,11 +301,13 @@
     }
 
     function getTempColorClass(tempStr) {
-      if (!tempStr) return "temp-mild";
+      if (!tempStr || tempStr.includes("--")) return "temp-mild";
       const nums = (tempStr.match(/-?\d+/g) || []).map(Number);
       if (nums.length === 0) return "temp-mild";
-      if (Math.max(...nums) > 28) return "temp-hot";
-      if (Math.min(...nums) < 15) return "temp-cold";
+      const tMax = Math.max(...nums);
+      const tMin = Math.min(...nums);
+      if (tMax >= 28) return "temp-hot";
+      if (tMin <= 14) return "temp-cold";
       return "temp-mild";
     }
 
@@ -384,7 +379,9 @@
           ? `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute">🚀 Apri in MyRoute-App</a>`
           : `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ Apri Percorso in Mappa</a>`;
 
-        const tClass = getTempColorClass(t.tempMedie);
+        // Se c'è già la temperatura nel foglio, la mostra subito con il suo colore!
+        const tempEsistente = t.tempMedie && t.tempMedie.trim() ? t.tempMedie.trim() : "--° / --°";
+        const tClass = getTempColorClass(tempEsistente);
         const bH = t.ora ? parseInt(t.ora.split(":")[0]) || 8 : 8;
         const bM = t.ora ? parseInt(t.ora.split(":")[1]) || 30 : 30;
 
@@ -432,7 +429,7 @@
               </div>
               <div class="tele-item">
                 <div class="tele-label">Temp Medie</div>
-                <div class="tele-val ${tClass}" id="temp-val-${i}">${t.tempMedie || '--° / --°'}</div>
+                <div class="tele-val ${tClass}" id="temp-val-${i}">${tempEsistente}</div>
               </div>
             </div>
 
@@ -477,8 +474,9 @@
     async function calcolaTelemetriaCompletaCard(idx, t, bH, bM) {
       const wLine = document.getElementById(`weather-line-${idx}`);
       const wBadge = document.getElementById(`w-badge-${idx}`);
+      const tempEl = document.getElementById(`temp-val-${idx}`);
 
-      // CONTROLLO TEMPORALE IMMEDIATO SULLA DATA
+      // Controllo della finestra meteo
       const checkMeteo = analizzaFinestraMeteo(t.data);
 
       if (wBadge && wLine) {
@@ -534,6 +532,16 @@
         if (eleEl) eleEl.innerText = `${Math.round(altToShow)} m`;
         if (eleBox && stats.elevationCurve.length > 0) {
           eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(altToShow));
+        }
+
+        // Se la temperatura nel foglio era vuota, la calcola adesso sulla destinazione
+        if ((!t.tempMedie || t.tempMedie.includes("--")) && tempEl) {
+          const dest = coords[coords.length - 1];
+          const tStorica = await getHistoricalTempRange(dest.lat, dest.lon, t.data);
+          if (tStorica) {
+            tempEl.innerText = tStorica;
+            tempEl.className = "tele-val " + getTempColorClass(tStorica);
+          }
         }
 
         // Se la data è nei prossimi 10 giorni calcola il meteo reale a step di 45 minuti
@@ -664,6 +672,25 @@
       return { temp: "--", rain: 0, icon: "🌤️" };
     }
 
+    async function getHistoricalTempRange(lat, lon, dataStr) {
+      try {
+        const chk = analizzaFinestraMeteo(dataStr);
+        let m = "10", d = "18";
+        if (chk.m && chk.d) {
+          m = String(chk.m).padStart(2, "0");
+          d = String(chk.d).padStart(2, "0");
+        }
+        const refDate = `2024-${m}-${d}`;
+        const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${refDate}&end_date=${refDate}&daily=temperature_2m_max,temperature_2m_min&timezone=auto`;
+        const res = await fetchWithTimeout(url, 3500);
+        const j = await res.json();
+        if (j && j.daily && j.daily.temperature_2m_min) {
+          return `${Math.round(j.daily.temperature_2m_min[0])}° / ${Math.round(j.daily.temperature_2m_max[0])}°`;
+        }
+      } catch(e){}
+      return "";
+    }
+
     function calcolaDataSuccessiva(dataStr) {
       if (!dataStr) return "";
       const m = analizzaFinestraMeteo(dataStr);
@@ -774,61 +801,4 @@
 
       try {
         const nomi = [dep];
-        if (via) via.split(",").forEach(p => { if (p.trim()) nomi.push(p.trim()); });
-        nomi.push(arr);
-
-        const pts = [];
-        for (const n of nomi) {
-          const c = await geocode(n);
-          if (c) pts.push({ ...c, name: n });
-        }
-        if (pts.length >= 2) {
-          const st = await getRouteAndElevationHD(pts);
-          if (st.km > 0) kmCalc = st.km;
-          if (st.oreStr) oreCalc = st.oreStr;
-          if (st.maxEle > 0) altMaxCalc = st.maxEle;
-        }
-      } catch (e) {}
-
-      const spesa = parseFloat(document.getElementById("inpSpesa").value) || 0;
-      const pagato = parseFloat(document.getElementById("inpPagato").value) || 0;
-      const daPagare = parseFloat(document.getElementById("inpDaPagare").value) || 0;
-
-      const payload = {
-        sheetName: schedaAttiva,
-        action: rowId ? "update" : "create",
-        rowId: rowId || undefined,
-        data: dataStr,
-        ora: document.getElementById("inpOra").value || "08:30",
-        partenza: dep,
-        passaggio: via,
-        arrivo: arr,
-        km: kmCalc,
-        oreGuida: oreCalc,
-        altMax: altMaxCalc,
-        tempMedie: tempCalc,
-        alloggio: document.getElementById("inpAlloggio").value.trim(),
-        piattaforma: document.getElementById("valPiattaforma").value,
-        spesa: spesa,
-        pagamento: document.getElementById("valPagamento").value,
-        pagato: pagato,
-        daPagare: daPagare,
-        metodoPagamento: document.getElementById("valMetodo").value,
-        parcheggio: document.getElementById("valParcheggio").value,
-        note: document.getElementById("inpNote").value.trim(),
-        myRouteUrl: document.getElementById("inpMyRoute").value.trim()
-      };
-
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      });
-
-      btn.innerText = "💾 Salva Tappa";
-      btn.disabled = false;
-      chiudiModale();
-      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1100);
-    }
-  </script>
+        if (via) via.split(",").forEach
