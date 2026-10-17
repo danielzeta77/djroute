@@ -79,10 +79,10 @@
     .trip-banner-stats { font-size: 13px; font-weight: 700; color: var(--cyan); }
 
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.45); overflow: hidden; }
-    .card-head { background: #0d131f; padding: 11px 14px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
-    .card-title-box { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .card-head { background: #0d131f; padding: 11px 14px; display: flex; justify-content: space-between; align-items: center; gap: 8px; border-bottom: 1px solid var(--border); }
+    .card-title-box { display: flex; align-items: center; gap: 6px; }
     .card-title { font-size: 15px; font-weight: 800; color: var(--yellow); }
-    .card-date { display: inline-block; white-space: nowrap; flex-shrink: 0; font-size: 12px; font-weight: 700; background: #1e293b; padding: 3px 9px; border-radius: 6px; border: 1px solid #334155; color: #fff; }
+    .card-date { font-size: 12px; font-weight: 700; background: #1e293b; padding: 3px 9px; border-radius: 6px; border: 1px solid #334155; color: #fff; }
     .card-actions { display: flex; gap: 6px; }
     .btn-card { border: none; padding: 6px 10px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; }
     .btn-edit { background: #1e293b; color: var(--yellow); border: 1px solid var(--yellow); }
@@ -132,23 +132,31 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
+    /* LAYOUT MODALE OTTIMIZZATO PER SMARTPHONE */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
-    .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 12px; text-transform: uppercase; }
-    .form-group { margin-bottom: 12px; position: relative; }
-    .form-row { display: flex; gap: 10px; }
-    .form-row .form-group { flex: 1; }
+    .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
+    
+    .form-group { margin-bottom: 14px; position: relative; }
     .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
-    .form-group input { width: 100%; background: #080b11; border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: #fff; font-size: 14px; font-weight: 600; }
+    .form-group input { width: 100%; box-sizing: border-box; background: #080b11; border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: #fff; font-size: 14px; font-weight: 600; }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
-    .btn-select-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 7px 11px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; }
+    /* Griglia per Data e Ora */
+    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    /* Griglia 3 colonne compatta per i pagamenti */
+    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+
+    /* Griglia Simmetrica e Ordinata per i Bottoni a Pillola */
+    .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
     .suggest-item { padding: 9px 12px; font-size: 13px; color: #fff; border-bottom: 1px solid #24324d; cursor: pointer; }
     .suggest-item:active, .suggest-item:hover { background: var(--yellow); color: #080b11; font-weight: 700; }
+    
     .modal-actions { display: flex; gap: 10px; margin-top: 18px; }
     .btn-save { flex: 1; background: var(--yellow); color: #080b11; border: none; padding: 12px; border-radius: 8px; font-weight: 800; font-size: 14px; cursor: pointer; text-transform: uppercase; }
     .btn-cancel { flex: 1; background: #263349; color: #fff; border: none; padding: 12px; border-radius: 8px; font-weight: 700; font-size: 14px; cursor: pointer; text-transform: uppercase; }
@@ -158,7 +166,7 @@
 
   <header>
     <div class="header-bar">
-      <!-- NUOVA ICONA HOME: MOTO CYBERPUNK COLORATA -->
+      <!-- NUOVA ICONA HOME MOTO STILIZZATA (CYBERPUNK) -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="5.5" cy="17.5" r="3.5" stroke="#00e5ff"/>
@@ -169,7 +177,7 @@
         </svg>
       </button>
 
-      <!-- NUOVO LOGO + SOTTOTITOLO FUCSIA -->
+      <!-- NUOVO LOGO FUCSIA/GIALLO -->
       <div class="brand-box">
         <div class="brand-logo">dj<span>Route</span></div>
         <div class="brand-sub">planner & Meteo</div>
@@ -187,14 +195,15 @@
   </header>
 
   <main id="vistaHome">
+    <!-- SCRITTE CENTRATE E PULITE -->
     <div class="section-tag">
       <span>📁 Schede Viaggi Attive</span>
-      <small>⬅️ Scorri a sinistra per eliminare</small>
+      <small>⬅️ Scorri a sinistra sulla scheda per eliminare</small>
     </div>
     <div class="trips-list" id="listaSchedeViaggi">
       <div style="text-align:center; padding:30px; color:var(--text-muted);">Sincronizzazione schede viaggio...</div>
     </div>
-    <button class="btn-create-sheet" onclick="creaNuovoFoglioViaggio()">+ Crea Nuovo Foglio di Viaggio</button>
+    <button class="btn-create-sheet" onclick="creaNuovoFoglioViaggio()">+ Crea Nuovo Foglio Viaggio</button>
   </main>
 
   <main id="vistaViaggio">
@@ -220,9 +229,10 @@
       <input type="hidden" id="valPiattaforma" value="Booking">
       <input type="hidden" id="valPagamento" value="Da pagare">
       <input type="hidden" id="valMetodo" value="Revolut Daniel">
-      <input type="hidden" id="valParcheggio" value="Garage coperto">
+      <input type="hidden" id="valParcheggio" value="Garage">
 
-      <div class="form-row">
+      <!-- DATA E ORA ORA SONO SU GRIGLIA PERFETTA (Niente sbavature ai lati) -->
+      <div class="form-row-2">
         <div class="form-group">
           <label>Data (GG/MM/AAAA)</label>
           <input type="text" id="inpData" placeholder="18/10/2026" maxlength="10">
@@ -256,6 +266,7 @@
         <input type="text" id="inpAlloggio" placeholder="es. Hotel Mantova">
       </div>
 
+      <!-- BOTTONI ORDINATI IN GRIGLIA A 2 COLONNE -->
       <div class="form-group">
         <label>Piattaforma Prenotazione</label>
         <div class="btn-select-grid" id="gridPiattaforma">
@@ -263,33 +274,33 @@
           <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Airbnb')">Airbnb</button>
           <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Expedia')">Expedia</button>
           <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Pren. Diretta')">Pren. Diretta</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Tenda / Libero')">Tenda / Libero</button>
+          <button type="button" class="opt-btn" style="grid-column: span 2;" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Tenda / Libero')">Tenda / Libero</button>
         </div>
       </div>
 
       <div class="form-group">
         <label>Stato Pagamento</label>
-        <div class="btn-select-grid" id="gridPagamento">
+        <div class="btn-select-grid" id="gridPagamento" style="grid-template-columns: 1fr 1fr 1fr;">
           <button type="button" class="opt-btn active" onclick="selezionaStatoPagamento('Da pagare')">Da pagare</button>
           <button type="button" class="opt-btn" onclick="selezionaStatoPagamento('Acconto')">Acconto</button>
           <button type="button" class="opt-btn" onclick="selezionaStatoPagamento('Pagato')">Pagato</button>
         </div>
       </div>
 
-      <div class="form-row">
+      <!-- SPESA, PAGATO E RESIDUO SU BARRA UNICA COMPATTA A 3 COLONNE -->
+      <div class="form-row-3">
         <div class="form-group">
-          <label>Prezzo Camera / Spesa (€)</label>
+          <label>Spesa (€)</label>
           <input type="number" id="inpSpesa" placeholder="0" oninput="ricalcolaPagamentiDaInput('spesa')">
         </div>
         <div class="form-group">
-          <label>Importo Pagato / Acconto (€)</label>
+          <label>Pagato (€)</label>
           <input type="number" id="inpPagato" placeholder="0" oninput="ricalcolaPagamentiDaInput('pagato')">
         </div>
-      </div>
-
-      <div class="form-group">
-        <label>Residuo Da Pagare (€)</label>
-        <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--yellow); font-weight:800;">
+        <div class="form-group">
+          <label>Residuo (€)</label>
+          <input type="number" id="inpDaPagare" placeholder="0" readonly style="background:#161f30; color:var(--yellow); font-weight:800;">
+        </div>
       </div>
 
       <div class="form-group">
@@ -304,15 +315,16 @@
         </div>
       </div>
 
+      <!-- PARCHEGGIO ALLINEATO ALLE TENDINE EXCEL AL 100% -->
       <div class="form-group">
         <label>Parcheggio Moto</label>
         <div class="btn-select-grid" id="gridParcheggio">
-          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage coperto')">Garage coperto</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Coperto in Struttura')">Coperto in Struttura</button>
+          <button type="button" class="opt-btn active" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage')">Garage</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Coperto in Struttura')">Coperto Strutt.</button>
           <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Parcheggio custodito')">Custodito</button>
           <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Cortile privato')">Cortile</button>
           <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Esterno struttura')">Esterno</button>
-          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Strada / Libero')">Strada</button>
+          <button type="button" class="opt-btn" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'In attesa di conferma')">In attesa</button>
         </div>
       </div>
 
@@ -404,7 +416,7 @@
       else if (v.length > 4) e.target.value = v.slice(0,2) + "/" + v.slice(2,4) + "/" + v.slice(4,8);
     });
 
-    // RICERCA MULTILINGUA AMPLIATA (IT, EN, TR, EL, KA)
+    // RICERCA MULTILINGUA GLOBALE (IT,EN,FR,DE,ES,TR,EL,KA,HR,BG,SR,RO,RU)
     function attivaAutocompleteMappa(inputId, boxId, multiplo = false) {
       const inp = document.getElementById(inputId);
       const box = document.getElementById(boxId);
@@ -418,7 +430,7 @@
 
         timer = setTimeout(async () => {
           try {
-            const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it,en,tr,el,ka`, 3500);
+            const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it,en,fr,de,es,tr,el,ka,hr,bg,sr,ro,ru`, 3500);
             const list = await res.json();
             if (!list || list.length === 0) { box.style.display = "none"; return; }
 
@@ -950,7 +962,7 @@
       const k = loc.trim().toLowerCase();
       if (GEO_CACHE[k]) return GEO_CACHE[k];
       try {
-        const r = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(loc)}&limit=1&accept-language=it,en,tr,el,ka`, 3500);
+        const r = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(loc)}&limit=1&accept-language=it,en,fr,de,es,tr,el,ka,hr,bg,sr,ro,ru`, 3500);
         const d = await r.json();
         if (d && d.length > 0) {
           const c = { lat: parseFloat(d[0].lat), lon: parseFloat(d[0].lon) };
@@ -1068,7 +1080,7 @@
 
       const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null;
       
-      // LOGICA ORA LOCALE SE LA DATA È OGGI
+      // LOGICA ORA LOCALE: Se la data è oggi, compila con l'ora esatta di adesso
       const oggi = new Date();
       const strOggi = `${String(oggi.getDate()).padStart(2, '0')}/${String(oggi.getMonth() + 1).padStart(2, '0')}/${oggi.getFullYear()}`;
       let targetData = ultima ? calcolaDataSuccessiva(ultima.data) : strOggi;
@@ -1095,7 +1107,7 @@
       selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Booking');
       selezionaStatoPagamento('Da pagare');
       selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel');
-      selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage coperto');
+      selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage');
 
       document.getElementById("modalTappa").style.display = "block";
     }
@@ -1125,7 +1137,7 @@
       selezionaPulsante('gridPiattaforma', 'valPiattaforma', t.piattaforma || 'Booking');
       selezionaStatoPagamento(t.pagamento || 'Da pagare');
       selezionaPulsante('gridMetodo', 'valMetodo', t.metodoPagamento || 'Revolut Daniel');
-      selezionaPulsante('gridParcheggio', 'valParcheggio', t.parcheggio || 'Garage coperto');
+      selezionaPulsante('gridParcheggio', 'valParcheggio', t.parcheggio || 'Garage');
 
       document.getElementById("modalTappa").style.display = "block";
     }
