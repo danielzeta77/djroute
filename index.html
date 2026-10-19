@@ -129,7 +129,7 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
-    /* LAYOUT MODALE OTTIMIZZATO (NIENTE CAMPI FUORI SCHERMO) */
+    /* LAYOUT MODALE OTTIMIZZATO PER SMARTPHONE */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
     .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
@@ -137,7 +137,7 @@
     .form-group { margin-bottom: 14px; position: relative; }
     .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
     
-    /* FIX CAMPI CHE USCIVANO DALLO SCHERMO: min-width: 0 */
+    /* CAMPI PERFETTAMENTE IN LINEA */
     .form-group input { width: 100%; min-width: 0; box-sizing: border-box; background: #080b11; border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: #fff; font-size: 14px; font-weight: 600; }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
@@ -148,12 +148,11 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* COLORI PERSONALIZZATI BOTTONI PIATTAFORME */
+    /* COLORI BOTTONI PIATTAFORME */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
     
-    /* STATO ATTIVO GENERICO */
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
@@ -225,7 +224,6 @@
       <input type="hidden" id="editAltMax" value="0">
       <input type="hidden" id="editTempMedie" value="">
 
-      <!-- HIDDEN INPUTS CHE RICEVONO IL DATA-VAL DEL PULSANTE CLICCATO -->
       <input type="hidden" id="valPiattaforma" value="Booking">
       <input type="hidden" id="valPagamento" value="Da pagare">
       <input type="hidden" id="valMetodo" value="Revolut Daniel">
@@ -233,7 +231,7 @@
 
       <div class="form-row-2">
         <div class="form-group">
-          <label>Data (GG/MM)</label>
+          <label>Data (GG/MM/AAAA)</label>
           <input type="text" id="inpData" placeholder="18/10/2026" maxlength="10">
         </div>
         <div class="form-group">
@@ -272,7 +270,7 @@
           <button type="button" class="opt-btn" data-val="Airbnb" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Airbnb')">Airbnb</button>
           <button type="button" class="opt-btn" data-val="Expedia" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Expedia')">Expedia</button>
           <button type="button" class="opt-btn" data-val="Pren. Diretta" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Pren. Diretta')">Pren. Diretta</button>
-          <button type="button" class="opt-btn" data-val="Tenda / Libero" style="grid-column: span 2;" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Tenda / Libero')">Tenda / Libero</button>
+          <button type="button" class="opt-btn" data-val="Altro" style="grid-column: span 2;" onclick="selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Altro')">Altro</button>
         </div>
       </div>
 
@@ -303,12 +301,13 @@
       <div class="form-group">
         <label>Metodo di Pagamento</label>
         <div class="btn-select-grid" id="gridMetodo">
-          <button type="button" class="opt-btn active" data-val="Revolut Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel')">Revolut</button>
-          <button type="button" class="opt-btn" data-val="N26 Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'N26 Daniel')">N26</button>
-          <button type="button" class="opt-btn" data-val="Carta Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Carta Emanuela')">C. Emanuela</button>
-          <button type="button" class="opt-btn" data-val="Paypal Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Emanuela')">Paypal Ema.</button>
+          <button type="button" class="opt-btn active" data-val="Revolut Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel')">Revolut Daniel</button>
+          <button type="button" class="opt-btn" data-val="N26 Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'N26 Daniel')">N26 Daniel</button>
+          <button type="button" class="opt-btn" data-val="Carta Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Carta Emanuela')">Carta Emanuela</button>
+          <button type="button" class="opt-btn" data-val="Paypal Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Emanuela')">Paypal Emanuela</button>
+          <button type="button" class="opt-btn" data-val="Paypal Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Daniel')">Paypal Daniel</button>
           <button type="button" class="opt-btn" data-val="Bonifico" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Bonifico')">Bonifico</button>
-          <button type="button" class="opt-btn" data-val="Contanti in struttura" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Contanti in struttura')">Contanti</button>
+          <button type="button" class="opt-btn" data-val="Cash in Struttura" style="grid-column: span 2;" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Cash in Struttura')">Cash in Struttura</button>
         </div>
       </div>
 
@@ -354,7 +353,6 @@
       mostraHome();
     });
 
-    // ORA LA SELEZIONE È INFALLIBILE: LEGGE L'ATTRIBUTO DATA-VAL
     function selezionaPulsante(containerId, hiddenInputId, valore) {
       document.getElementById(hiddenInputId).value = valore;
       const btns = document.getElementById(containerId).querySelectorAll('.opt-btn');
@@ -1164,7 +1162,7 @@
       }
 
       const btn = document.getElementById("btnSalvaTappa");
-      btn.innerText = "⏳ Calcolo Rotta...";
+      btn.innerText = "⏳ Calcolo...";
       btn.disabled = true;
 
       let kmCalc = parseFloat(document.getElementById("editKm").value) || 0;
