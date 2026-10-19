@@ -129,30 +129,24 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
-    /* LAYOUT MODALE OTTIMIZZATO PER SMARTPHONE */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
     .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
     
     .form-group { margin-bottom: 14px; position: relative; }
     .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
-    
-    /* CAMPI PERFETTAMENTE IN LINEA */
     .form-group input { width: 100%; min-width: 0; box-sizing: border-box; background: #080b11; border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: #fff; font-size: 14px; font-weight: 600; }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
     .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
 
-    /* GRIGLIA PULSANTI */
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* COLORI BOTTONI PIATTAFORME */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
-    
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
@@ -1180,11 +1174,19 @@
           const c = await geocode(n);
           if (c) pts.push({ ...c, name: n });
         }
+        
+        // CALCOLO ROTTA E RECUPERO TEMPERATURA SE MANCANTE
         if (pts.length >= 2) {
           const st = await getRouteAndElevationHD(pts);
           if (st.km > 0) kmCalc = st.km;
           if (st.oreStr) oreCalc = st.oreStr;
           if (st.maxEle > 0) altMaxCalc = st.maxEle;
+
+          if (!tempCalc) {
+            const dest = pts[pts.length - 1];
+            const tStorica = await getHistoricalTempRange(dest.lat, dest.lon, dataStr);
+            if (tStorica) tempCalc = tStorica;
+          }
         }
       } catch (e) {}
 
