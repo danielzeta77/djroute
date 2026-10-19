@@ -129,62 +129,59 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
-    /* LAYOUT MODALE OTTIMIZZATO PER SMARTPHONE (Allineamenti precisi) */
+    /* LAYOUT MODALE: CSS ANTI-SBAVATURA (FLEXBOX FORZATO) */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
     .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
     
-    .form-group { margin-bottom: 14px; position: relative; }
+    .form-group { position: relative; margin-bottom: 14px; }
     .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
     
-    /* INPUT E SELECT ALLINEATI: Stessa altezza, stesso padding, width forzata */
+    /* Input universale blindato */
     .form-group input { 
-        width: 100% !important; 
-        min-width: 0 !important; /* Previene sfondamento griglia in Safari/Chrome Mobile */
+        width: 100%; 
+        max-width: 100%;
+        min-width: 0; /* Essenziale per iOS/Android */
         box-sizing: border-box; 
         background: #080b11; 
         border: 1px solid var(--border); 
         border-radius: 7px; 
-        padding: 10px 12px; /* Uniformato */
+        padding: 10px 12px; 
         color: #fff; 
         font-size: 14px; 
         font-weight: 600; 
-        height: 42px; /* Altezza fissa esatta per data e ora */
+        height: 44px; /* Altezza rigorosamente fissa per tutti */
+        -webkit-appearance: none; /* Rimuove stili iOS indesiderati */
+        appearance: none;
     }
-    
-    /* Tweak per input type="time" che fa i capricci su iOS */
-    input[type="time"] {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-    }
-
     .form-group input:focus { outline: none; border-color: var(--yellow); }
+    input[type="time"]::-webkit-date-and-time-value { text-align: left; } /* Allinea il testo su iOS */
 
-    /* GRIGLIE FISSE */
-    .form-row-2 { 
-        display: grid; 
-        grid-template-columns: repeat(2, minmax(0, 1fr)); /* Forza a dividersi esattamente a metà */
-        gap: 12px; 
-    }
-    .form-row-3 { 
-        display: grid; 
-        grid-template-columns: repeat(3, minmax(0, 1fr)); 
-        gap: 8px; 
-    }
+    /* Griglie a colonne basate su Flexbox (Infallibile) */
+    .form-row-2 { display: flex; width: 100%; gap: 10px; margin-bottom: 14px; }
+    .form-row-2 .form-group { flex: 1 1 0; min-width: 0; margin-bottom: 0; overflow: hidden; }
+
+    .form-row-3 { display: flex; width: 100%; gap: 8px; margin-bottom: 14px; }
+    .form-row-3 .form-group { flex: 1 1 0; min-width: 0; margin-bottom: 0; overflow: hidden; }
 
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* COLORI BOTTONI PIATTAFORME */
+    /* =========================================
+       COLOR-CODING SEMANTICO
+       ========================================= */
+
+    /* Piattaforme */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
 
+    /* Stati Pagamento (Semaforo) */
     .opt-btn[data-val="Da pagare"].active { background: #f43f5e !important; color: #fff !important; border-color: #fda4af !important; box-shadow: 0 0 12px rgba(244,63,94,0.6) !important; }
     .opt-btn[data-val="Acconto"].active { background: #f59e0b !important; color: #fff !important; border-color: #fcd34d !important; box-shadow: 0 0 12px rgba(245,158,11,0.6) !important; }
     .opt-btn[data-val="Pagato"].active { background: #10b981 !important; color: #fff !important; border-color: #6ee7b7 !important; box-shadow: 0 0 12px rgba(16,185,129,0.6) !important; }
 
+    /* Metodi Pagamento */
     .opt-btn[data-val="Revolut Daniel"].active { background: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; box-shadow: 0 0 12px rgba(255,255,255,0.5) !important; }
     .opt-btn[data-val="N26 Daniel"].active { background: #94a3b8 !important; color: #0f172a !important; border-color: #e2e8f0 !important; box-shadow: 0 0 12px rgba(148,163,184,0.5) !important; }
     .opt-btn[data-val="Carta Emanuela"].active { background: #f97316 !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(249,115,22,0.5) !important; }
@@ -192,12 +189,14 @@
     .opt-btn[data-val="Bonifico"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
     .opt-btn[data-val="Cash in Struttura"].active { background: #22c55e !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(34,197,94,0.5) !important; }
 
+    /* Parcheggio Moto */
     .opt-btn[data-val="Garage"].active { background: #16a34a !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(22,163,74,0.5) !important; }
     .opt-btn[data-val="Coperto in Struttura"].active { background: #2563eb !important; color: #fff !important; border-color: #93c5fd !important; box-shadow: 0 0 12px rgba(37,99,235,0.5) !important; }
     .opt-btn[data-val="Parcheggio custodito"].active { background: #0ea5e9 !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(14,165,233,0.5) !important; }
     .opt-btn[data-val="Cortile privato"].active { background: #eab308 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(234,179,8,0.5) !important; }
     .opt-btn[data-val="Esterno struttura"].active { background: #ea580c !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(234,88,12,0.5) !important; }
     
+    /* Effetto Lampeggiante (In attesa) */
     .opt-btn[data-val="In attesa di conferma"].active { background: #ef4444 !important; color: #fff !important; border-color: #fca5a5 !important; box-shadow: 0 0 12px rgba(239,68,68,0.8) !important; animation: pulseRed 1.5s infinite; }
     @keyframes pulseRed {
       0% { box-shadow: 0 0 0 0 rgba(239,68,68, 0.7); }
@@ -220,7 +219,7 @@
 
   <header>
     <div class="header-bar">
-      <!-- TASTO HOME GIGANTE MOTO + DJ NEON -->
+      <!-- TASTO HOME GIGANTE -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative;">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
           <circle cx="5.5" cy="17.5" r="3.5" stroke="#00e5ff"/>
@@ -283,6 +282,7 @@
       <input type="hidden" id="valMetodo" value="Revolut Daniel">
       <input type="hidden" id="valParcheggio" value="Garage">
 
+      <!-- BLINDATURA LAYOUT -->
       <div class="form-row-2">
         <div class="form-group">
           <label>Data (GG/MM/AAAA)</label>
@@ -337,6 +337,7 @@
         </div>
       </div>
 
+      <!-- BLINDATURA LAYOUT -->
       <div class="form-row-3">
         <div class="form-group">
           <label>Spesa (€)</label>
@@ -1282,7 +1283,7 @@
       const rowId = document.getElementById("editRowId").value;
 
       if (!dep || !arr) {
-        alert("Inser Città di Partenza e Arrivo!");
+        alert("Inserisci Città di Partenza e Arrivo!");
         return;
       }
 
