@@ -129,7 +129,6 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
-    /* LAYOUT MODALE OTTIMIZZATO */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
     .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
@@ -145,21 +144,14 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* =========================================
-       COLOR-CODING SEMANTICO PER I BOTTONI 
-       ========================================= */
-
-    /* Piattaforme (Branding) */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
 
-    /* Stati Pagamento (Semaforo) */
     .opt-btn[data-val="Da pagare"].active { background: #f43f5e !important; color: #fff !important; border-color: #fda4af !important; box-shadow: 0 0 12px rgba(244,63,94,0.6) !important; }
     .opt-btn[data-val="Acconto"].active { background: #f59e0b !important; color: #fff !important; border-color: #fcd34d !important; box-shadow: 0 0 12px rgba(245,158,11,0.6) !important; }
     .opt-btn[data-val="Pagato"].active { background: #10b981 !important; color: #fff !important; border-color: #6ee7b7 !important; box-shadow: 0 0 12px rgba(16,185,129,0.6) !important; }
 
-    /* Metodi Pagamento */
     .opt-btn[data-val="Revolut Daniel"].active { background: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; box-shadow: 0 0 12px rgba(255,255,255,0.5) !important; }
     .opt-btn[data-val="N26 Daniel"].active { background: #94a3b8 !important; color: #0f172a !important; border-color: #e2e8f0 !important; box-shadow: 0 0 12px rgba(148,163,184,0.5) !important; }
     .opt-btn[data-val="Carta Emanuela"].active { background: #f97316 !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(249,115,22,0.5) !important; }
@@ -167,14 +159,12 @@
     .opt-btn[data-val="Bonifico"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
     .opt-btn[data-val="Cash in Struttura"].active { background: #22c55e !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(34,197,94,0.5) !important; }
 
-    /* Parcheggio Moto */
     .opt-btn[data-val="Garage"].active { background: #16a34a !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(22,163,74,0.5) !important; }
     .opt-btn[data-val="Coperto in Struttura"].active { background: #2563eb !important; color: #fff !important; border-color: #93c5fd !important; box-shadow: 0 0 12px rgba(37,99,235,0.5) !important; }
     .opt-btn[data-val="Parcheggio custodito"].active { background: #0ea5e9 !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(14,165,233,0.5) !important; }
     .opt-btn[data-val="Cortile privato"].active { background: #eab308 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(234,179,8,0.5) !important; }
     .opt-btn[data-val="Esterno struttura"].active { background: #ea580c !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(234,88,12,0.5) !important; }
     
-    /* Lampeggio Rosso per In attesa di conferma */
     .opt-btn[data-val="In attesa di conferma"].active { background: #ef4444 !important; color: #fff !important; border-color: #fca5a5 !important; box-shadow: 0 0 12px rgba(239,68,68,0.8) !important; animation: pulseRed 1.5s infinite; }
     @keyframes pulseRed {
       0% { box-shadow: 0 0 0 0 rgba(239,68,68, 0.7); }
@@ -182,7 +172,6 @@
       100% { box-shadow: 0 0 0 0 rgba(239,68,68, 0); }
     }
 
-    /* Fallback Giallo Generico per le altre voci (es. Altro) */
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
@@ -198,7 +187,6 @@
 
   <header>
     <div class="header-bar">
-      <!-- TASTO HOME GIGANTE MOTO + DJ NEON -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative;">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
           <circle cx="5.5" cy="17.5" r="3.5" stroke="#00e5ff"/>
@@ -215,7 +203,6 @@
         <div class="brand-sub">planner & Meteo</div>
       </div>
 
-      <!-- TASTO SYNC INGRANDITO -->
       <button class="nav-btn sync-btn" id="btnSync" onclick="sincronizzaVistaAttiva()" title="Sincronizza con Foglio" style="width: 58px; height: 58px;">
         <svg id="syncIcon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
@@ -760,10 +747,15 @@
         const card = document.createElement("article");
         card.className = "card";
 
+        const isSosta = (t.arrivo && t.arrivo.toUpperCase() === "SOSTA");
         const gmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza)}&destination=${encodeURIComponent(t.arrivo)}${t.passaggio ? '&waypoints=' + encodeURIComponent(t.passaggio) : ''}`;
-        const btnRouteHtml = (t.myRouteUrl && t.myRouteUrl.startsWith("http"))
-          ? `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute">🚀 Apri in MyRoute-App</a>`
-          : `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ Apri Percorso in Mappa</a>`;
+        
+        let btnRouteHtml = "";
+        if (!isSosta) {
+           btnRouteHtml = (t.myRouteUrl && t.myRouteUrl.startsWith("http"))
+            ? `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute">🚀 Apri in MyRoute-App</a>`
+            : `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ Apri Percorso in Mappa</a>`;
+        }
 
         const tempEsistente = t.tempMedie && t.tempMedie.trim() ? t.tempMedie.trim() : "--° / --°";
         const tClass = getTempColorClass(tempEsistente);
@@ -794,8 +786,8 @@
                 <div class="point-city" style="font-size:14px; color:var(--yellow);">${t.passaggio}</div>
               </div>` : ''}
               <div class="route-point arr">
-                <div class="point-label">Arrivo</div>
-                <div class="point-city">${t.arrivo || 'N/D'}</div>
+                <div class="point-label">${isSosta ? 'Destinazione' : 'Arrivo'}</div>
+                <div class="point-city" style="${isSosta ? 'color:var(--green);' : ''}">${t.arrivo || 'N/D'}</div>
               </div>
             </div>
 
@@ -835,7 +827,7 @@
 
             <div class="weather-box">
               <div class="weather-head">
-                <span>⛅ Meteo Percorso (Step 45 Min)</span>
+                <span>${isSosta ? '⛅ Meteo di Giornata' : '⛅ Meteo Percorso (Step 45 Min)'}</span>
                 <span id="w-badge-${i}" class="weather-badge-status">Inizializzazione...</span>
               </div>
               <div class="weather-scroll" id="weather-line-${i}">
@@ -862,6 +854,7 @@
       const tempEl = document.getElementById(`temp-val-${idx}`);
 
       const checkMeteo = analizzaFinestraMeteo(t.data);
+      const isSosta = (t.arrivo && t.arrivo.toUpperCase() === "SOSTA");
 
       if (wBadge && wLine) {
         if (checkMeteo.stato === "obsoleto") {
@@ -881,10 +874,12 @@
 
       const locNomi = [];
       if (t.partenza) locNomi.push(t.partenza);
-      if (t.passaggio) {
-        t.passaggio.split(",").forEach(p => { if (p.trim()) locNomi.push(p.trim()); });
+      if (!isSosta) {
+        if (t.passaggio) {
+          t.passaggio.split(",").forEach(p => { if (p.trim()) locNomi.push(p.trim()); });
+        }
+        if (t.arrivo) locNomi.push(t.arrivo);
       }
-      if (t.arrivo) locNomi.push(t.arrivo);
 
       const coords = [];
       for (const name of locNomi) {
@@ -894,7 +889,64 @@
         } catch(e) {}
       }
 
-      if (coords.length >= 2) {
+      // --- LOGICA SPECIALE: GIORNATA DI SOSTA ---
+      if (isSosta && coords.length === 1) {
+          const pt = coords[0];
+          const kmEl = document.getElementById(`km-val-${idx}`);
+          const timeEl = document.getElementById(`time-val-${idx}`);
+          const eleEl = document.getElementById(`ele-val-${idx}`);
+          const eleBox = document.getElementById(`ele-box-${idx}`);
+
+          if (kmEl) kmEl.innerText = `0 km`;
+          if (timeEl) timeEl.innerText = `0:00`;
+          if (eleEl) eleEl.innerText = `${t.altMax ? Math.round(t.altMax) : '--'} m`;
+          if (eleBox) eleBox.innerHTML = `<div style="font-size:12px; padding:15px; color:var(--green); text-align:center; font-weight:800;">⛺ Giornata di Sosta a ${t.partenza}</div>`;
+
+          if ((!t.tempMedie || t.tempMedie.includes("--")) && tempEl) {
+            const tStorica = await getHistoricalTempRange(pt.lat, pt.lon, t.data);
+            if (tStorica) {
+              tempEl.innerText = tStorica;
+              tempEl.className = "tele-val " + getTempColorClass(tStorica);
+            }
+          }
+
+          if (checkMeteo.stato === "disponibile" && wBadge && wLine) {
+             wBadge.className = "weather-badge-status status-live";
+             wBadge.innerText = `METEO SOSTA (${checkMeteo.diffDays === 0 ? 'OGGI' : 'tra ' + checkMeteo.diffDays + ' gg'})`;
+
+             let wHtml = "";
+             let tempRilevateTratta = [];
+             const oreSosta = [9, 14, 19];
+
+             for (let hS of oreSosta) {
+                const w = await getForecastLiveFast(pt.lat, pt.lon, checkMeteo.isoDate, hS);
+                if (w.temp !== "--") tempRilevateTratta.push(parseFloat(w.temp));
+                const stileColoreTermico = getLiveTempColor(w.temp);
+                const timeStr = `${String(hS).padStart(2,'0')}:00`;
+
+                wHtml += `
+                  <div class="weather-cell">
+                    <div class="w-time">${timeStr}</div>
+                    <div class="w-km">Sosta</div>
+                    <div class="w-icon">${w.icon}</div>
+                    <div class="w-temp" style="${stileColoreTermico}">${w.temp}°C</div>
+                    <div class="w-rain">💧${w.rain}%</div>
+                    <div class="w-name" title="${t.partenza}">${t.partenza}</div>
+                  </div>
+                `;
+             }
+             wLine.innerHTML = wHtml;
+
+             if (tempRilevateTratta.length > 0 && tempEl) {
+               const liveMin = Math.min(...tempRilevateTratta);
+               const liveMax = Math.max(...tempRilevateTratta);
+               tempEl.innerText = `${Math.round(liveMin)}° / ${Math.round(liveMax)}°`;
+               tempEl.setAttribute("style", getLiveTempColor(liveMax));
+             }
+          }
+      } 
+      // --- LOGICA STANDARD: TAPPA IN MOVIMENTO ---
+      else if (coords.length >= 2) {
         let stats = { km: t.km || 0, timeMin: 180, oreStr: t.oreGuida || "3:00", maxEle: t.altMax || 0, elevationCurve: [], fullGeometry: [] };
         try {
           stats = await getRouteAndElevationHD(coords);
@@ -1119,7 +1171,17 @@
         document.getElementById("inpOra").value = "08:30";
       }
 
-      document.getElementById("inpPartenza").value = ultima ? (ultima.arrivo || "") : "";
+      // Propagazione SOSTA: se ieri ho fatto sosta, riparto da dove ero
+      let partenzaDefault = "";
+      if (ultima) {
+          if (ultima.arrivo && ultima.arrivo.toUpperCase() === "SOSTA") {
+              partenzaDefault = ultima.partenza || "";
+          } else {
+              partenzaDefault = ultima.arrivo || "";
+          }
+      }
+      
+      document.getElementById("inpPartenza").value = partenzaDefault;
       document.getElementById("inpPassaggio").value = "";
       document.getElementById("inpArrivo").value = "";
       document.getElementById("inpAlloggio").value = "";
@@ -1203,10 +1265,14 @@
       let altMaxCalc = parseFloat(document.getElementById("editAltMax").value) || 0;
       let tempCalc = document.getElementById("editTempMedie").value || "";
 
+      const isSosta = (arr.toUpperCase() === "SOSTA");
+
       try {
         const nomi = [dep];
-        if (via) via.split(",").forEach(p => { if (p.trim()) nomi.push(p.trim()); });
-        nomi.push(arr);
+        if (!isSosta) {
+            if (via) via.split(",").forEach(p => { if (p.trim()) nomi.push(p.trim()); });
+            nomi.push(arr);
+        }
 
         const pts = [];
         for (const n of nomi) {
@@ -1214,7 +1280,18 @@
           if (c) pts.push({ ...c, name: n });
         }
         
-        if (pts.length >= 2) {
+        if (isSosta && pts.length >= 1) {
+            kmCalc = 0;
+            oreCalc = "0:00";
+            const eleRes = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${pts[0].lat}&longitude=${pts[0].lon}`, 3500);
+            const eleData = await eleRes.json();
+            if (eleData && eleData.elevation) altMaxCalc = Math.round(eleData.elevation[0]);
+
+            if (!tempCalc) {
+                const tStorica = await getHistoricalTempRange(pts[0].lat, pts[0].lon, dataStr);
+                if (tStorica) tempCalc = tStorica;
+            }
+        } else if (pts.length >= 2) {
           const st = await getRouteAndElevationHD(pts);
           if (st.km > 0) kmCalc = st.km;
           if (st.oreStr) oreCalc = st.oreStr;
