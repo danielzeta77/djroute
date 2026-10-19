@@ -129,21 +129,54 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
+    /* LAYOUT MODALE OTTIMIZZATO PER SMARTPHONE (Allineamenti precisi) */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
     .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
     
     .form-group { margin-bottom: 14px; position: relative; }
     .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
-    .form-group input { width: 100%; min-width: 0; box-sizing: border-box; background: #080b11; border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: #fff; font-size: 14px; font-weight: 600; }
+    
+    /* INPUT E SELECT ALLINEATI: Stessa altezza, stesso padding, width forzata */
+    .form-group input { 
+        width: 100% !important; 
+        min-width: 0 !important; /* Previene sfondamento griglia in Safari/Chrome Mobile */
+        box-sizing: border-box; 
+        background: #080b11; 
+        border: 1px solid var(--border); 
+        border-radius: 7px; 
+        padding: 10px 12px; /* Uniformato */
+        color: #fff; 
+        font-size: 14px; 
+        font-weight: 600; 
+        height: 42px; /* Altezza fissa esatta per data e ora */
+    }
+    
+    /* Tweak per input type="time" che fa i capricci su iOS */
+    input[type="time"] {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+    }
+
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
-    .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    /* GRIGLIE FISSE */
+    .form-row-2 { 
+        display: grid; 
+        grid-template-columns: repeat(2, minmax(0, 1fr)); /* Forza a dividersi esattamente a metà */
+        gap: 12px; 
+    }
+    .form-row-3 { 
+        display: grid; 
+        grid-template-columns: repeat(3, minmax(0, 1fr)); 
+        gap: 8px; 
+    }
 
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
+    /* COLORI BOTTONI PIATTAFORME */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
@@ -187,6 +220,7 @@
 
   <header>
     <div class="header-bar">
+      <!-- TASTO HOME GIGANTE MOTO + DJ NEON -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative;">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
           <circle cx="5.5" cy="17.5" r="3.5" stroke="#00e5ff"/>
@@ -889,7 +923,6 @@
         } catch(e) {}
       }
 
-      // --- LOGICA SPECIALE: GIORNATA DI SOSTA ---
       if (isSosta && coords.length === 1) {
           const pt = coords[0];
           const kmEl = document.getElementById(`km-val-${idx}`);
@@ -944,9 +977,7 @@
                tempEl.setAttribute("style", getLiveTempColor(liveMax));
              }
           }
-      } 
-      // --- LOGICA STANDARD: TAPPA IN MOVIMENTO ---
-      else if (coords.length >= 2) {
+      } else if (coords.length >= 2) {
         let stats = { km: t.km || 0, timeMin: 180, oreStr: t.oreGuida || "3:00", maxEle: t.altMax || 0, elevationCurve: [], fullGeometry: [] };
         try {
           stats = await getRouteAndElevationHD(coords);
@@ -1171,7 +1202,6 @@
         document.getElementById("inpOra").value = "08:30";
       }
 
-      // Propagazione SOSTA: se ieri ho fatto sosta, riparto da dove ero
       let partenzaDefault = "";
       if (ultima) {
           if (ultima.arrivo && ultima.arrivo.toUpperCase() === "SOSTA") {
@@ -1252,7 +1282,7 @@
       const rowId = document.getElementById("editRowId").value;
 
       if (!dep || !arr) {
-        alert("Inserisci Città di Partenza e Arrivo!");
+        alert("Inser Città di Partenza e Arrivo!");
         return;
       }
 
