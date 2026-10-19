@@ -125,7 +125,10 @@
     .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
     .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
-    .btn-myroute { display: block; width: 100%; padding: 12px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; text-align: center; border-radius: 9px; text-decoration: none; font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; }
+    /* BOTTONI NAVIGAZIONE SDOPPIATI */
+    .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
+    .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 4px; line-height: 1.1; }
+    .btn-myroute.mra { background: #0070ba; color: #fff; border-color: #38bdf8; box-shadow: 0 0 12px rgba(0,112,186,0.4); }
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
@@ -151,11 +154,11 @@
         font-size: 14px; 
         font-weight: 600; 
         height: 44px; /* Altezza rigorosamente fissa per tutti */
-        -webkit-appearance: none; /* Rimuove stili iOS indesiderati */
+        -webkit-appearance: none; 
         appearance: none;
     }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
-    input[type="time"]::-webkit-date-and-time-value { text-align: left; } /* Allinea il testo su iOS */
+    input[type="time"]::-webkit-date-and-time-value { text-align: left; }
 
     /* Griglie a colonne basate su Flexbox (Infallibile) */
     .form-row-2 { display: flex; width: 100%; gap: 10px; margin-bottom: 14px; }
@@ -163,6 +166,11 @@
 
     .form-row-3 { display: flex; width: 100%; gap: 8px; margin-bottom: 14px; }
     .form-row-3 .form-group { flex: 1 1 0; min-width: 0; margin-bottom: 0; overflow: hidden; }
+
+    /* BOTTONE IMPORTA GPX */
+    .btn-gpx-upload { width: 100%; background: rgba(0, 229, 255, 0.1); border: 1.5px dashed #00e5ff; color: #00e5ff; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 800; cursor: pointer; text-transform: uppercase; text-align: center; margin-bottom: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .btn-gpx-upload:active { background: rgba(0, 229, 255, 0.2); }
+    #inpFileGpx { display: none; }
 
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -219,7 +227,7 @@
 
   <header>
     <div class="header-bar">
-      <!-- TASTO HOME GIGANTE -->
+      <!-- TASTO HOME GIGANTE MOTO + DJ NEON -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative;">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
           <circle cx="5.5" cy="17.5" r="3.5" stroke="#00e5ff"/>
@@ -271,6 +279,13 @@
   <div id="modalTappa" class="modal-overlay">
     <div class="modal-box">
       <div class="modal-title" id="modalTitle">🏍️ Nuova Tappa</div>
+
+      <!-- TASTO IMPORTA GPX -->
+      <label for="inpFileGpx" class="btn-gpx-upload" id="lblGpx">
+        🗺️ Importa File GPX (Auto-compila Tappa)
+      </label>
+      <input type="file" id="inpFileGpx" accept=".gpx" onchange="leggiFileGPX(event)">
+
       <input type="hidden" id="editRowId" value="">
       <input type="hidden" id="editKm" value="0">
       <input type="hidden" id="editOre" value="">
@@ -282,7 +297,6 @@
       <input type="hidden" id="valMetodo" value="Revolut Daniel">
       <input type="hidden" id="valParcheggio" value="Garage">
 
-      <!-- BLINDATURA LAYOUT -->
       <div class="form-row-2">
         <div class="form-group">
           <label>Data (GG/MM/AAAA)</label>
@@ -337,7 +351,6 @@
         </div>
       </div>
 
-      <!-- BLINDATURA LAYOUT -->
       <div class="form-row-3">
         <div class="form-group">
           <label>Spesa (€)</label>
@@ -407,6 +420,90 @@
     window.addEventListener("DOMContentLoaded", () => {
       mostraHome();
     });
+
+    // ==========================================
+    // LOGICA LETTURA FILE GPX LOCALE
+    // ==========================================
+    function haversineDist(lat1, lon1, lat2, lon2) {
+      const R = 6371; // Raggio Terra in km
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    async function reverseGeocode(lat, lon) {
+      try {
+        const r = await fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=it`, 3500);
+        const d = await r.json();
+        if (d && d.address) {
+           return d.address.city || d.address.town || d.address.village || d.address.municipality || d.name || "Punto Mappa";
+        }
+      } catch(e) {}
+      return `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+    }
+
+    async function leggiFileGPX(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const lbl = document.getElementById("lblGpx");
+      lbl.innerText = "⏳ Analisi GPX in corso...";
+      lbl.style.color = "var(--yellow)";
+      lbl.style.borderColor = "var(--yellow)";
+
+      const reader = new FileReader();
+      reader.onload = async function(e) {
+        try {
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+          
+          let trkpts = xmlDoc.getElementsByTagName("trkpt");
+          if (trkpts.length === 0) trkpts = xmlDoc.getElementsByTagName("rtept"); // Supporto a vecchi GPX
+
+          if (trkpts.length < 2) {
+             alert("File GPX non valido o privo di rotta.");
+             lbl.innerText = "🗺️ Importa File GPX";
+             lbl.style.color = "#00e5ff"; lbl.style.borderColor = "#00e5ff";
+             return;
+          }
+
+          // Calcola Km totali (formula Haversine)
+          let totalKm = 0;
+          for (let i = 0; i < trkpts.length - 1; i++) {
+             const lat1 = parseFloat(trkpts[i].getAttribute("lat"));
+             const lon1 = parseFloat(trkpts[i].getAttribute("lon"));
+             const lat2 = parseFloat(trkpts[i+1].getAttribute("lat"));
+             const lon2 = parseFloat(trkpts[i+1].getAttribute("lon"));
+             totalKm += haversineDist(lat1, lon1, lat2, lon2);
+          }
+
+          // Trova nomi città dai punti iniziale e finale
+          const pStart = trkpts[0];
+          const pEnd = trkpts[trkpts.length - 1];
+          const nameStart = await reverseGeocode(parseFloat(pStart.getAttribute("lat")), parseFloat(pStart.getAttribute("lon")));
+          const nameEnd = await reverseGeocode(parseFloat(pEnd.getAttribute("lat")), parseFloat(pEnd.getAttribute("lon")));
+
+          // Compila Modale
+          document.getElementById("inpPartenza").value = nameStart;
+          document.getElementById("inpArrivo").value = nameEnd;
+          document.getElementById("editKm").value = Math.round(totalKm);
+          
+          lbl.innerText = `✅ GPX Caricato (${Math.round(totalKm)} km)`;
+          lbl.style.color = "var(--green)";
+          lbl.style.borderColor = "var(--green)";
+
+        } catch (err) {
+          alert("Errore lettura GPX.");
+          lbl.innerText = "🗺️ Importa File GPX";
+          lbl.style.color = "#00e5ff"; lbl.style.borderColor = "#00e5ff";
+        }
+      };
+      reader.readAsText(file);
+    }
+    // ==========================================
 
     function selezionaPulsante(containerId, hiddenInputId, valore) {
       document.getElementById(hiddenInputId).value = valore;
@@ -787,9 +884,13 @@
         
         let btnRouteHtml = "";
         if (!isSosta) {
-           btnRouteHtml = (t.myRouteUrl && t.myRouteUrl.startsWith("http"))
-            ? `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute">🚀 Apri in MyRoute-App</a>`
-            : `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ Apri Percorso in Mappa</a>`;
+           btnRouteHtml = `<div class="btn-route-container">`;
+           btnRouteHtml += `<a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
+           
+           if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
+               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">🚀 NAVIGA MRA</a>`;
+           }
+           btnRouteHtml += `</div>`;
         }
 
         const tempEsistente = t.tempMedie && t.tempMedie.trim() ? t.tempMedie.trim() : "--° / --°";
@@ -1188,6 +1289,12 @@
       document.getElementById("editAltMax").value = "0";
       document.getElementById("editTempMedie").value = "";
 
+      const lblGpx = document.getElementById("lblGpx");
+      if(lblGpx){
+         lblGpx.innerText = "🗺️ Importa File GPX";
+         lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff";
+      }
+
       const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null;
       
       const oggi = new Date();
@@ -1239,6 +1346,12 @@
       document.getElementById("editOre").value = t.oreGuida || "";
       document.getElementById("editAltMax").value = t.altMax || 0;
       document.getElementById("editTempMedie").value = t.tempMedie || "";
+
+      const lblGpx = document.getElementById("lblGpx");
+      if(lblGpx){
+         lblGpx.innerText = "🗺️ Importa File GPX (Opzionale)";
+         lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff";
+      }
 
       document.getElementById("inpData").value = t.data || "";
       document.getElementById("inpOra").value = t.ora || "08:30";
@@ -1323,10 +1436,12 @@
                 if (tStorica) tempCalc = tStorica;
             }
         } else if (pts.length >= 2) {
-          const st = await getRouteAndElevationHD(pts);
-          if (st.km > 0) kmCalc = st.km;
-          if (st.oreStr) oreCalc = st.oreStr;
-          if (st.maxEle > 0) altMaxCalc = st.maxEle;
+          if (kmCalc === 0) {
+              const st = await getRouteAndElevationHD(pts);
+              if (st.km > 0) kmCalc = st.km;
+              if (st.oreStr) oreCalc = st.oreStr;
+              if (st.maxEle > 0) altMaxCalc = st.maxEle;
+          }
 
           if (!tempCalc) {
             const dest = pts[pts.length - 1];
