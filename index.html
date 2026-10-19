@@ -129,12 +129,14 @@
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250, 204, 21, 0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
+    /* LAYOUT MODALE OTTIMIZZATO PER SMARTPHONE */
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.88); z-index: 100; padding: 12px; overflow-y: auto; }
     .modal-box { background: #121927; border: 1px solid var(--yellow); border-radius: 16px; padding: 16px; max-width: 480px; margin: 10px auto 30px auto; }
     .modal-title { font-size: 18px; font-weight: 800; color: var(--yellow); margin-bottom: 16px; text-transform: uppercase; }
     
     .form-group { margin-bottom: 14px; position: relative; }
     .form-group label { display: block; font-size: 10px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+    
     .form-group input { width: 100%; min-width: 0; box-sizing: border-box; background: #080b11; border: 1px solid var(--border); border-radius: 7px; padding: 10px; color: #fff; font-size: 14px; font-weight: 600; }
     .form-group input:focus { outline: none; border-color: var(--yellow); }
 
@@ -144,6 +146,7 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
+    /* COLORI BOTTONI PIATTAFORME */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
@@ -162,14 +165,16 @@
 
   <header>
     <div class="header-bar">
-      <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- TASTO HOME GIGANTE MOTO + DJ NEON -->
+      <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative;">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.4;">
           <circle cx="5.5" cy="17.5" r="3.5" stroke="#00e5ff"/>
           <circle cx="18.5" cy="17.5" r="3.5" stroke="#facc15"/>
           <path d="M15 6h3l3 5v3h-2" stroke="#fff"/>
           <path d="M5.5 17.5L9 11h6l2 6.5" stroke="#fff"/>
           <path d="M9 11L7 7H4" stroke="#d946ef"/>
         </svg>
+        <span style="position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 18px; color: #fff; text-shadow: 0 0 8px #d946ef, 0 0 12px #facc15; font-style: italic; letter-spacing: 1px;">DJ</span>
       </button>
 
       <div class="brand-box">
@@ -177,8 +182,9 @@
         <div class="brand-sub">planner & Meteo</div>
       </div>
 
-      <button class="nav-btn sync-btn" id="btnSync" onclick="sincronizzaVistaAttiva()" title="Sincronizza con Foglio">
-        <svg id="syncIcon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      <!-- TASTO SYNC INGRANDITO -->
+      <button class="nav-btn sync-btn" id="btnSync" onclick="sincronizzaVistaAttiva()" title="Sincronizza con Foglio" style="width: 58px; height: 58px;">
+        <svg id="syncIcon" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
           <path d="M3 3v5h5"/>
           <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/>
@@ -1175,7 +1181,7 @@
           if (c) pts.push({ ...c, name: n });
         }
         
-        // CALCOLO ROTTA E RECUPERO TEMPERATURA SE MANCANTE
+        // CALCOLO ROTTA E RECUPERO TEMPERATURA PRE-SALVATAGGIO
         if (pts.length >= 2) {
           const st = await getRouteAndElevationHD(pts);
           if (st.km > 0) kmCalc = st.km;
