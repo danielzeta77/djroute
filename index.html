@@ -76,13 +76,25 @@
     .btn-elevation { width: 100%; background: #151f32; border: 1px solid #2d3f5e; color: var(--yellow); padding: 9px; border-radius: 9px; font-size: 12px; font-weight: 800; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; }
     .ele-box { display: none; background: #090d15; border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; margin-bottom: 12px; }
 
+    /* CSS METEO ORIGINALE RESTAURATO */
+    .weather-box { background: var(--card-alt); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px; }
+    .weather-head { font-size: 11px; font-weight: 800; color: var(--yellow); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; }
+    .weather-badge-status { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; }
+    .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
+    .weather-cell { flex: 0 0 auto; background: #131c2c; border: 1px solid #24344d; border-radius: 8px; padding: 7px 10px; text-align: center; min-width: 86px; }
+    .w-time { font-size: 11px; color: var(--yellow); font-weight: 800; }
+    .w-km { font-size: 9px; color: var(--text-muted); font-weight: 700; margin-bottom: 2px; }
+    .w-icon { font-size: 18px; margin: 2px 0; }
+    .w-temp { font-size: 14px; font-weight: 800; }
+    .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
+    .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
+
     .grid-info { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; background: var(--card-alt); border: 1px solid var(--border); border-radius: 10px; padding: 11px; margin-bottom: 12px; font-size: 12px; }
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .grid-info div strong { color: #fff; font-size: 14px; font-weight: 700; }
 
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
     .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; border:none; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: all 0.2s ease; }
-    
     .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border: 1px solid #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
     .btn-myroute.mra:active { transform: scale(0.96); }
 
@@ -110,6 +122,26 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
+    /* CSS COLORI CARTA/BOOKING ORIGINALI RESTAURATI */
+    .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
+    .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
+    .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
+    .opt-btn[data-val="Pren. Diretta"].active { background: #8b5cf6 !important; color: #fff !important; border-color: #a78bfa !important; box-shadow: 0 0 12px rgba(139,92,246,0.5) !important; }
+    .opt-btn[data-val="Da pagare"].active { background: #f43f5e !important; color: #fff !important; border-color: #fda4af !important; box-shadow: 0 0 12px rgba(244,63,94,0.6) !important; }
+    .opt-btn[data-val="Acconto"].active { background: #f59e0b !important; color: #fff !important; border-color: #fcd34d !important; box-shadow: 0 0 12px rgba(245,158,11,0.6) !important; }
+    .opt-btn[data-val="Pagato"].active { background: #10b981 !important; color: #fff !important; border-color: #6ee7b7 !important; box-shadow: 0 0 12px rgba(16,185,129,0.6) !important; }
+    .opt-btn[data-val="Revolut Daniel"].active { background: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; box-shadow: 0 0 12px rgba(255,255,255,0.5) !important; }
+    .opt-btn[data-val="N26 Daniel"].active { background: #94a3b8 !important; color: #0f172a !important; border-color: #e2e8f0 !important; box-shadow: 0 0 12px rgba(148,163,184,0.5) !important; }
+    .opt-btn[data-val="Carta Emanuela"].active { background: #f97316 !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(249,115,22,0.5) !important; }
+    .opt-btn[data-val="Paypal Emanuela"].active, .opt-btn[data-val="Paypal Daniel"].active { background: #0070ba !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(0,112,186,0.5) !important; }
+    .opt-btn[data-val="Bonifico"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
+    .opt-btn[data-val="Cash in Struttura"].active { background: #22c55e !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(34,197,94,0.5) !important; }
+    .opt-btn[data-val="Garage"].active { background: #16a34a !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(22,163,74,0.5) !important; }
+    .opt-btn[data-val="Coperto in Struttura"].active { background: #2563eb !important; color: #fff !important; border-color: #93c5fd !important; box-shadow: 0 0 12px rgba(37,99,235,0.5) !important; }
+    .opt-btn[data-val="Parcheggio custodito"].active { background: #0ea5e9 !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(14,165,233,0.5) !important; }
+    .opt-btn[data-val="Cortile privato"].active { background: #eab308 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(234,179,8,0.5) !important; }
+    .opt-btn[data-val="Esterno struttura"].active { background: #ea580c !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(234,88,12,0.5) !important; }
+    .opt-btn[data-val="In attesa di conferma"].active { background: #ef4444 !important; color: #fff !important; border-color: #fca5a5 !important; box-shadow: 0 0 12px rgba(239,68,68,0.8) !important; animation: pulseRed 1.5s infinite; }
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
@@ -186,7 +218,7 @@
       <input type="hidden" id="editMyRouteUrl" value="">
       
       <div class="form-row-2">
-        <div class="form-group"><label>Data</label><input type="text" id="inpData" placeholder="Lun 18/10/2026"></div>
+        <div class="form-group"><label>Data (GG/MM/AAAA)</label><input type="text" id="inpData" placeholder="Lun 18/10/2026"></div>
         <div class="form-group"><label>Ora Partenza</label><input type="time" id="inpOra" value="08:30"></div>
       </div>
 
@@ -250,7 +282,6 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
     
-    // SOSTITUZIONE VERA E PROPRIA DEL MOTORE DI GEOCODING PER IL TELEFONO (BIGDATACLOUD - API VELOCE E SENZA BLOCCHI)
     async function geocodeInversoMobile(lat, lon) {
       try {
         const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lon}&localityLanguage=it`;
@@ -327,13 +358,11 @@
         btnElement.innerText = "⏳ SCARICAMENTO IN CORSO...";
         btnElement.style.pointerEvents = "none";
 
-        // Scarichiamo il file testo da Google Apps Script Endpoint
         const res = await fetch(`${SCRIPT_URL}?action=getGpxText&id=${m[1]}`);
         const testogpx = await res.text();
         
         if (testogpx === "ERROR") throw new Error("File non trovato su Drive.");
 
-        // Creiamo l'oggetto file per forzare il download di sistema
         window._gpxFileCorrente = new Blob([testogpx], { type: "application/gpx+xml" });
 
         btnElement.dataset.ready = "true";
@@ -353,7 +382,6 @@
        const blob = window._gpxFileCorrente;
        if (!blob) return;
        
-       // Trigger Download Nativo
        const blobUrl = URL.createObjectURL(blob);
        const a = document.createElement("a");
        a.style.display = "none";
@@ -366,12 +394,94 @@
        
        setTimeout(() => URL.revokeObjectURL(blobUrl), 3500);
        
-       // Riporta il bottone allo stato iniziale
        btnElement.dataset.ready = "false";
        btnElement.innerText = "1. ⬇️ SCARICA GPX";
        btnElement.style.background = "";
        btnElement.style.borderColor = "";
        btnElement.style.boxShadow = "";
+    }
+
+    // ==== IMPIANTO METEO NATIVO E ORIGINALE 14 GIORNI ====
+    function getWIcon(code, hour) {
+        let isNight = hour < 6 || hour > 20;
+        if(code === 0) return isNight ? "🌙" : "☀️";
+        if(code === 1 || code === 2) return isNight ? "☁️" : "⛅";
+        if(code === 3) return "☁️";
+        if(code >= 45 && code <= 48) return "🌫️";
+        if(code >= 51 && code <= 67) return "🌧️";
+        if(code >= 71 && code <= 77) return "❄️";
+        if(code >= 80 && code <= 82) return "🌦️";
+        if(code >= 95) return "⛈️";
+        return "🌤️";
+    }
+
+    async function generaImpiantoMeteo(t, coords) {
+        let d = parseItalianDateStr(t.data);
+        if (!d) return "";
+        
+        let oggi = new Date(); oggi.setHours(0,0,0,0);
+        let target = new Date(d); target.setHours(0,0,0,0);
+        let diff = Math.round((target - oggi)/(1000*3600*24));
+        
+        if (diff < 0) {
+           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-obsoleto" style="background:rgba(244,63,94,0.15); color:#fda4af; border:1px solid #fda4af;">Passato</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Data ormai passata.</div></div>`;
+        }
+        if (diff > 14) {
+           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-future" style="background:rgba(250,204,21,0.15); color:#fef08a; border:1px solid #fef08a;">Lontano</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Dati meteo disponibili solo per i prossimi 14 giorni.</div></div>`;
+        }
+        
+        let partStr = t.ora || "08:30";
+        let hPartenza = parseInt(partStr.split(":")[0]) || 8;
+        let mPartenza = parseInt(partStr.split(":")[1]) || 30;
+        let startDate = new Date(d); startDate.setHours(hPartenza, mPartenza, 0);
+        
+        let oreGuidaParts = (t.oreGuida || "0:00").split(":");
+        let totOre = (parseInt(oreGuidaParts[0]) || 0) + (parseInt(oreGuidaParts[1]) || 0)/60;
+        
+        let htmlCells = "";
+        let uniqueCoords = coords.filter((c, index, self) => index === 0 || index === self.length - 1 || (Math.abs(c.lat - self[index-1].lat) > 0.01));
+        
+        for(let i=0; i < uniqueCoords.length; i++) {
+            let c = uniqueCoords[i];
+            let msOffset = uniqueCoords.length > 1 ? (i / (uniqueCoords.length-1)) * (totOre * 3600 * 1000) : 0;
+            let timeAtPoint = new Date(startDate.getTime() + msOffset);
+            
+            let isoDate = timeAtPoint.getFullYear() + "-" + String(timeAtPoint.getMonth()+1).padStart(2,'0') + "-" + String(timeAtPoint.getDate()).padStart(2,'0');
+            let targetHour = timeAtPoint.getHours();
+            
+            try {
+                let url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&hourly=temperature_2m,precipitation,weathercode&timezone=auto&start_date=${isoDate}&end_date=${isoDate}`;
+                let r = await fetchWithTimeout(url, 3500);
+                let j = await r.json();
+                
+                if (j && j.hourly && j.hourly.temperature_2m) {
+                    let temp = j.hourly.temperature_2m[targetHour];
+                    let rain = j.hourly.precipitation[targetHour];
+                    let code = j.hourly.weathercode[targetHour];
+                    let icon = getWIcon(code, targetHour);
+                    
+                    let timeStr = String(targetHour).padStart(2,'0') + ":" + String(timeAtPoint.getMinutes()).padStart(2,'0');
+                    let kmStr = i === 0 ? "Partenza" : (i === uniqueCoords.length-1 ? "Arrivo" : "Passaggio");
+                    let shortName = c.name ? c.name.split(",")[0].substring(0,12) : "Punto";
+                    
+                    htmlCells += `<div class="weather-cell">
+                       <div class="w-time">${timeStr}</div>
+                       <div class="w-km">${kmStr}</div>
+                       <div class="w-icon">${icon}</div>
+                       <div class="w-temp">${Math.round(temp)}°</div>
+                       <div class="w-rain">${rain > 0 ? rain+'mm' : '0mm'}</div>
+                       <div class="w-name" title="${c.name}">${shortName}</div>
+                    </div>`;
+                }
+            } catch(e) {}
+        }
+        
+        if (!htmlCells) return `<div class="weather-box"><div style="text-align:center; font-size:12px; color:var(--red);">Errore API Meteo.</div></div>`;
+        
+        return `<div class="weather-box">
+           <div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-live" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid #6ee7b7;">Live</span></div>
+           <div class="weather-scroll">${htmlCells}</div>
+        </div>`;
     }
 
     function selezionaPulsante(containerId, hiddenInputId, valore) {
@@ -521,7 +631,6 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               // BOTTONE DOWNLOAD PURO A 2 FASI
                btnRouteHtml += `<button onclick="preparaCondivisione('${t.myRouteUrl}', this)" data-ready="false" class="btn-myroute mra">1. ⬇️ SCARICA GPX</button>`;
            }
            btnRouteHtml += `</div>`;
@@ -545,8 +654,13 @@
               <div class="tele-item"><div class="tele-label">Alt. Max</div><div class="tele-val" id="ele-val-${i}">${t.altMax ? Math.round(t.altMax) + ' m' : '-- m'}</div></div>
               <div class="tele-item"><div class="tele-label">Temp Medie</div><div class="tele-val temp-mild" id="temp-val-${i}">${tempEsistente}</div></div>
             </div>
+            
             <button class="btn-elevation" onclick="toggleProfiloAltimetrico(${i})">⛰️ Mostra Curva Altimetrica ▾</button>
             <div class="ele-box" id="ele-box-${i}"><div style="font-size:11px; color:var(--text-muted); text-align:center;">Elaborazione altimetria...</div></div>
+            
+            <!-- IL METEO VERRA' INIETTATO QUI -->
+            <div id="meteo-box-${i}"></div>
+
             <div class="grid-info">
               <div><span>Alloggio</span><strong>${t.alloggio || 'Non spec.'} ${t.piattaforma ? '('+t.piattaforma+')' : ''}</strong></div>
               <div><span>Parcheggio Moto</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
@@ -583,6 +697,11 @@
           } else if (eleBox) {
               eleBox.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile</div>`;
           }
+      }
+      
+      const meteoBox = document.getElementById(`meteo-box-${idx}`);
+      if (coords.length > 0 && meteoBox) {
+          meteoBox.innerHTML = await generaImpiantoMeteo(t, coords);
       }
     }
 
