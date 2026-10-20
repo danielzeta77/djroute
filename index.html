@@ -126,7 +126,6 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* COLORI ORIGINALI PULSANTI */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
@@ -405,7 +404,7 @@
        btnElement.style.boxShadow = "";
     }
 
-    // ==== MOTORE METEO A 45 MINUTI DI TRAGITTO REALE ====
+    // ==== MOTORE METEO A 45 MINUTI ====
     function getWIcon(code, hour) {
         let isNight = hour < 6 || hour > 20;
         if(code === 0) return isNight ? "🌙" : "☀️";
@@ -428,10 +427,10 @@
         let diff = Math.round((target - oggi)/(1000*3600*24));
         
         if (diff < 0) {
-           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-obsoleto">Passato</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Data ormai passata.</div></div>`;
+           return `<div class="weather-box"><div class="weather-head">METEO LIVE <span class="weather-badge-status status-obsoleto">Passata</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);"><b>Data già passata</b></div></div>`;
         }
         if (diff > 14) {
-           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-future">Lontano</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Dati meteo disponibili solo per i prossimi 14 giorni.</div></div>`;
+           return `<div class="weather-box"><div class="weather-head">METEO LIVE <span class="weather-badge-status status-future">In attesa</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);"><b>Non ancora disponibile</b><br>(mancano più di 14 giorni)</div></div>`;
         }
         
         let partStr = t.ora || "08:30";
@@ -443,7 +442,6 @@
         let totMin = (stats && stats.durationSec) ? stats.durationSec / 60 : ((parseInt((t.oreGuida||"0:00").split(":")[0])||0)*60 + (parseInt((t.oreGuida||"0:00").split(":")[1])||0));
         if (totMin <= 0) totMin = 60; 
         
-        // Estrazione Punti ogni 45 Minuti dalla Geometria reale OSRM
         if (stats && stats.fullGeo && stats.fullGeo.length > 0) {
             targetPoints.push({ lat: stats.fullGeo[0][1], lon: stats.fullGeo[0][0], type: "Partenza", min: 0, name: t.partenza });
             let steps = Math.floor(totMin / 45);
@@ -455,7 +453,6 @@
             }
             targetPoints.push({ lat: stats.fullGeo[stats.fullGeo.length-1][1], lon: stats.fullGeo[stats.fullGeo.length-1][0], type: "Arrivo", min: totMin, name: t.arrivo });
         } else {
-            // Backup
             targetPoints = coords.map((c, i) => ({ 
                lat: c.lat, lon: c.lon, 
                type: i===0?"Partenza":(i===coords.length-1?"Arrivo":"Passaggio"), 
@@ -507,7 +504,7 @@
         if (!htmlCells) return `<div class="weather-box"><div style="text-align:center; font-size:12px; color:var(--red);">Errore API Meteo.</div></div>`;
         
         return `<div class="weather-box">
-           <div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-live">Live</span></div>
+           <div class="weather-head">METEO LIVE <span class="weather-badge-status status-live">Live</span></div>
            <div class="weather-scroll">${htmlCells}</div>
         </div>`;
     }
