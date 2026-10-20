@@ -298,7 +298,7 @@
       reader.readAsText(file);
     }
 
-    // ==== IL BOTTONE 2-STEP PER SBLOCCARE LA CONDIVISIONE SU IPHONE/ANDROID ====
+    // ==== DOWNLOAD E APERTURA NATIVA IOS/ANDROID ====
     window._gpxFileCorrente = null;
 
     async function preparaCondivisione(url, btnElement) {
@@ -311,49 +311,51 @@
         if (!m) { window.open(url, "_blank"); return; }
         
         const originalText = btnElement.innerText;
-        btnElement.innerText = "⏳ SCARICAMENTO...";
+        btnElement.innerText = "⏳ SCARICAMENTO IN CORSO...";
         btnElement.style.pointerEvents = "none";
 
+        // Scarichiamo il file testo
         const res = await fetch(`${SCRIPT_URL}?action=getGpxText&id=${m[1]}`);
         const testogpx = await res.text();
         
-        if (testogpx === "ERROR") throw new Error("File non trovato.");
+        if (testogpx === "ERROR") throw new Error("File non trovato su Drive.");
 
-        window._gpxFileCorrente = new File([testogpx], "djRoute_Traccia.gpx", { type: "application/gpx+xml" });
+        // Creiamo l'oggetto file per forzare il download di sistema
+        window._gpxFileCorrente = new Blob([testogpx], { type: "application/gpx+xml" });
 
         btnElement.dataset.ready = "true";
-        btnElement.innerText = "2. 📎 CONDIVIDI ORA";
+        btnElement.innerText = "2. 📎 APRI FILE SCARICATO";
         btnElement.style.pointerEvents = "auto";
         btnElement.style.background = "#10b981";
         btnElement.style.borderColor = "#6ee7b7";
         btnElement.style.boxShadow = "0 0 12px rgba(16,185,129,0.6)";
       } catch(e) {
         alert("Errore download: " + e.message);
-        btnElement.innerText = "1. ⬇️ PREPARA GPX";
+        btnElement.innerText = "1. ⬇️ SCARICA GPX";
         btnElement.style.pointerEvents = "auto";
       }
     }
 
     function eseguiCondivisioneSincrona(btnElement) {
-       const file = window._gpxFileCorrente;
-       if (!file) return;
+       const blob = window._gpxFileCorrente;
+       if (!blob) return;
        
-       if (navigator.canShare && navigator.canShare({ files: [file] })) {
-         navigator.share({
-           files: [file],
-           title: 'Traccia GPX',
-           text: 'Traccia djRoute'
-         }).catch(e => console.log(e));
-       } else {
-         const blobUrl = URL.createObjectURL(file);
-         const a = document.createElement("a");
-         a.href = blobUrl; a.download = "djRoute_Traccia.gpx";
-         document.body.appendChild(a); a.click();
-         document.body.removeChild(a); URL.revokeObjectURL(blobUrl);
-       }
+       // Trigger Download Nativo
+       const blobUrl = URL.createObjectURL(blob);
+       const a = document.createElement("a");
+       a.style.display = "none";
+       a.href = blobUrl; 
+       a.download = "djRoute_Tappa.gpx";
        
+       document.body.appendChild(a); 
+       a.click();
+       document.body.removeChild(a); 
+       
+       setTimeout(() => URL.revokeObjectURL(blobUrl), 3500);
+       
+       // Riporta il bottone allo stato iniziale
        btnElement.dataset.ready = "false";
-       btnElement.innerText = "1. ⬇️ PREPARA GPX";
+       btnElement.innerText = "1. ⬇️ SCARICA GPX";
        btnElement.style.background = "";
        btnElement.style.borderColor = "";
        btnElement.style.boxShadow = "";
@@ -506,8 +508,8 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               // BOTTONE CON IL NUOVO METODO 2-STEP
-               btnRouteHtml += `<button onclick="preparaCondivisione('${t.myRouteUrl}', this)" data-ready="false" class="btn-myroute mra">1. ⬇️ PREPARA GPX</button>`;
+               // BOTTONE DOWNLOAD PURO A 2 FASI
+               btnRouteHtml += `<button onclick="preparaCondivisione('${t.myRouteUrl}', this)" data-ready="false" class="btn-myroute mra">1. ⬇️ SCARICA GPX</button>`;
            }
            btnRouteHtml += `</div>`;
         }
