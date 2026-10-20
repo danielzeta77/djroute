@@ -37,6 +37,9 @@
     .trip-item.swiped { transform: translateX(-105px); }
     .trip-item-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
     .trip-item-badge { font-size: 12px; font-weight: 800; color: #080b11; background: var(--yellow); padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
+    
+    /* Nuova matita piccola per rinominare */
+    .edit-badge { background: #1e293b; color: #94a3b8; padding: 5px 10px; font-size: 11px; border-radius: 12px; }
 
     .btn-create-sheet { width: 100%; margin-top: 18px; padding: 16px; background: rgba(250, 204, 21, 0.08); border: 1.5px dashed var(--yellow); border-radius: 14px; color: var(--yellow); font-size: 15px; font-weight: 800; letter-spacing: 0.8px; cursor: pointer; text-transform: uppercase; }
 
@@ -95,9 +98,10 @@
     .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
     .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
+    /* BOTTONI NAVIGAZIONE SDOPPIATI AZZURRI */
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
     .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; }
-    .btn-myroute.mra { background: #0070ba; color: #fff; border-color: #38bdf8; box-shadow: 0 0 12px rgba(0,112,186,0.4); }
+    .btn-myroute.mra { background: #0070ba; color: #fff; border-color: #38bdf8; box-shadow: 0 0 12px rgba(0,112,186,0.5); }
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250,204,21,0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
@@ -121,7 +125,7 @@
     #inpFileGpx { display: none; }
 
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
@@ -157,17 +161,16 @@
 
   <header>
     <div class="header-bar">
-      <!-- LOGO MOTO STILIZZATO NUOVO -->
+      <!-- MOTO STILIZZATA PULITA -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative; background: #111827; border: 1px solid #1f2937;">
-        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5;">
-          <path d="M14 6L11 9H8L6 11V14" stroke="#00e5ff"/>
-          <circle cx="6" cy="16" r="3" stroke="#00e5ff"/>
-          <circle cx="18" cy="16" r="3" stroke="#facc15"/>
-          <path d="M15 8H17L19 13V16" stroke="#facc15"/>
-          <path d="M14 6H10" stroke="#fff"/>
-          <path d="M11 9L15 13H17" stroke="#fff"/>
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;">
+          <circle cx="5.5" cy="16.5" r="3.5" stroke="#00e5ff"/>
+          <circle cx="18.5" cy="16.5" r="3.5" stroke="#facc15"/>
+          <path d="M15 6h3l3 5.5V15h-2.5"/>
+          <path d="M11.5 12H15l-1-4h-3L8.5 12H5"/>
+          <path d="M8.5 12l-2-6h-3"/>
         </svg>
-        <span style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 18px; color: #fff; text-shadow: 0 0 10px #00e5ff, 0 0 20px #00e5ff; font-style: italic; letter-spacing: 1px;">DJ</span>
+        <span style="position: absolute; top: 48%; left: 50%; transform: translate(-50%, -50%); font-weight: 900; font-size: 15px; color: #fff; text-shadow: 0 0 8px #00e5ff, 0 0 12px #00e5ff; font-style: italic; letter-spacing: 1px;">DJ</span>
       </button>
 
       <div class="brand-box">
@@ -274,15 +277,19 @@
       const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
+    
+    // Geocoding App: chiede espressamente in italiano
     async function reverseGeocode(lat, lon) {
-      try { const r = await fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=10&accept-language=it`, 4000);
-      const d = await r.json(); if (d && d.address) return d.address.city || d.address.town || d.address.village || d.name || "Punto Mappa"; } catch(e){} return `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
+      try { const r = await fetchWithTimeout(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=12&accept-language=it,en`, 4000);
+      const d = await r.json(); 
+      if (d && d.display_name) return d.display_name.split(",")[0].trim();
+      else if (d && d.address) return d.address.city || d.address.town || d.address.village || d.name || "Punto Mappa"; } catch(e){} return `${lat.toFixed(3)}, ${lon.toFixed(3)}`;
     }
 
     async function leggiFileGPX(event) {
       const file = event.target.files[0]; if (!file) return;
       const lbl = document.getElementById("lblGpx");
-      lbl.innerText = "⏳ Preparazione Cloud..."; lbl.style.color = "var(--yellow)"; lbl.style.borderColor = "var(--yellow)";
+      lbl.innerText = "⏳ Lettura file GPX..."; lbl.style.color = "var(--yellow)"; lbl.style.borderColor = "var(--yellow)";
 
       const reader = new FileReader();
       reader.onload = async function(e) {
@@ -303,7 +310,6 @@
           document.getElementById("inpArrivo").value = nameEnd;
           document.getElementById("editKm").value = Math.round(totalKm);
           
-          // Memorizza il testo per mandarlo al server
           gpxCacheData = txt; gpxCacheName = file.name;
           
           lbl.innerText = `✅ Caricato (${Math.round(totalKm)}km - Cloud Pronto)`;
@@ -344,7 +350,7 @@
         if (query.length < 3) { box.style.display = "none"; return; }
         timer = setTimeout(async () => {
           try {
-            const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it`, 3500);
+            const res = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&accept-language=it,en`, 3500);
             const list = await res.json(); if (!list || list.length === 0) { box.style.display = "none"; return; }
             box.innerHTML = "";
             list.forEach(item => {
@@ -362,7 +368,6 @@
     }
     attivaAutocompleteMappa("inpPartenza", "sugPartenza", false); attivaAutocompleteMappa("inpPassaggio", "sugPassaggio", true); attivaAutocompleteMappa("inpArrivo", "sugArrivo", false);
 
-    // Timeout potenziato per non far bloccare i caricamenti lenti di Google!
     async function fetchWithTimeout(resource, timeout = 12000) {
       const controller = new AbortController(); const id = setTimeout(() => controller.abort(), timeout);
       try { const response = await fetch(resource, { signal: controller.signal }); clearTimeout(id); return response; } catch (error) { clearTimeout(id); throw error; }
@@ -371,7 +376,6 @@
     async function mostraHome() { schedaAttiva = ""; document.getElementById("vistaViaggio").style.display = "none"; document.getElementById("fabNuovaTappa").style.display = "none"; document.getElementById("vistaHome").style.display = "block"; await scaricaSchedeViaggi(); }
     async function sincronizzaVistaAttiva() { const icon = document.getElementById("syncIcon"); icon.classList.add("spin"); if (schedaAttiva) await apriSchedaViaggio(schedaAttiva); else await scaricaSchedeViaggi(); setTimeout(() => icon.classList.remove("spin"), 500); }
 
-    // === RINOMINARE FOGLIO DALL'APP ===
     async function rinominaFoglio(vecchioNome, ev) {
       ev.stopPropagation();
       const n = prompt("Nuovo nome per il viaggio:", vecchioNome);
@@ -393,8 +397,8 @@
             const card = document.createElement("div"); card.className = "trip-item";
             card.innerHTML = `
               <div class="trip-item-title">🏍️ ${nome}</div>
-              <div style="display:flex; gap:8px;">
-                <div class="trip-item-badge" style="background:#1e293b; color:#fff;" onclick="rinominaFoglio('${nome}', event)">✏️</div>
+              <div style="display:flex; gap:8px; align-items:center;">
+                <div class="edit-badge" onclick="rinominaFoglio('${nome}', event)">✏️</div>
                 <div class="trip-item-badge">Apri ➔</div>
               </div>
             `;
@@ -409,7 +413,7 @@
     }
 
     async function confermaEliminazioneFoglio(nomeFoglio) {
-      if (!confirm(`Attenzione procedendo si cancellerà anche il File Excel ("${nomeFoglio}").\n\nVuoi procedere definitivamente?`)) return;
+      if (!confirm(`Vuoi procedere definitivamente e cancellare "${nomeFoglio}"?`)) return;
       await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "deleteSheet", sheetName: nomeFoglio }) });
       setTimeout(() => scaricaSchedeViaggi(), 1100);
     }
@@ -424,7 +428,7 @@
       schedaAttiva = nomeFoglio; document.getElementById("vistaHome").style.display = "none"; document.getElementById("vistaViaggio").style.display = "block"; document.getElementById("fabNuovaTappa").style.display = "block"; document.getElementById("nomeViaggioAttivo").innerText = "🏍️ " + nomeFoglio;
       const cont = document.getElementById("contenitoreTappe"); cont.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">Lettura tappe "${nomeFoglio}"...</div>`;
       try { const res = await fetchWithTimeout(`${SCRIPT_URL}?sheetName=${encodeURIComponent(nomeFoglio)}&_t=${Date.now()}`, 12000); tappeCorrenti = await res.json(); renderTappeViaggio(tappeCorrenti); } 
-      catch (e) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:var(--red);">Errore lettura tappe o timeout connessione. Google potrebbe essere lento.</div>`; }
+      catch (e) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:var(--red);">Errore lettura tappe o timeout connessione.</div>`; }
     }
 
     function toggleProfiloAltimetrico(idx) { const box = document.getElementById(`ele-box-${idx}`); if (box) box.style.display = (box.style.display === "block") ? "none" : "block"; }
@@ -442,10 +446,9 @@
         
         let btnRouteHtml = "";
         if (!isSosta) {
-           btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ MAPS</a>`;
+           btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               const isDriveGpx = t.myRouteUrl.includes("drive.google.com");
-               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">${isDriveGpx ? "📎 SCARICA GPX" : "🚀 NAVIGA MRA"}</a>`;
+               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 APRI / CONDIVIDI GPX</a>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -532,7 +535,6 @@
     async function salvaTappa() {
       const dep = document.getElementById("inpPartenza").value.trim(); const arr = document.getElementById("inpArrivo").value.trim();
       if (!dep || !arr) { alert("Inserisci Partenza e Arrivo!"); return; }
-      
       const btn = document.getElementById("btnSalvaTappa"); btn.innerText = "⏳ Inviando al Foglio..."; btn.disabled = true;
 
       const payload = {
