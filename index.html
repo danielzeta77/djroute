@@ -86,7 +86,6 @@
 
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
     .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; }
-    /* IL BOTTONE AZZURRO SICURO */
     .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border-color: #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250,204,21,0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
@@ -272,12 +271,11 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
     
-    // IL MOTORE GOOGLE MAPS INVINCIBILE DIRETTAMENTE DAL SERVER!
     function geocodeInversoGoogle(lat, lon) {
       return new Promise((resolve) => {
          google.script.run
            .withSuccessHandler(res => resolve(res))
-           .withFailureHandler(err => resolve(`${lat.toFixed(3)}, ${lon.toFixed(3)}`))
+           .withFailureHandler(err => resolve(`${lat.toFixed(4)}, ${lon.toFixed(4)}`))
            .risolviCittaDaCoordinateNative(lat, lon);
       });
     }
@@ -292,15 +290,17 @@
         try {
           const txt = e.target.result;
           const parser = new DOMParser(); const xmlDoc = parser.parseFromString(txt, "text/xml");
-          let trkpts = xmlDoc.getElementsByTagName("trkpt"); if (trkpts.length === 0) trkpts = xmlDoc.getElementsByTagName("rtept");
-          if (trkpts.length < 2) { alert("File GPX non valido"); lbl.innerText = "🗺️ Importa File GPX"; return; }
+          let trkpts = xmlDoc.getElementsByTagName("trkpt"); 
+          if (trkpts.length === 0) trkpts = xmlDoc.getElementsByTagName("rtept");
+          if (trkpts.length === 0) trkpts = xmlDoc.getElementsByTagName("wpt");
+          if (trkpts.length < 2) { alert("File GPX non valido o con pochi punti."); lbl.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; return; }
           
           let totalKm = 0;
           for (let i = 0; i < trkpts.length-1; i++) {
              totalKm += haversineDist(parseFloat(trkpts[i].getAttribute("lat")), parseFloat(trkpts[i].getAttribute("lon")), parseFloat(trkpts[i+1].getAttribute("lat")), parseFloat(trkpts[i+1].getAttribute("lon")));
           }
           
-          lbl.innerText = `⏳ Ricerca nomi città (Google Maps)...`;
+          lbl.innerText = `⏳ Localizzazione con Google Maps...`;
           
           const nameStart = await geocodeInversoGoogle(parseFloat(trkpts[0].getAttribute("lat")), parseFloat(trkpts[0].getAttribute("lon")));
           const nameEnd = await geocodeInversoGoogle(parseFloat(trkpts[trkpts.length-1].getAttribute("lat")), parseFloat(trkpts[trkpts.length-1].getAttribute("lon")));
@@ -314,7 +314,7 @@
           
           lbl.innerText = `✅ Caricato (${Math.round(totalKm)}km - Pronto al Cloud)`;
           lbl.style.color = "var(--green)"; lbl.style.borderColor = "var(--green)";
-        } catch (err) { alert("Errore GPX."); lbl.innerText = "🗺️ Importa File GPX"; }
+        } catch (err) { alert("Errore durante l'elaborazione del GPX: " + err.message); lbl.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; }
       };
       reader.readAsText(file);
     }
@@ -353,272 +353,4 @@
               div.onclick = () => {
                 const citta = parti[0].trim();
                 if (multiplo && raw.includes(",")) inp.value = raw.split(",").slice(0,-1).map(s=>s.trim()).join(", ") + ", " + citta; else inp.value = citta;
-                GEO_CACHE[citta.toLowerCase()] = { lat: parseFloat(item.lat), lon: parseFloat(item.lon), name: citta }; box.style.display = "none";
-              }; box.appendChild(div);
-            }); box.style.display = "block";
-          } catch (e) { box.style.display = "none"; }
-        }, 260);
-      });
-      document.addEventListener("click", (e) => { if (!inp.contains(e.target) && !box.contains(e.target)) box.style.display = "none"; });
-    }
-    attivaAutocompleteMappa("inpPartenza", "sugPartenza", false); attivaAutocompleteMappa("inpPassaggio", "sugPassaggio", true); attivaAutocompleteMappa("inpArrivo", "sugArrivo", false);
-
-    async function fetchWithTimeout(resource, timeout = 12000) {
-      const controller = new AbortController(); const id = setTimeout(() => controller.abort(), timeout);
-      try { const response = await fetch(resource, { signal: controller.signal }); clearTimeout(id); return response; } catch (error) { clearTimeout(id); throw error; }
-    }
-
-    async function mostraHome() { schedaAttiva = ""; document.getElementById("vistaViaggio").style.display = "none"; document.getElementById("fabNuovaTappa").style.display = "none"; document.getElementById("vistaHome").style.display = "block"; await scaricaSchedeViaggi(); }
-    async function sincronizzaVistaAttiva() { const icon = document.getElementById("syncIcon"); icon.classList.add("spin"); if (schedaAttiva) await apriSchedaViaggio(schedaAttiva); else await scaricaSchedeViaggi(); setTimeout(() => icon.classList.remove("spin"), 500); }
-
-    async function rinominaFoglio(vecchioNome, ev) {
-      ev.stopPropagation();
-      const n = prompt("Nuovo nome per il viaggio:", vecchioNome);
-      if (!n || n.trim() === "" || n === vecchioNome) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "renameSheet", sheetName: vecchioNome, newName: n.trim() }) });
-      setTimeout(() => scaricaSchedeViaggi(), 1200);
-    }
-
-    async function scaricaSchedeViaggi() {
-      const cont = document.getElementById("listaSchedeViaggi");
-      try {
-        const res = await fetchWithTimeout(`${SCRIPT_URL}?action=getSheets&_t=${Date.now()}`, 12000);
-        const fogli = await res.json();
-        if (Array.isArray(fogli)) {
-          schedeViaggi = fogli; cont.innerHTML = "";
-          fogli.forEach(nome => {
-            const wrap = document.createElement("div"); wrap.className = "swipe-wrapper";
-            const delBg = document.createElement("div"); delBg.className = "swipe-delete-bg"; delBg.innerHTML = `🗑️<span>ELIMINA</span>`; delBg.onclick = (e) => { e.stopPropagation(); confermaEliminazioneFoglio(nome); };
-            const card = document.createElement("div"); card.className = "trip-item";
-            card.innerHTML = `
-              <div class="trip-item-title">🏍️ ${nome}</div>
-              <div style="display:flex; gap:8px; align-items:center;">
-                <div class="edit-badge" onclick="rinominaFoglio('${nome}', event)">✏️</div>
-                <div class="trip-item-badge">Apri ➔</div>
-              </div>
-            `;
-            let startX = 0; let swiped = false;
-            card.addEventListener("touchstart", (e) => { startX = e.touches[0].clientX; }, { passive: true });
-            card.addEventListener("touchend", (e) => { const diffX = e.changedTouches[0].clientX - startX; if (diffX < -55) { document.querySelectorAll(".trip-item.swiped").forEach(el => el.classList.remove("swiped")); card.classList.add("swiped"); swiped = true; } else if (diffX > 40 && swiped) { card.classList.remove("swiped"); swiped = false; } });
-            card.onclick = () => { if (card.classList.contains("swiped")) { card.classList.remove("swiped"); return; } apriSchedaViaggio(nome); };
-            wrap.appendChild(delBg); wrap.appendChild(card); cont.appendChild(wrap);
-          });
-        }
-      } catch (e) { cont.innerHTML = `<div style="text-align:center; padding:25px; color:var(--red);">Connessione con Google fallita. Tocca 🔄 in alto.</div>`; }
-    }
-
-    async function confermaEliminazioneFoglio(nomeFoglio) {
-      if (!confirm(`Vuoi procedere definitivamente e cancellare "${nomeFoglio}"?`)) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "deleteSheet", sheetName: nomeFoglio }) });
-      setTimeout(() => scaricaSchedeViaggi(), 1100);
-    }
-
-    async function creaNuovoFoglioViaggio() {
-      const nome = prompt("Nome del nuovo viaggio (es. Kurdistan 2027):"); if (!nome || !nome.trim()) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "createSheet", newSheetName: nome.trim() }) });
-      setTimeout(() => scaricaSchedeViaggi(), 1200);
-    }
-
-    async function apriSchedaViaggio(nomeFoglio) {
-      schedaAttiva = nomeFoglio; document.getElementById("vistaHome").style.display = "none"; document.getElementById("vistaViaggio").style.display = "block"; document.getElementById("fabNuovaTappa").style.display = "block"; document.getElementById("nomeViaggioAttivo").innerText = "🏍️ " + nomeFoglio;
-      const cont = document.getElementById("contenitoreTappe"); cont.innerHTML = `<div style="text-align:center; padding:40px; color:var(--text-muted);">Lettura tappe "${nomeFoglio}"...</div>`;
-      try { const res = await fetchWithTimeout(`${SCRIPT_URL}?sheetName=${encodeURIComponent(nomeFoglio)}&_t=${Date.now()}`, 12000); tappeCorrenti = await res.json(); renderTappeViaggio(tappeCorrenti); } 
-      catch (e) { cont.innerHTML = `<div style="text-align:center; padding:30px; color:var(--red);">Errore lettura tappe o timeout connessione.</div>`; }
-    }
-
-    function toggleProfiloAltimetrico(idx) { 
-        const box = document.getElementById(`ele-box-${idx}`); 
-        if (box) box.style.display = (box.style.display === "block") ? "none" : "block"; 
-    }
-
-    function generaSvgAltimetriaHD(elevationArray, depName, arrName, maxEle) {
-      if (!elevationArray || elevationArray.length < 2) return `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile</div>`;
-      const W = 340, H = 105; const tetto = Math.max(...elevationArray, 150); const stepX = (W - 32) / (elevationArray.length - 1);
-      const pts = elevationArray.map((ele, idx) => { return { x: (16 + idx * stepX).toFixed(1), y: (H - 22 - ((Math.max(0, ele) / tetto) * (H - 44))).toFixed(1), ele: Math.round(ele) }; });
-      const polyPoints = `${pts[0].x},${H-20} ` + pts.map(p => `${p.x},${p.y}`).join(" ") + ` ${pts[pts.length-1].x},${H-20}`;
-      const linePoints = pts.map(p => `${p.x},${p.y}`).join(" ");
-      let peakPt = pts[0]; pts.forEach(p => { if (p.ele > peakPt.ele) peakPt = p; });
-
-      return `
-        <svg viewBox="0 0 ${W} ${H}" style="width:100%; height:auto; display:block;">
-          <defs><linearGradient id="gradEle" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#facc15" stop-opacity="0.45"/><stop offset="100%" stop-color="#facc15" stop-opacity="0.0"/></linearGradient></defs>
-          <polygon points="${polyPoints}" fill="url(#gradEle)" />
-          <polyline points="${linePoints}" fill="none" stroke="#facc15" stroke-width="2.2" />
-          <circle cx="${peakPt.x}" cy="${peakPt.y}" r="4" fill="#00e5ff" />
-          <text x="${peakPt.x}" y="${Math.max(12, peakPt.y - 6)}" fill="#00e5ff" font-size="10" font-weight="800" text-anchor="middle">⛰️ Max ${maxEle}m</text>
-          <text x="16" y="${H-5}" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="start">${depName.slice(0,12)} (${pts[0].ele}m)</text>
-          <text x="${W-16}" y="${H-5}" fill="#94a3b8" font-size="9" font-weight="700" text-anchor="end">${arrName.slice(0,12)} (${pts[pts.length-1].ele}m)</text>
-        </svg>`;
-    }
-
-    async function renderTappeViaggio(tappe) {
-      const cont = document.getElementById("contenitoreTappe"); const statsHeader = document.getElementById("riepilogoKmViaggio"); cont.innerHTML = "";
-      if (!tappe || tappe.length === 0) { statsHeader.innerText = "0 tappe • 0 km"; cont.innerHTML = `<div style="text-align:center; padding:45px 20px; color:var(--text-muted);">Nessuna tappa presente.<br>Tocca <strong>➕ NUOVA TAPPA</strong> in basso a destra.</div>`; return; }
-
-      let sommaKm = 0;
-      for (let i = 0; i < tappe.length; i++) {
-        const t = tappe[i]; sommaKm += (parseFloat(t.km) || 0);
-        const card = document.createElement("article"); card.className = "card";
-        const isSosta = (t.arrivo && t.arrivo.toUpperCase() === "SOSTA");
-        const gmaps = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(t.partenza)}&destination=${encodeURIComponent(t.arrivo)}${t.passaggio ? '&waypoints=' + encodeURIComponent(t.passaggio) : ''}`;
-        
-        let btnRouteHtml = "";
-        if (!isSosta) {
-           btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
-           if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               // Senza il Target Blank, non fa crashare l'app. Apre Google Drive che gestisce il telefono
-               btnRouteHtml += `<a href="${t.myRouteUrl}" class="btn-myroute mra">📎 CONDIVIDI GPX / NAVIGA</a>`;
-           }
-           btnRouteHtml += `</div>`;
-        }
-
-        const tempEsistente = t.tempMedie && t.tempMedie.trim() ? t.tempMedie.trim() : "--° / --°";
-        card.innerHTML = `
-          <div class="card-head">
-            <div class="card-title-box"><span class="card-title">TAPPA #${i + 1}</span><span class="card-date">${t.data || 'DATA N/D'}</span></div>
-            <div class="card-actions"><button class="btn-card btn-edit" onclick="apriModaleModifica(${i})">✏️ Modifica</button><button class="btn-card btn-del" onclick="eliminaTappa(${t.id})">🗑️</button></div>
-          </div>
-          <div class="card-body">
-            <div class="route-box">
-              <div class="route-point dep"><div class="point-label">Partenza • Ore ${t.ora || '08:30'}</div><div class="point-city">${t.partenza || 'N/D'}</div></div>
-              ${t.passaggio ? `<div class="route-point via"><div class="point-label">Passaggi / Valichi</div><div class="point-city" style="font-size:14px; color:var(--yellow);">${t.passaggio}</div></div>` : ''}
-              <div class="route-point arr"><div class="point-label">${isSosta ? 'Destinazione' : 'Arrivo'}</div><div class="point-city" style="${isSosta ? 'color:var(--green);' : ''}">${t.arrivo || 'N/D'}</div></div>
-            </div>
-            <div class="road-telemetry">
-              <div class="tele-item"><div class="tele-label">Distanza</div><div class="tele-val" id="km-val-${i}">${t.km ? Math.round(t.km) + ' km' : '-- km'}</div></div>
-              <div class="tele-item"><div class="tele-label">Ore Guida</div><div class="tele-val" id="time-val-${i}">${t.oreGuida || '--:--'}</div></div>
-              <div class="tele-item"><div class="tele-label">Alt. Max</div><div class="tele-val" id="ele-val-${i}">${t.altMax ? Math.round(t.altMax) + ' m' : '-- m'}</div></div>
-              <div class="tele-item"><div class="tele-label">Temp Medie</div><div class="tele-val temp-mild" id="temp-val-${i}">${tempEsistente}</div></div>
-            </div>
-            <button class="btn-elevation" onclick="toggleProfiloAltimetrico(${i})">⛰️ Mostra Curva Altimetrica ▾</button>
-            <div class="ele-box" id="ele-box-${i}"><div style="font-size:11px; color:var(--text-muted); text-align:center;">Elaborazione altimetria...</div></div>
-            <div class="grid-info">
-              <div><span>Alloggio</span><strong>${t.alloggio || 'Non spec.'} ${t.piattaforma ? '('+t.piattaforma+')' : ''}</strong></div>
-              <div><span>Parcheggio Moto</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
-              <div><span>Prezzo Camera</span><strong>${t.spesa ? t.spesa + ' €' : '0 €'} (${t.pagamento})</strong></div>
-              <div><span>Pagato / Residuo</span><strong>${t.pagato || 0} € / <b style="color:${t.daPagare>0?'#f43f5e':'#10b981'}">${t.daPagare>0?t.daPagare+' €':'Saldato'}</b></strong></div>
-              <div style="grid-column: span 2;"><span>Metodo di Pagamento</span><strong>${t.metodoPagamento || 'Non specificato'}</strong></div>
-            </div>
-            ${t.note ? `<div style="font-size:12px; color:var(--yellow); margin-bottom:12px; background:#182235; padding:8px 10px; border-radius:7px; border-left:3px solid var(--yellow);">📌 ${t.note}</div>` : ''}
-            ${btnRouteHtml}
-          </div>
-        `;
-        cont.appendChild(card);
-        calcolaTelemetriaCompletaCard(i, t);
-      }
-      statsHeader.innerText = `${tappe.length} tappe • ${Math.round(sommaKm)} km`;
-    }
-
-    async function calcolaTelemetriaCompletaCard(idx, t) {
-      const isSosta = (t.arrivo && t.arrivo.toUpperCase() === "SOSTA");
-      const locNomi = []; if (t.partenza) locNomi.push(t.partenza);
-      if (!isSosta) { if (t.passaggio) { t.passaggio.split(",").forEach(p => { if (p.trim()) locNomi.push(p.trim()); }); } if (t.arrivo) locNomi.push(t.arrivo); }
-
-      const coords = [];
-      for (const name of locNomi) { try { const c = await geocode(name); if (c) coords.push({ ...c, name: name }); } catch(e){} }
-
-      const eleBox = document.getElementById(`ele-box-${idx}`);
-      if (isSosta && coords.length === 1) {
-          if (eleBox) eleBox.innerHTML = `<div style="font-size:12px; padding:15px; color:var(--green); text-align:center; font-weight:800;">⛺ Giornata di Sosta a ${t.partenza}</div>`;
-      } else if (coords.length >= 2) {
-          let stats = { km: t.km || 0, maxEle: t.altMax || 0, elevationCurve: [] };
-          try { stats = await getRouteAndElevationHD(coords); } catch (e) {}
-          if (eleBox && stats.elevationCurve.length > 0) {
-              eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(t.altMax > 0 ? t.altMax : stats.maxEle));
-          } else if (eleBox) {
-              eleBox.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile</div>`;
-          }
-      }
-    }
-
-    async function geocode(loc) {
-      if (!loc) return null; const k = loc.trim().toLowerCase(); if (GEO_CACHE[k]) return GEO_CACHE[k];
-      try { const r = await fetchWithTimeout(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1&language=it&format=json`, 3500);
-      const d = await r.json(); if (d && d.results && d.results.length > 0) { const c = { lat: d.results[0].latitude, lon: d.results[0].longitude }; GEO_CACHE[k] = c; return c; } } catch(e){} return null;
-    }
-
-    async function getRouteAndElevationHD(coords) {
-      const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";"); if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
-      try {
-        const res = await fetchWithTimeout(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`, 4500); const data = await res.json();
-        let km = 0, maxEle = 0, elevationCurve = [], sampleLats = [], sampleLons = [];
-        if (data.routes && data.routes.length > 0) {
-          const fullGeometry = data.routes[0].geometry.coordinates;
-          for (let i = 0; i < 15; i++) {
-            const idx = Math.min(fullGeometry.length - 1, Math.floor((i / 14) * (fullGeometry.length - 1)));
-            sampleLons.push(fullGeometry[idx][0].toFixed(4)); sampleLats.push(fullGeometry[idx][1].toFixed(4));
-          }
-        } else { sampleLats = coords.map(p => p.lat); sampleLons = coords.map(p => p.lon); }
-
-        const eleRes = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`, 3500);
-        const eleData = await eleRes.json();
-        if (eleData && eleData.elevation) { elevationCurve = eleData.elevation; maxEle = Math.round(Math.max(...elevationCurve)); }
-        const out = { km, maxEle, elevationCurve }; ROUTE_CACHE[coordStr] = out; return out;
-      } catch(e){ return { km: 0, maxEle: 0, elevationCurve: [] }; }
-    }
-
-    function apriModaleNuovaTappa() {
-      gpxCacheData = ""; gpxCacheName = ""; document.getElementById("modalTitle").innerText = `🏍️ Nuova Tappa`; document.getElementById("editRowId").value = "";
-      document.getElementById("editMyRouteUrl").value = ""; 
-      const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
-      
-      const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null; document.getElementById("inpOra").value = "08:30";
-      
-      if (ultima) {
-          let dtParsed = parseItalianDateStr(ultima.data);
-          if(dtParsed) {
-              dtParsed.setDate(dtParsed.getDate() + 1);
-              document.getElementById("inpData").value = formattaDataConGiorno(dtParsed);
-          }
-          document.getElementById("inpPartenza").value = (ultima.arrivo && ultima.arrivo.toUpperCase() === "SOSTA") ? ultima.partenza : ultima.arrivo;
-      } else { 
-          document.getElementById("inpData").value = formattaDataConGiorno(new Date()); 
-          document.getElementById("inpPartenza").value = ""; 
-      }
-      
-      document.getElementById("inpPassaggio").value = ""; document.getElementById("inpArrivo").value = ""; document.getElementById("inpSpesa").value = ""; document.getElementById("inpPagato").value = "0"; document.getElementById("inpDaPagare").value = "0"; document.getElementById("inpNote").value = "";
-      selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Booking'); selezionaStatoPagamento('Da pagare'); selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel'); selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage');
-      document.getElementById("modalTappa").style.display = "block";
-    }
-
-    function apriModaleModifica(idx) {
-      gpxCacheData = ""; gpxCacheName = ""; const t = tappeCorrenti[idx]; if (!t) return;
-      document.getElementById("modalTitle").innerText = `✏️ Modifica Tappa #${idx + 1}`; document.getElementById("editRowId").value = t.id;
-      document.getElementById("editMyRouteUrl").value = t.myRouteUrl || ""; 
-      const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Sostituisci Traccia)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
-      
-      document.getElementById("editKm").value = t.km; document.getElementById("editAltMax").value = t.altMax; document.getElementById("inpData").value = t.data; document.getElementById("inpOra").value = t.ora; document.getElementById("inpPartenza").value = t.partenza; document.getElementById("inpPassaggio").value = t.passaggio; document.getElementById("inpArrivo").value = t.arrivo; document.getElementById("inpAlloggio").value = t.alloggio; document.getElementById("inpSpesa").value = t.spesa; document.getElementById("inpPagato").value = t.pagato; document.getElementById("inpDaPagare").value = t.daPagare; document.getElementById("inpNote").value = t.note;
-      
-      selezionaPulsante('gridPiattaforma', 'valPiattaforma', t.piattaforma || 'Booking'); selezionaStatoPagamento(t.pagamento || 'Da pagare'); selezionaPulsante('gridMetodo', 'valMetodo', t.metodoPagamento || 'Revolut Daniel'); selezionaPulsante('gridParcheggio', 'valParcheggio', t.parcheggio || 'Garage');
-      document.getElementById("modalTappa").style.display = "block";
-    }
-
-    function chiudiModale() { document.getElementById("modalTappa").style.display = "none"; }
-
-    async function eliminaTappa(rowId) {
-      if (!confirm("Confermi l'eliminazione di questa tappa?")) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "delete", sheetName: schedaAttiva, rowId: rowId }) });
-      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1000);
-    }
-
-    async function salvaTappa() {
-      const dep = document.getElementById("inpPartenza").value.trim(); const arr = document.getElementById("inpArrivo").value.trim();
-      if (!dep || !arr) { alert("Inserisci Partenza e Arrivo!"); return; }
-      const btn = document.getElementById("btnSalvaTappa"); btn.innerText = "⏳ Inviando al Foglio..."; btn.disabled = true;
-
-      const payload = {
-        sheetName: schedaAttiva, action: document.getElementById("editRowId").value ? "update" : "create", rowId: document.getElementById("editRowId").value || undefined,
-        data: document.getElementById("inpData").value.trim(), ora: document.getElementById("inpOra").value || "08:30", partenza: dep, passaggio: document.getElementById("inpPassaggio").value.trim(), arrivo: arr,
-        km: parseFloat(document.getElementById("editKm").value) || 0, alloggio: document.getElementById("inpAlloggio").value.trim(), piattaforma: document.getElementById("valPiattaforma").value, spesa: parseFloat(document.getElementById("inpSpesa").value) || 0, pagamento: document.getElementById("valPagamento").value, pagato: parseFloat(document.getElementById("inpPagato").value) || 0, metodoPagamento: document.getElementById("valMetodo").value, parcheggio: document.getElementById("valParcheggio").value, note: document.getElementById("inpNote").value.trim(),
-        myRouteUrl: document.getElementById("editMyRouteUrl").value,
-        gpxText: gpxCacheData, gpxFilename: gpxCacheName
-      };
-
-      try { await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) }); } catch(e){}
-      
-      btn.innerText = "💾 Salva Tappa"; btn.disabled = false; chiudiModale();
-      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1100);
-    }
-  </script>
-</body>
-</html>
+                GEO_CACHE[citta.toLowerCase()] = { lat: parseFloat(item.lat), lon: parseFloat(item.lon), name: citta }; box.style.display = "
