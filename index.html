@@ -96,6 +96,7 @@
     .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
     .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
+    /* BOTTONI NAVIGAZIONE SDOPPIATI AZZURRI */
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
     .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border-color: #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
@@ -122,7 +123,7 @@
     #inpFileGpx { display: none; }
 
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
@@ -158,7 +159,6 @@
 
   <header>
     <div class="header-bar">
-      <!-- MOTO STILIZZATA PULITA -->
       <button class="nav-btn" onclick="mostraHome()" title="Torna ai Viaggi" style="width: 58px; height: 58px; position: relative; background: #111827; border: 1px solid #1f2937;">
         <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.6;">
           <circle cx="5.5" cy="16.5" r="3.5" stroke="#00e5ff"/>
@@ -219,8 +219,6 @@
       <input type="hidden" id="editOre" value="">
       <input type="hidden" id="editAltMax" value="0">
       <input type="hidden" id="editTempMedie" value="">
-      
-      <!-- CAMPO INVISIBILE FONDAMENTALE PER SALVARE IL LINK IN CASO DI MODIFICA -->
       <input type="hidden" id="editMyRouteUrl" value="">
       
       <div class="form-row-2">
@@ -272,7 +270,6 @@
 
     window.addEventListener("DOMContentLoaded", () => { mostraHome(); });
 
-    // ==== GESTIONE DATE ITALIANE ====
     function parseItalianDateStr(str) {
       if(!str) return null;
       let match = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
@@ -283,7 +280,6 @@
       return `${NOMI_GIORNI[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
     }
 
-    // ==== LETTORE GPX LOCALE ====
     function haversineDist(lat1, lon1, lat2, lon2) {
       const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180;
       const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
@@ -321,10 +317,11 @@
           document.getElementById("inpArrivo").value = nameEnd;
           document.getElementById("editKm").value = Math.round(totalKm);
           
-          gpxCacheData = btoa(unescape(encodeURIComponent(txt))); 
+          // Testo puro, addio Base64 per evitare blocchi
+          gpxCacheData = txt; 
           gpxCacheName = file.name;
           
-          lbl.innerText = `✅ Caricato (${Math.round(totalKm)}km - Cloud Pronto)`;
+          lbl.innerText = `✅ Caricato (${Math.round(totalKm)}km - Pronto al Cloud)`;
           lbl.style.color = "var(--green)"; lbl.style.borderColor = "var(--green)";
         } catch (err) { alert("Errore GPX."); lbl.innerText = "🗺️ Importa File GPX"; }
       };
@@ -387,7 +384,7 @@
       ev.stopPropagation();
       const n = prompt("Nuovo nome per il viaggio:", vecchioNome);
       if (!n || n.trim() === "" || n === vecchioNome) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "renameSheet", sheetName: vecchioNome, newName: n.trim() }) });
+      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "renameSheet", sheetName: vecchioNome, newName: n.trim() }) });
       setTimeout(() => scaricaSchedeViaggi(), 1200);
     }
 
@@ -421,13 +418,13 @@
 
     async function confermaEliminazioneFoglio(nomeFoglio) {
       if (!confirm(`Vuoi procedere definitivamente e cancellare "${nomeFoglio}"?`)) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "deleteSheet", sheetName: nomeFoglio }) });
+      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "deleteSheet", sheetName: nomeFoglio }) });
       setTimeout(() => scaricaSchedeViaggi(), 1100);
     }
 
     async function creaNuovoFoglioViaggio() {
       const nome = prompt("Nome del nuovo viaggio (es. Kurdistan 2027):"); if (!nome || !nome.trim()) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ action: "createSheet", newSheetName: nome.trim() }) });
+      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "createSheet", newSheetName: nome.trim() }) });
       setTimeout(() => scaricaSchedeViaggi(), 1200);
     }
 
@@ -478,7 +475,7 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX / NAVIGA</a>`;
+               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX</a>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -570,7 +567,7 @@
 
     function apriModaleNuovaTappa() {
       gpxCacheData = ""; gpxCacheName = ""; document.getElementById("modalTitle").innerText = `🏍️ Nuova Tappa`; document.getElementById("editRowId").value = "";
-      document.getElementById("editMyRouteUrl").value = ""; // Reset memoria link
+      document.getElementById("editMyRouteUrl").value = ""; 
       const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
       
       const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null; document.getElementById("inpOra").value = "08:30";
@@ -595,7 +592,7 @@
     function apriModaleModifica(idx) {
       gpxCacheData = ""; gpxCacheName = ""; const t = tappeCorrenti[idx]; if (!t) return;
       document.getElementById("modalTitle").innerText = `✏️ Modifica Tappa #${idx + 1}`; document.getElementById("editRowId").value = t.id;
-      document.getElementById("editMyRouteUrl").value = t.myRouteUrl || ""; // Mantiene vivo il link del tasto blu!
+      document.getElementById("editMyRouteUrl").value = t.myRouteUrl || ""; 
       const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Sostituisci Traccia)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
       
       document.getElementById("editKm").value = t.km; document.getElementById("editAltMax").value = t.altMax; document.getElementById("inpData").value = t.data; document.getElementById("inpOra").value = t.ora; document.getElementById("inpPartenza").value = t.partenza; document.getElementById("inpPassaggio").value = t.passaggio; document.getElementById("inpArrivo").value = t.arrivo; document.getElementById("inpAlloggio").value = t.alloggio; document.getElementById("inpSpesa").value = t.spesa; document.getElementById("inpPagato").value = t.pagato; document.getElementById("inpDaPagare").value = t.daPagare; document.getElementById("inpNote").value = t.note;
@@ -606,6 +603,13 @@
 
     function chiudiModale() { document.getElementById("modalTappa").style.display = "none"; }
 
+    async function eliminaTappa(rowId) {
+      if (!confirm("Confermi l'eliminazione di questa tappa?")) return;
+      // TEXT/PLAIN INVECE DI APPLICATION/JSON PER SBLOCCARE IL CORS DEI BROWSER SMARTPHONE!
+      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "delete", sheetName: schedaAttiva, rowId: rowId }) });
+      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1000);
+    }
+
     async function salvaTappa() {
       const dep = document.getElementById("inpPartenza").value.trim(); const arr = document.getElementById("inpArrivo").value.trim();
       if (!dep || !arr) { alert("Inserisci Partenza e Arrivo!"); return; }
@@ -615,11 +619,11 @@
         sheetName: schedaAttiva, action: document.getElementById("editRowId").value ? "update" : "create", rowId: document.getElementById("editRowId").value || undefined,
         data: document.getElementById("inpData").value.trim(), ora: document.getElementById("inpOra").value || "08:30", partenza: dep, passaggio: document.getElementById("inpPassaggio").value.trim(), arrivo: arr,
         km: parseFloat(document.getElementById("editKm").value) || 0, alloggio: document.getElementById("inpAlloggio").value.trim(), piattaforma: document.getElementById("valPiattaforma").value, spesa: parseFloat(document.getElementById("inpSpesa").value) || 0, pagamento: document.getElementById("valPagamento").value, pagato: parseFloat(document.getElementById("inpPagato").value) || 0, metodoPagamento: document.getElementById("valMetodo").value, parcheggio: document.getElementById("valParcheggio").value, note: document.getElementById("inpNote").value.trim(),
-        myRouteUrl: document.getElementById("editMyRouteUrl").value, // Rimanda indietro il link
-        gpxBase64: gpxCacheData, gpxFilename: gpxCacheName
+        myRouteUrl: document.getElementById("editMyRouteUrl").value,
+        gpxText: gpxCacheData, gpxFilename: gpxCacheName
       };
 
-      try { await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) }); } catch(e){}
+      try { await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) }); } catch(e){}
       
       btn.innerText = "💾 Salva Tappa"; btn.disabled = false; chiudiModale();
       setTimeout(() => apriSchedaViaggio(schedaAttiva), 1100);
