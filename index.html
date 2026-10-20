@@ -81,11 +81,10 @@
     .grid-info div strong { color: #fff; font-size: 14px; font-weight: 700; }
 
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
-    .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; border:none; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+    .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; border:none; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; transition: all 0.2s ease; }
     
-    /* BOTTONE AZZURRO MAGICO */
     .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border: 1px solid #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
-    .btn-myroute.mra:active { background: #0284c7 !important; transform: scale(0.96); }
+    .btn-myroute.mra:active { transform: scale(0.96); }
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250,204,21,0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
@@ -299,50 +298,65 @@
       reader.readAsText(file);
     }
 
-    // ==== FUNZIONE MAGICA CONDIVISIONE GPX NATIVA ====
-    async function condividiGpxNativo(url, btnElement) {
+    // ==== IL BOTTONE 2-STEP PER SBLOCCARE LA CONDIVISIONE SU IPHONE/ANDROID ====
+    window._gpxFileCorrente = null;
+
+    async function preparaCondivisione(url, btnElement) {
+      if (btnElement.dataset.ready === "true") {
+         eseguiCondivisioneSincrona(btnElement);
+         return;
+      }
       try {
         const m = url.match(/id=([a-zA-Z0-9_-]+)/);
         if (!m) { window.open(url, "_blank"); return; }
-        const fileId = m[1];
-
+        
         const originalText = btnElement.innerText;
-        btnElement.innerText = "⏳ DOWNLOAD GPX...";
+        btnElement.innerText = "⏳ SCARICAMENTO...";
         btnElement.style.pointerEvents = "none";
 
-        const res = await fetch(`${SCRIPT_URL}?action=getGpxText&id=${fileId}`);
+        const res = await fetch(`${SCRIPT_URL}?action=getGpxText&id=${m[1]}`);
         const testogpx = await res.text();
-
-        btnElement.innerText = originalText;
-        btnElement.style.pointerEvents = "auto";
-
-        if (testogpx === "ERROR") throw new Error("File rimosso o permessi mancanti.");
-
-        // Crea il file fisico in memoria e apre il menu di condivisione del telefono!
-        const file = new File([testogpx], "djRoute_Traccia.gpx", { type: "application/gpx+xml" });
         
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            files: [file],
-            title: 'Traccia GPX',
-            text: 'Traccia esportata da djRoute'
-          });
-        } else {
-          // Se per caso il telefono è vecchio, lo scarica dritto nella cartella Download
-          const blobUrl = URL.createObjectURL(file);
-          const a = document.createElement("a");
-          a.href = blobUrl;
-          a.download = "djRoute_Traccia.gpx";
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(blobUrl);
-        }
+        if (testogpx === "ERROR") throw new Error("File non trovato.");
+
+        window._gpxFileCorrente = new File([testogpx], "djRoute_Traccia.gpx", { type: "application/gpx+xml" });
+
+        btnElement.dataset.ready = "true";
+        btnElement.innerText = "2. 📎 CONDIVIDI ORA";
+        btnElement.style.pointerEvents = "auto";
+        btnElement.style.background = "#10b981";
+        btnElement.style.borderColor = "#6ee7b7";
+        btnElement.style.boxShadow = "0 0 12px rgba(16,185,129,0.6)";
       } catch(e) {
-        alert("Impossibile condividere: " + e.message);
-        btnElement.innerText = "📎 CONDIVIDI GPX";
+        alert("Errore download: " + e.message);
+        btnElement.innerText = "1. ⬇️ PREPARA GPX";
         btnElement.style.pointerEvents = "auto";
       }
+    }
+
+    function eseguiCondivisioneSincrona(btnElement) {
+       const file = window._gpxFileCorrente;
+       if (!file) return;
+       
+       if (navigator.canShare && navigator.canShare({ files: [file] })) {
+         navigator.share({
+           files: [file],
+           title: 'Traccia GPX',
+           text: 'Traccia djRoute'
+         }).catch(e => console.log(e));
+       } else {
+         const blobUrl = URL.createObjectURL(file);
+         const a = document.createElement("a");
+         a.href = blobUrl; a.download = "djRoute_Traccia.gpx";
+         document.body.appendChild(a); a.click();
+         document.body.removeChild(a); URL.revokeObjectURL(blobUrl);
+       }
+       
+       btnElement.dataset.ready = "false";
+       btnElement.innerText = "1. ⬇️ PREPARA GPX";
+       btnElement.style.background = "";
+       btnElement.style.borderColor = "";
+       btnElement.style.boxShadow = "";
     }
 
     function selezionaPulsante(containerId, hiddenInputId, valore) {
@@ -492,8 +506,8 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               // BOTTONE CON IL NUOVO METODO DI SCARICAMENTO E CONDIVISIONE NATIVA
-               btnRouteHtml += `<button onclick="condividiGpxNativo('${t.myRouteUrl}', this)" class="btn-myroute mra">📎 CONDIVIDI GPX</button>`;
+               // BOTTONE CON IL NUOVO METODO 2-STEP
+               btnRouteHtml += `<button onclick="preparaCondivisione('${t.myRouteUrl}', this)" data-ready="false" class="btn-myroute mra">1. ⬇️ PREPARA GPX</button>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -620,6 +634,12 @@
     }
 
     function chiudiModale() { document.getElementById("modalTappa").style.display = "none"; }
+
+    async function eliminaTappa(rowId) {
+      if (!confirm("Confermi l'eliminazione di questa tappa?")) return;
+      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "delete", sheetName: schedaAttiva, rowId: rowId }) });
+      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1000);
+    }
 
     async function salvaTappa() {
       const dep = document.getElementById("inpPartenza").value.trim(); const arr = document.getElementById("inpArrivo").value.trim();
