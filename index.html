@@ -37,8 +37,6 @@
     .trip-item.swiped { transform: translateX(-105px); }
     .trip-item-title { font-size: 18px; font-weight: 800; color: #fff; display: flex; align-items: center; gap: 10px; }
     .trip-item-badge { font-size: 12px; font-weight: 800; color: #080b11; background: var(--yellow); padding: 5px 12px; border-radius: 20px; text-transform: uppercase; }
-    
-    /* La matita piccolina */
     .edit-badge { background: #1e293b; color: #94a3b8; padding: 4px 8px; font-size: 10px; border-radius: 10px; display: flex; align-items: center; justify-content: center; height: 24px; }
 
     .btn-create-sheet { width: 100%; margin-top: 18px; padding: 16px; background: rgba(250, 204, 21, 0.08); border: 1.5px dashed var(--yellow); border-radius: 14px; color: var(--yellow); font-size: 15px; font-weight: 800; letter-spacing: 0.8px; cursor: pointer; text-transform: uppercase; }
@@ -98,7 +96,6 @@
     .w-rain { font-size: 10px; color: var(--cyan); font-weight: 700; }
     .w-name { font-size: 10px; color: #cbd5e1; max-width: 78px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; margin-top: 2px; }
 
-    /* BOTTONI NAVIGAZIONE SDOPPIATI AZZURRI */
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
     .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; }
     .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border-color: #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
@@ -214,7 +211,7 @@
     <div class="modal-box">
       <div class="modal-title" id="modalTitle">🏍️ Nuova Tappa</div>
 
-      <label for="inpFileGpx" class="btn-gpx-upload" id="lblGpx">🗺️ Importa File GPX (Salvataggio in Cloud)</label>
+      <label for="inpFileGpx" class="btn-gpx-upload" id="lblGpx">🗺️ Importa GPX (Calcolo e Condivisione)</label>
       <input type="file" id="inpFileGpx" accept=".gpx" onchange="leggiFileGPX(event)">
 
       <input type="hidden" id="editRowId" value="">
@@ -224,7 +221,7 @@
       <input type="hidden" id="editTempMedie" value="">
       
       <div class="form-row-2">
-        <div class="form-group"><label>Data (GG/MM/AAAA)</label><input type="text" id="inpData" placeholder="18/10/2026" maxlength="10"></div>
+        <div class="form-group"><label>Data (GG/MM/AAAA)</label><input type="text" id="inpData" placeholder="Lun 18/10/2026"></div>
         <div class="form-group"><label>Ora Partenza</label><input type="time" id="inpOra" value="08:30"></div>
       </div>
 
@@ -252,7 +249,6 @@
       <input type="hidden" id="valParcheggio" value="Garage">
       <div class="form-group"><label>Parcheggio Moto</label><div class="btn-select-grid" id="gridParcheggio"><button type="button" class="opt-btn active" data-val="Garage" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage')">Garage</button><button type="button" class="opt-btn" data-val="Coperto in Struttura" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Coperto in Struttura')">Coperto Strutt.</button><button type="button" class="opt-btn" data-val="Parcheggio custodito" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Parcheggio custodito')">Custodito</button><button type="button" class="opt-btn" data-val="Cortile privato" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Cortile privato')">Cortile</button><button type="button" class="opt-btn" data-val="Esterno struttura" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Esterno struttura')">Esterno</button><button type="button" class="opt-btn" data-val="In attesa di conferma" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'In attesa di conferma')">In attesa</button></div></div>
 
-      <div class="form-group"><label>Link MyRoute-app / Traccia GPX</label><input type="url" id="inpMyRoute" placeholder="https://www.myrouteapp.com/..."></div>
       <div class="form-group"><label>Note Tappa</label><input type="text" id="inpNote" placeholder="es. Sosta pranzo, imbarco..."></div>
 
       <div class="modal-actions">
@@ -268,10 +264,22 @@
     let schedeViaggi = []; let schedaAttiva = ""; let tappeCorrenti = [];
     const GEO_CACHE = {}; const ROUTE_CACHE = {};
     let gpxCacheData = ""; let gpxCacheName = "";
+    
+    const NOMI_GIORNI = ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"];
 
     window.addEventListener("DOMContentLoaded", () => { mostraHome(); });
 
-    // ==== NUOVO LETTORE GPX CON MEMORIA CLOUD ====
+    // ==== GESTIONE DATE ITALIANE ====
+    function parseItalianDateStr(str) {
+      let match = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
+      if(match) return new Date(match[3], match[2]-1, match[1]);
+      return null;
+    }
+    function formattaDataConGiorno(d) {
+      return `${NOMI_GIORNI[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    }
+
+    // ==== LETTORE GPX LOCALE ====
     function haversineDist(lat1, lon1, lat2, lon2) {
       const R = 6371; const dLat = (lat2-lat1)*Math.PI/180; const dLon = (lon2-lon1)*Math.PI/180;
       const a = Math.sin(dLat/2)*Math.sin(dLat/2) + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
@@ -309,7 +317,6 @@
           document.getElementById("inpArrivo").value = nameEnd;
           document.getElementById("editKm").value = Math.round(totalKm);
           
-          // CODIFICA BASE64 PER SUPERARE I BLOCCHI DI GOOGLE DRIVE
           gpxCacheData = btoa(unescape(encodeURIComponent(txt))); 
           gpxCacheName = file.name;
           
@@ -338,11 +345,6 @@
       else if (origine === 'pagato') { if (p >= spesa && spesa > 0) selezionaStatoPagamento('Pagato'); else if (p > 0 && p < spesa) selezionaStatoPagamento('Acconto'); else selezionaStatoPagamento('Da pagare'); }
       inpDaPagare.value = Math.max(0, Math.round((spesa-p)*100)/100);
     }
-    document.getElementById("inpData").addEventListener("input", (e) => {
-      let v = e.target.value.replace(/\D/g, "");
-      if (v.length > 2 && v.length <= 4) e.target.value = v.slice(0,2) + "/" + v.slice(2);
-      else if (v.length > 4) e.target.value = v.slice(0,2) + "/" + v.slice(2,4) + "/" + v.slice(4,8);
-    });
 
     function attivaAutocompleteMappa(inputId, boxId, multiplo = false) {
       const inp = document.getElementById(inputId); const box = document.getElementById(boxId); let timer = null;
@@ -472,8 +474,7 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               const isDrive = t.myRouteUrl.includes("drive.google.com");
-               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 ${isDrive ? "CONDIVIDI GPX" : "NAVIGA MRA"}</a>`;
+               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX</a>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -529,11 +530,10 @@
       } else if (coords.length >= 2) {
           let stats = { km: t.km || 0, maxEle: t.altMax || 0, elevationCurve: [] };
           try { stats = await getRouteAndElevationHD(coords); } catch (e) {}
-          // Forza l'aggiornamento dell'HTML interno della curva
           if (eleBox && stats.elevationCurve.length > 0) {
               eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(t.altMax > 0 ? t.altMax : stats.maxEle));
           } else if (eleBox) {
-              eleBox.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile (Usa OSRM)</div>`;
+              eleBox.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile</div>`;
           }
       }
     }
@@ -548,10 +548,9 @@
       const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";"); if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
       try {
         const res = await fetchWithTimeout(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`, 4500); const data = await res.json();
-        let km = 0, timeMin = 0, oreStr = "0:00", maxEle = 0, elevationCurve = [], sampleLats = [], sampleLons = [];
+        let km = 0, maxEle = 0, elevationCurve = [], sampleLats = [], sampleLons = [];
         if (data.routes && data.routes.length > 0) {
-          const route = data.routes[0]; km = Math.round(route.distance / 1000);
-          const fullGeometry = route.geometry.coordinates;
+          const fullGeometry = data.routes[0].geometry.coordinates;
           for (let i = 0; i < 15; i++) {
             const idx = Math.min(fullGeometry.length - 1, Math.floor((i / 14) * (fullGeometry.length - 1)));
             sampleLons.push(fullGeometry[idx][0].toFixed(4)); sampleLats.push(fullGeometry[idx][1].toFixed(4));
@@ -567,14 +566,23 @@
 
     function apriModaleNuovaTappa() {
       gpxCacheData = ""; gpxCacheName = ""; document.getElementById("modalTitle").innerText = `🏍️ Nuova Tappa`; document.getElementById("editRowId").value = "";
-      const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Salvataggio in Cloud)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
+      const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
+      
       const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null; document.getElementById("inpOra").value = "08:30";
+      
       if (ultima) {
-          let p = ultima.data.split("/"); let dp = new Date(p[2], p[1]-1, p[0]); dp.setDate(dp.getDate() + 1);
-          document.getElementById("inpData").value = `${String(dp.getDate()).padStart(2,'0')}/${String(dp.getMonth()+1).padStart(2,'0')}/${dp.getFullYear()}`;
+          let dtParsed = parseItalianDateStr(ultima.data);
+          if(dtParsed) {
+              dtParsed.setDate(dtParsed.getDate() + 1);
+              document.getElementById("inpData").value = formattaDataConGiorno(dtParsed);
+          }
           document.getElementById("inpPartenza").value = (ultima.arrivo && ultima.arrivo.toUpperCase() === "SOSTA") ? ultima.partenza : ultima.arrivo;
-      } else { document.getElementById("inpData").value = ""; document.getElementById("inpPartenza").value = ""; }
-      document.getElementById("inpPassaggio").value = ""; document.getElementById("inpArrivo").value = ""; document.getElementById("inpSpesa").value = ""; document.getElementById("inpPagato").value = "0"; document.getElementById("inpDaPagare").value = "0"; document.getElementById("inpMyRoute").value = ""; document.getElementById("inpNote").value = "";
+      } else { 
+          document.getElementById("inpData").value = formattaDataConGiorno(new Date()); 
+          document.getElementById("inpPartenza").value = ""; 
+      }
+      
+      document.getElementById("inpPassaggio").value = ""; document.getElementById("inpArrivo").value = ""; document.getElementById("inpSpesa").value = ""; document.getElementById("inpPagato").value = "0"; document.getElementById("inpDaPagare").value = "0"; document.getElementById("inpNote").value = "";
       selezionaPulsante('gridPiattaforma', 'valPiattaforma', 'Booking'); selezionaStatoPagamento('Da pagare'); selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel'); selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage');
       document.getElementById("modalTappa").style.display = "block";
     }
@@ -582,8 +590,10 @@
     function apriModaleModifica(idx) {
       gpxCacheData = ""; gpxCacheName = ""; const t = tappeCorrenti[idx]; if (!t) return;
       document.getElementById("modalTitle").innerText = `✏️ Modifica Tappa #${idx + 1}`; document.getElementById("editRowId").value = t.id;
-      const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Opzionale)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
-      document.getElementById("editKm").value = t.km; document.getElementById("editAltMax").value = t.altMax; document.getElementById("inpData").value = t.data; document.getElementById("inpOra").value = t.ora; document.getElementById("inpPartenza").value = t.partenza; document.getElementById("inpPassaggio").value = t.passaggio; document.getElementById("inpArrivo").value = t.arrivo; document.getElementById("inpAlloggio").value = t.alloggio; document.getElementById("inpSpesa").value = t.spesa; document.getElementById("inpPagato").value = t.pagato; document.getElementById("inpDaPagare").value = t.daPagare; document.getElementById("inpMyRoute").value = t.myRouteUrl; document.getElementById("inpNote").value = t.note;
+      const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Sostituisci Traccia)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
+      
+      document.getElementById("editKm").value = t.km; document.getElementById("editAltMax").value = t.altMax; document.getElementById("inpData").value = t.data; document.getElementById("inpOra").value = t.ora; document.getElementById("inpPartenza").value = t.partenza; document.getElementById("inpPassaggio").value = t.passaggio; document.getElementById("inpArrivo").value = t.arrivo; document.getElementById("inpAlloggio").value = t.alloggio; document.getElementById("inpSpesa").value = t.spesa; document.getElementById("inpPagato").value = t.pagato; document.getElementById("inpDaPagare").value = t.daPagare; document.getElementById("inpNote").value = t.note;
+      
       selezionaPulsante('gridPiattaforma', 'valPiattaforma', t.piattaforma || 'Booking'); selezionaStatoPagamento(t.pagamento || 'Da pagare'); selezionaPulsante('gridMetodo', 'valMetodo', t.metodoPagamento || 'Revolut Daniel'); selezionaPulsante('gridParcheggio', 'valParcheggio', t.parcheggio || 'Garage');
       document.getElementById("modalTappa").style.display = "block";
     }
@@ -599,7 +609,6 @@
         sheetName: schedaAttiva, action: document.getElementById("editRowId").value ? "update" : "create", rowId: document.getElementById("editRowId").value || undefined,
         data: document.getElementById("inpData").value.trim(), ora: document.getElementById("inpOra").value || "08:30", partenza: dep, passaggio: document.getElementById("inpPassaggio").value.trim(), arrivo: arr,
         km: parseFloat(document.getElementById("editKm").value) || 0, alloggio: document.getElementById("inpAlloggio").value.trim(), piattaforma: document.getElementById("valPiattaforma").value, spesa: parseFloat(document.getElementById("inpSpesa").value) || 0, pagamento: document.getElementById("valPagamento").value, pagato: parseFloat(document.getElementById("inpPagato").value) || 0, metodoPagamento: document.getElementById("valMetodo").value, parcheggio: document.getElementById("valParcheggio").value, note: document.getElementById("inpNote").value.trim(),
-        myRouteUrl: document.getElementById("inpMyRoute").value.trim(),
         gpxBase64: gpxCacheData, gpxFilename: gpxCacheName
       };
 
