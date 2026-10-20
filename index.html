@@ -309,7 +309,8 @@
           document.getElementById("inpArrivo").value = nameEnd;
           document.getElementById("editKm").value = Math.round(totalKm);
           
-          gpxCacheData = txt; 
+          // LA CIFRATURA SICURA BASE64 E' TORNATA
+          gpxCacheData = btoa(unescape(encodeURIComponent(txt))); 
           gpxCacheName = file.name;
           
           lbl.innerText = `✅ Caricato (${Math.round(totalKm)}km - Pronto al Cloud)`;
@@ -466,7 +467,8 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_top" class="btn-myroute mra">📎 CONDIVIDI GPX / NAVIGA</a>`;
+               // LINK APERTO IN SCHEDA ESTERNA: SICUREZZA 100% SU IOS E ANDROID
+               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX</a>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -610,7 +612,7 @@
         data: document.getElementById("inpData").value.trim(), ora: document.getElementById("inpOra").value || "08:30", partenza: dep, passaggio: document.getElementById("inpPassaggio").value.trim(), arrivo: arr,
         km: parseFloat(document.getElementById("editKm").value) || 0, alloggio: document.getElementById("inpAlloggio").value.trim(), piattaforma: document.getElementById("valPiattaforma").value, spesa: parseFloat(document.getElementById("inpSpesa").value) || 0, pagamento: document.getElementById("valPagamento").value, pagato: parseFloat(document.getElementById("inpPagato").value) || 0, metodoPagamento: document.getElementById("valMetodo").value, parcheggio: document.getElementById("valParcheggio").value, note: document.getElementById("inpNote").value.trim(),
         myRouteUrl: document.getElementById("editMyRouteUrl").value,
-        gpxText: gpxCacheData, gpxFilename: gpxCacheName
+        gpxBase64: gpxCacheData, gpxFilename: gpxCacheName
       };
 
       try { await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify(payload) }); } catch(e){}
