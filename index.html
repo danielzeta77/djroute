@@ -122,7 +122,7 @@
     #inpFileGpx { display: none; }
 
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
@@ -220,8 +220,11 @@
       <input type="hidden" id="editAltMax" value="0">
       <input type="hidden" id="editTempMedie" value="">
       
+      <!-- CAMPO INVISIBILE FONDAMENTALE PER SALVARE IL LINK IN CASO DI MODIFICA -->
+      <input type="hidden" id="editMyRouteUrl" value="">
+      
       <div class="form-row-2">
-        <div class="form-group"><label>Data (GG/MM/AAAA)</label><input type="text" id="inpData" placeholder="Lun 18/10/2026"></div>
+        <div class="form-group"><label>Data</label><input type="text" id="inpData" placeholder="Lun 18/10/2026"></div>
         <div class="form-group"><label>Ora Partenza</label><input type="time" id="inpOra" value="08:30"></div>
       </div>
 
@@ -271,6 +274,7 @@
 
     // ==== GESTIONE DATE ITALIANE ====
     function parseItalianDateStr(str) {
+      if(!str) return null;
       let match = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
       if(match) return new Date(match[3], match[2]-1, match[1]);
       return null;
@@ -474,7 +478,7 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX</a>`;
+               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX / NAVIGA</a>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -566,6 +570,7 @@
 
     function apriModaleNuovaTappa() {
       gpxCacheData = ""; gpxCacheName = ""; document.getElementById("modalTitle").innerText = `🏍️ Nuova Tappa`; document.getElementById("editRowId").value = "";
+      document.getElementById("editMyRouteUrl").value = ""; // Reset memoria link
       const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
       
       const ultima = tappeCorrenti.length > 0 ? tappeCorrenti[tappeCorrenti.length - 1] : null; document.getElementById("inpOra").value = "08:30";
@@ -590,6 +595,7 @@
     function apriModaleModifica(idx) {
       gpxCacheData = ""; gpxCacheName = ""; const t = tappeCorrenti[idx]; if (!t) return;
       document.getElementById("modalTitle").innerText = `✏️ Modifica Tappa #${idx + 1}`; document.getElementById("editRowId").value = t.id;
+      document.getElementById("editMyRouteUrl").value = t.myRouteUrl || ""; // Mantiene vivo il link del tasto blu!
       const lblGpx = document.getElementById("lblGpx"); if(lblGpx){ lblGpx.innerText = "🗺️ Importa GPX (Sostituisci Traccia)"; lblGpx.style.color = "#00e5ff"; lblGpx.style.borderColor = "#00e5ff"; }
       
       document.getElementById("editKm").value = t.km; document.getElementById("editAltMax").value = t.altMax; document.getElementById("inpData").value = t.data; document.getElementById("inpOra").value = t.ora; document.getElementById("inpPartenza").value = t.partenza; document.getElementById("inpPassaggio").value = t.passaggio; document.getElementById("inpArrivo").value = t.arrivo; document.getElementById("inpAlloggio").value = t.alloggio; document.getElementById("inpSpesa").value = t.spesa; document.getElementById("inpPagato").value = t.pagato; document.getElementById("inpDaPagare").value = t.daPagare; document.getElementById("inpNote").value = t.note;
@@ -609,6 +615,7 @@
         sheetName: schedaAttiva, action: document.getElementById("editRowId").value ? "update" : "create", rowId: document.getElementById("editRowId").value || undefined,
         data: document.getElementById("inpData").value.trim(), ora: document.getElementById("inpOra").value || "08:30", partenza: dep, passaggio: document.getElementById("inpPassaggio").value.trim(), arrivo: arr,
         km: parseFloat(document.getElementById("editKm").value) || 0, alloggio: document.getElementById("inpAlloggio").value.trim(), piattaforma: document.getElementById("valPiattaforma").value, spesa: parseFloat(document.getElementById("inpSpesa").value) || 0, pagamento: document.getElementById("valPagamento").value, pagato: parseFloat(document.getElementById("inpPagato").value) || 0, metodoPagamento: document.getElementById("valMetodo").value, parcheggio: document.getElementById("valParcheggio").value, note: document.getElementById("inpNote").value.trim(),
+        myRouteUrl: document.getElementById("editMyRouteUrl").value, // Rimanda indietro il link
         gpxBase64: gpxCacheData, gpxFilename: gpxCacheName
       };
 
