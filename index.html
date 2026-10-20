@@ -76,10 +76,14 @@
     .btn-elevation { width: 100%; background: #151f32; border: 1px solid #2d3f5e; color: var(--yellow); padding: 9px; border-radius: 9px; font-size: 12px; font-weight: 800; cursor: pointer; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; text-transform: uppercase; }
     .ele-box { display: none; background: #090d15; border: 1px solid var(--border); border-radius: 10px; padding: 12px 10px; margin-bottom: 12px; }
 
-    /* CSS METEO ORIGINALE RESTAURATO */
+    /* METEO BOXES */
     .weather-box { background: var(--card-alt); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px; }
     .weather-head { font-size: 11px; font-weight: 800; color: var(--yellow); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; }
     .weather-badge-status { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; }
+    .status-obsoleto { background: rgba(244,63,94,0.15); color: #fda4af; border: 1px solid #fda4af; }
+    .status-future { background: rgba(250,204,21,0.15); color: #fef08a; border: 1px solid #fef08a; }
+    .status-live { background: rgba(16,185,129,0.15); color: #6ee7b7; border: 1px solid #6ee7b7; }
+    
     .weather-scroll { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; }
     .weather-cell { flex: 0 0 auto; background: #131c2c; border: 1px solid #24344d; border-radius: 8px; padding: 7px 10px; text-align: center; min-width: 86px; }
     .w-time { font-size: 11px; color: var(--yellow); font-weight: 800; }
@@ -122,7 +126,7 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* CSS COLORI CARTA/BOOKING ORIGINALI RESTAURATI */
+    /* COLORI ORIGINALI PULSANTI */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
     .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
@@ -401,7 +405,7 @@
        btnElement.style.boxShadow = "";
     }
 
-    // ==== IMPIANTO METEO NATIVO E ORIGINALE 14 GIORNI ====
+    // ==== MOTORE METEO A 45 MINUTI DI TRAGITTO REALE ====
     function getWIcon(code, hour) {
         let isNight = hour < 6 || hour > 20;
         if(code === 0) return isNight ? "🌙" : "☀️";
@@ -415,7 +419,7 @@
         return "🌤️";
     }
 
-    async function generaImpiantoMeteo(t, coords) {
+    async function generaImpiantoMeteo(t, coords, stats) {
         let d = parseItalianDateStr(t.data);
         if (!d) return "";
         
@@ -424,10 +428,10 @@
         let diff = Math.round((target - oggi)/(1000*3600*24));
         
         if (diff < 0) {
-           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-obsoleto" style="background:rgba(244,63,94,0.15); color:#fda4af; border:1px solid #fda4af;">Passato</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Data ormai passata.</div></div>`;
+           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-obsoleto">Passato</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Data ormai passata.</div></div>`;
         }
         if (diff > 14) {
-           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-future" style="background:rgba(250,204,21,0.15); color:#fef08a; border:1px solid #fef08a;">Lontano</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Dati meteo disponibili solo per i prossimi 14 giorni.</div></div>`;
+           return `<div class="weather-box"><div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-future">Lontano</span></div><div style="padding:10px; text-align:center; font-size:12px; color:var(--text-muted);">Dati meteo disponibili solo per i prossimi 14 giorni.</div></div>`;
         }
         
         let partStr = t.ora || "08:30";
@@ -435,22 +439,40 @@
         let mPartenza = parseInt(partStr.split(":")[1]) || 30;
         let startDate = new Date(d); startDate.setHours(hPartenza, mPartenza, 0);
         
-        let oreGuidaParts = (t.oreGuida || "0:00").split(":");
-        let totOre = (parseInt(oreGuidaParts[0]) || 0) + (parseInt(oreGuidaParts[1]) || 0)/60;
+        let targetPoints = [];
+        let totMin = (stats && stats.durationSec) ? stats.durationSec / 60 : ((parseInt((t.oreGuida||"0:00").split(":")[0])||0)*60 + (parseInt((t.oreGuida||"0:00").split(":")[1])||0));
+        if (totMin <= 0) totMin = 60; 
+        
+        // Estrazione Punti ogni 45 Minuti dalla Geometria reale OSRM
+        if (stats && stats.fullGeo && stats.fullGeo.length > 0) {
+            targetPoints.push({ lat: stats.fullGeo[0][1], lon: stats.fullGeo[0][0], type: "Partenza", min: 0, name: t.partenza });
+            let steps = Math.floor(totMin / 45);
+            for(let i=1; i<=steps; i++) {
+                let m = i * 45;
+                if (totMin - m < 15) continue; 
+                let idx = Math.floor((m / totMin) * (stats.fullGeo.length - 1));
+                targetPoints.push({ lat: stats.fullGeo[idx][1], lon: stats.fullGeo[idx][0], type: `+${m} min`, min: m, name: "" });
+            }
+            targetPoints.push({ lat: stats.fullGeo[stats.fullGeo.length-1][1], lon: stats.fullGeo[stats.fullGeo.length-1][0], type: "Arrivo", min: totMin, name: t.arrivo });
+        } else {
+            // Backup
+            targetPoints = coords.map((c, i) => ({ 
+               lat: c.lat, lon: c.lon, 
+               type: i===0?"Partenza":(i===coords.length-1?"Arrivo":"Passaggio"), 
+               min: (i/(coords.length-1))*totMin,
+               name: c.name || ""
+            }));
+        }
         
         let htmlCells = "";
-        let uniqueCoords = coords.filter((c, index, self) => index === 0 || index === self.length - 1 || (Math.abs(c.lat - self[index-1].lat) > 0.01));
-        
-        for(let i=0; i < uniqueCoords.length; i++) {
-            let c = uniqueCoords[i];
-            let msOffset = uniqueCoords.length > 1 ? (i / (uniqueCoords.length-1)) * (totOre * 3600 * 1000) : 0;
-            let timeAtPoint = new Date(startDate.getTime() + msOffset);
-            
+        for(let i=0; i < targetPoints.length; i++) {
+            let pt = targetPoints[i];
+            let timeAtPoint = new Date(startDate.getTime() + pt.min * 60000);
             let isoDate = timeAtPoint.getFullYear() + "-" + String(timeAtPoint.getMonth()+1).padStart(2,'0') + "-" + String(timeAtPoint.getDate()).padStart(2,'0');
             let targetHour = timeAtPoint.getHours();
             
             try {
-                let url = `https://api.open-meteo.com/v1/forecast?latitude=${c.lat}&longitude=${c.lon}&hourly=temperature_2m,precipitation,weathercode&timezone=auto&start_date=${isoDate}&end_date=${isoDate}`;
+                let url = `https://api.open-meteo.com/v1/forecast?latitude=${pt.lat}&longitude=${pt.lon}&hourly=temperature_2m,precipitation,weathercode&timezone=auto&start_date=${isoDate}&end_date=${isoDate}`;
                 let r = await fetchWithTimeout(url, 3500);
                 let j = await r.json();
                 
@@ -461,16 +483,22 @@
                     let icon = getWIcon(code, targetHour);
                     
                     let timeStr = String(targetHour).padStart(2,'0') + ":" + String(timeAtPoint.getMinutes()).padStart(2,'0');
-                    let kmStr = i === 0 ? "Partenza" : (i === uniqueCoords.length-1 ? "Arrivo" : "Passaggio");
-                    let shortName = c.name ? c.name.split(",")[0].substring(0,12) : "Punto";
+                    
+                    let cityName = pt.name;
+                    if (!cityName) {
+                        let cName = await geocodeInversoMobile(pt.lat, pt.lon);
+                        cityName = cName ? cName.split(",")[0].substring(0,12) : "In viaggio";
+                    } else {
+                        cityName = cityName.substring(0,12);
+                    }
                     
                     htmlCells += `<div class="weather-cell">
                        <div class="w-time">${timeStr}</div>
-                       <div class="w-km">${kmStr}</div>
+                       <div class="w-km">${pt.type}</div>
                        <div class="w-icon">${icon}</div>
                        <div class="w-temp">${Math.round(temp)}°</div>
                        <div class="w-rain">${rain > 0 ? rain+'mm' : '0mm'}</div>
-                       <div class="w-name" title="${c.name}">${shortName}</div>
+                       <div class="w-name" title="${cityName}">${cityName}</div>
                     </div>`;
                 }
             } catch(e) {}
@@ -479,7 +507,7 @@
         if (!htmlCells) return `<div class="weather-box"><div style="text-align:center; font-size:12px; color:var(--red);">Errore API Meteo.</div></div>`;
         
         return `<div class="weather-box">
-           <div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-live" style="background:rgba(16,185,129,0.15); color:#6ee7b7; border:1px solid #6ee7b7;">Live</span></div>
+           <div class="weather-head">METEO PREVISTO <span class="weather-badge-status status-live">Live</span></div>
            <div class="weather-scroll">${htmlCells}</div>
         </div>`;
     }
@@ -654,11 +682,9 @@
               <div class="tele-item"><div class="tele-label">Alt. Max</div><div class="tele-val" id="ele-val-${i}">${t.altMax ? Math.round(t.altMax) + ' m' : '-- m'}</div></div>
               <div class="tele-item"><div class="tele-label">Temp Medie</div><div class="tele-val temp-mild" id="temp-val-${i}">${tempEsistente}</div></div>
             </div>
-            
             <button class="btn-elevation" onclick="toggleProfiloAltimetrico(${i})">⛰️ Mostra Curva Altimetrica ▾</button>
             <div class="ele-box" id="ele-box-${i}"><div style="font-size:11px; color:var(--text-muted); text-align:center;">Elaborazione altimetria...</div></div>
             
-            <!-- IL METEO VERRA' INIETTATO QUI -->
             <div id="meteo-box-${i}"></div>
 
             <div class="grid-info">
@@ -687,10 +713,11 @@
       for (const name of locNomi) { try { const c = await geocode(name); if (c) coords.push({ ...c, name: name }); } catch(e){} }
 
       const eleBox = document.getElementById(`ele-box-${idx}`);
+      let stats = null;
       if (isSosta && coords.length === 1) {
           if (eleBox) eleBox.innerHTML = `<div style="font-size:12px; padding:15px; color:var(--green); text-align:center; font-weight:800;">⛺ Giornata di Sosta a ${t.partenza}</div>`;
       } else if (coords.length >= 2) {
-          let stats = { km: t.km || 0, maxEle: t.altMax || 0, elevationCurve: [] };
+          stats = { km: t.km || 0, maxEle: t.altMax || 0, elevationCurve: [], fullGeo: [], durationSec: 0 };
           try { stats = await getRouteAndElevationHD(coords); } catch (e) {}
           if (eleBox && stats.elevationCurve.length > 0) {
               eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(t.altMax > 0 ? t.altMax : stats.maxEle));
@@ -701,7 +728,7 @@
       
       const meteoBox = document.getElementById(`meteo-box-${idx}`);
       if (coords.length > 0 && meteoBox) {
-          meteoBox.innerHTML = await generaImpiantoMeteo(t, coords);
+          meteoBox.innerHTML = await generaImpiantoMeteo(t, coords, stats);
       }
     }
 
@@ -715,20 +742,21 @@
       const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";"); if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
       try {
         const res = await fetchWithTimeout(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`, 4500); const data = await res.json();
-        let km = 0, maxEle = 0, elevationCurve = [], sampleLats = [], sampleLons = [];
+        let km = 0, maxEle = 0, elevationCurve = [], sampleLats = [], sampleLons = [], fullGeo = [], durationSec = 0;
         if (data.routes && data.routes.length > 0) {
-          const fullGeometry = data.routes[0].geometry.coordinates;
+          fullGeo = data.routes[0].geometry.coordinates;
+          durationSec = data.routes[0].duration;
           for (let i = 0; i < 15; i++) {
-            const idx = Math.min(fullGeometry.length - 1, Math.floor((i / 14) * (fullGeometry.length - 1)));
-            sampleLons.push(fullGeometry[idx][0].toFixed(4)); sampleLats.push(fullGeometry[idx][1].toFixed(4));
+            const idx = Math.min(fullGeo.length - 1, Math.floor((i / 14) * (fullGeo.length - 1)));
+            sampleLons.push(fullGeo[idx][0].toFixed(4)); sampleLats.push(fullGeo[idx][1].toFixed(4));
           }
         } else { sampleLats = coords.map(p => p.lat); sampleLons = coords.map(p => p.lon); }
 
         const eleRes = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`, 3500);
         const eleData = await eleRes.json();
         if (eleData && eleData.elevation) { elevationCurve = eleData.elevation; maxEle = Math.round(Math.max(...elevationCurve)); }
-        const out = { km, maxEle, elevationCurve }; ROUTE_CACHE[coordStr] = out; return out;
-      } catch(e){ return { km: 0, maxEle: 0, elevationCurve: [] }; }
+        const out = { km, maxEle, elevationCurve, fullGeo, durationSec }; ROUTE_CACHE[coordStr] = out; return out;
+      } catch(e){ return { km: 0, maxEle: 0, elevationCurve: [], fullGeo: [], durationSec: 0 }; }
     }
 
     function apriModaleNuovaTappa() {
