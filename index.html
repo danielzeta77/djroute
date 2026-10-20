@@ -80,13 +80,12 @@
     .grid-info div span { display: block; font-size: 10px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .grid-info div strong { color: #fff; font-size: 14px; font-weight: 700; }
 
-    .weather-box { background: var(--card-alt); border: 1px solid var(--border); border-radius: 10px; padding: 10px; margin-bottom: 12px; }
-    .weather-head { font-size: 11px; font-weight: 800; color: var(--yellow); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; }
-    .weather-badge-status { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 5px; }
-
     .btn-route-container { display: flex; gap: 8px; margin-top: 14px; }
-    .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; }
-    .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border-color: #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
+    .btn-myroute { flex: 1; padding: 12px 6px; background: #1e293b; color: var(--yellow); border: 1px solid #334155; text-align: center; border-radius: 9px; border:none; text-decoration: none; font-size: 12px; font-weight: 800; text-transform: uppercase; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; }
+    
+    /* BOTTONE AZZURRO MAGICO */
+    .btn-myroute.mra { background: #0070ba !important; color: #fff !important; border: 1px solid #38bdf8 !important; box-shadow: 0 0 12px rgba(0,112,186,0.6) !important; }
+    .btn-myroute.mra:active { background: #0284c7 !important; transform: scale(0.96); }
 
     .fab-btn { display: none; position: fixed; bottom: 20px; right: 20px; background: linear-gradient(135deg, #facc15, #eab308); color: #080b11; border: 2px solid #fef08a; padding: 14px 22px; border-radius: 30px; font-size: 14px; font-weight: 800; box-shadow: 0 6px 24px rgba(250,204,21,0.45); cursor: pointer; z-index: 99; text-transform: uppercase; }
 
@@ -112,25 +111,6 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
-    .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
-    .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
-    .opt-btn[data-val="Da pagare"].active { background: #f43f5e !important; color: #fff !important; border-color: #fda4af !important; box-shadow: 0 0 12px rgba(244,63,94,0.6) !important; }
-    .opt-btn[data-val="Acconto"].active { background: #f59e0b !important; color: #fff !important; border-color: #fcd34d !important; box-shadow: 0 0 12px rgba(245,158,11,0.6) !important; }
-    .opt-btn[data-val="Pagato"].active { background: #10b981 !important; color: #fff !important; border-color: #6ee7b7 !important; box-shadow: 0 0 12px rgba(16,185,129,0.6) !important; }
-    .opt-btn[data-val="Revolut Daniel"].active { background: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; box-shadow: 0 0 12px rgba(255,255,255,0.5) !important; }
-    .opt-btn[data-val="N26 Daniel"].active { background: #94a3b8 !important; color: #0f172a !important; border-color: #e2e8f0 !important; box-shadow: 0 0 12px rgba(148,163,184,0.5) !important; }
-    .opt-btn[data-val="Carta Emanuela"].active { background: #f97316 !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(249,115,22,0.5) !important; }
-    .opt-btn[data-val="Paypal Emanuela"].active, .opt-btn[data-val="Paypal Daniel"].active { background: #0070ba !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(0,112,186,0.5) !important; }
-    .opt-btn[data-val="Bonifico"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
-    .opt-btn[data-val="Cash in Struttura"].active { background: #22c55e !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(34,197,94,0.5) !important; }
-    .opt-btn[data-val="Garage"].active { background: #16a34a !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(22,163,74,0.5) !important; }
-    .opt-btn[data-val="Coperto in Struttura"].active { background: #2563eb !important; color: #fff !important; border-color: #93c5fd !important; box-shadow: 0 0 12px rgba(37,99,235,0.5) !important; }
-    .opt-btn[data-val="Parcheggio custodito"].active { background: #0ea5e9 !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(14,165,233,0.5) !important; }
-    .opt-btn[data-val="Cortile privato"].active { background: #eab308 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(234,179,8,0.5) !important; }
-    .opt-btn[data-val="Esterno struttura"].active { background: #ea580c !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(234,88,12,0.5) !important; }
-    .opt-btn[data-val="In attesa di conferma"].active { background: #ef4444 !important; color: #fff !important; border-color: #fca5a5 !important; box-shadow: 0 0 12px rgba(239,68,68,0.8) !important; animation: pulseRed 1.5s infinite; }
-    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.7); } 70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
@@ -309,7 +289,6 @@
           document.getElementById("inpArrivo").value = nameEnd;
           document.getElementById("editKm").value = Math.round(totalKm);
           
-          // LA CIFRATURA SICURA BASE64 E' TORNATA
           gpxCacheData = btoa(unescape(encodeURIComponent(txt))); 
           gpxCacheName = file.name;
           
@@ -318,6 +297,52 @@
         } catch (err) { alert("Errore durante l'elaborazione del GPX: " + err.message); lbl.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; }
       };
       reader.readAsText(file);
+    }
+
+    // ==== FUNZIONE MAGICA CONDIVISIONE GPX NATIVA ====
+    async function condividiGpxNativo(url, btnElement) {
+      try {
+        const m = url.match(/id=([a-zA-Z0-9_-]+)/);
+        if (!m) { window.open(url, "_blank"); return; }
+        const fileId = m[1];
+
+        const originalText = btnElement.innerText;
+        btnElement.innerText = "⏳ DOWNLOAD GPX...";
+        btnElement.style.pointerEvents = "none";
+
+        const res = await fetch(`${SCRIPT_URL}?action=getGpxText&id=${fileId}`);
+        const testogpx = await res.text();
+
+        btnElement.innerText = originalText;
+        btnElement.style.pointerEvents = "auto";
+
+        if (testogpx === "ERROR") throw new Error("File rimosso o permessi mancanti.");
+
+        // Crea il file fisico in memoria e apre il menu di condivisione del telefono!
+        const file = new File([testogpx], "djRoute_Traccia.gpx", { type: "application/gpx+xml" });
+        
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({
+            files: [file],
+            title: 'Traccia GPX',
+            text: 'Traccia esportata da djRoute'
+          });
+        } else {
+          // Se per caso il telefono è vecchio, lo scarica dritto nella cartella Download
+          const blobUrl = URL.createObjectURL(file);
+          const a = document.createElement("a");
+          a.href = blobUrl;
+          a.download = "djRoute_Traccia.gpx";
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(blobUrl);
+        }
+      } catch(e) {
+        alert("Impossibile condividere: " + e.message);
+        btnElement.innerText = "📎 CONDIVIDI GPX";
+        btnElement.style.pointerEvents = "auto";
+      }
     }
 
     function selezionaPulsante(containerId, hiddenInputId, valore) {
@@ -467,8 +492,8 @@
         if (!isSosta) {
            btnRouteHtml = `<div class="btn-route-container"><a href="${gmaps}" target="_blank" class="btn-myroute">🗺️ GOOGLE MAPS</a>`;
            if (t.myRouteUrl && t.myRouteUrl.startsWith("http")) {
-               // LINK APERTO IN SCHEDA ESTERNA: SICUREZZA 100% SU IOS E ANDROID
-               btnRouteHtml += `<a href="${t.myRouteUrl}" target="_blank" class="btn-myroute mra">📎 CONDIVIDI GPX</a>`;
+               // BOTTONE CON IL NUOVO METODO DI SCARICAMENTO E CONDIVISIONE NATIVA
+               btnRouteHtml += `<button onclick="condividiGpxNativo('${t.myRouteUrl}', this)" class="btn-myroute mra">📎 CONDIVIDI GPX</button>`;
            }
            btnRouteHtml += `</div>`;
         }
@@ -595,12 +620,6 @@
     }
 
     function chiudiModale() { document.getElementById("modalTappa").style.display = "none"; }
-
-    async function eliminaTappa(rowId) {
-      if (!confirm("Confermi l'eliminazione di questa tappa?")) return;
-      await fetch(SCRIPT_URL, { method: "POST", mode: "no-cors", headers: { "Content-Type": "text/plain" }, body: JSON.stringify({ action: "delete", sheetName: schedaAttiva, rowId: rowId }) });
-      setTimeout(() => apriSchedaViaggio(schedaAttiva), 1000);
-    }
 
     async function salvaTappa() {
       const dep = document.getElementById("inpPartenza").value.trim(); const arr = document.getElementById("inpArrivo").value.trim();
