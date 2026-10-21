@@ -126,25 +126,34 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #0056d2 !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
-    .opt-btn[data-val="Airbnb"].active { background: #10b981 !important; color: #fff !important; border-color: #34d399 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
-    .opt-btn[data-val="Expedia"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
-    .opt-btn[data-val="Pren. Diretta"].active { background: #8b5cf6 !important; color: #fff !important; border-color: #a78bfa !important; box-shadow: 0 0 12px rgba(139,92,246,0.5) !important; }
-    .opt-btn[data-val="Da pagare"].active { background: #f43f5e !important; color: #fff !important; border-color: #fda4af !important; box-shadow: 0 0 12px rgba(244,63,94,0.6) !important; }
-    .opt-btn[data-val="Acconto"].active { background: #f59e0b !important; color: #fff !important; border-color: #fcd34d !important; box-shadow: 0 0 12px rgba(245,158,11,0.6) !important; }
-    .opt-btn[data-val="Pagato"].active { background: #10b981 !important; color: #fff !important; border-color: #6ee7b7 !important; box-shadow: 0 0 12px rgba(16,185,129,0.6) !important; }
-    .opt-btn[data-val="Revolut Daniel"].active { background: #f8fafc !important; color: #0f172a !important; border-color: #cbd5e1 !important; box-shadow: 0 0 12px rgba(255,255,255,0.5) !important; }
-    .opt-btn[data-val="N26 Daniel"].active { background: #94a3b8 !important; color: #0f172a !important; border-color: #e2e8f0 !important; box-shadow: 0 0 12px rgba(148,163,184,0.5) !important; }
-    .opt-btn[data-val="Carta Emanuela"].active { background: #f97316 !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(249,115,22,0.5) !important; }
-    .opt-btn[data-val="Paypal Emanuela"].active, .opt-btn[data-val="Paypal Daniel"].active { background: #0070ba !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(0,112,186,0.5) !important; }
-    .opt-btn[data-val="Bonifico"].active { background: #facc15 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
-    .opt-btn[data-val="Cash in Struttura"].active { background: #22c55e !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(34,197,94,0.5) !important; }
-    .opt-btn[data-val="Garage"].active { background: #16a34a !important; color: #fff !important; border-color: #86efac !important; box-shadow: 0 0 12px rgba(22,163,74,0.5) !important; }
-    .opt-btn[data-val="Coperto in Struttura"].active { background: #2563eb !important; color: #fff !important; border-color: #93c5fd !important; box-shadow: 0 0 12px rgba(37,99,235,0.5) !important; }
-    .opt-btn[data-val="Parcheggio custodito"].active { background: #0ea5e9 !important; color: #fff !important; border-color: #7dd3fc !important; box-shadow: 0 0 12px rgba(14,165,233,0.5) !important; }
-    .opt-btn[data-val="Cortile privato"].active { background: #eab308 !important; color: #080b11 !important; border-color: #fef08a !important; box-shadow: 0 0 12px rgba(234,179,8,0.5) !important; }
-    .opt-btn[data-val="Esterno struttura"].active { background: #ea580c !important; color: #fff !important; border-color: #fdba74 !important; box-shadow: 0 0 12px rgba(234,88,12,0.5) !important; }
-    .opt-btn[data-val="In attesa di conferma"].active { background: #ef4444 !important; color: #fff !important; border-color: #fca5a5 !important; box-shadow: 0 0 12px rgba(239,68,68,0.8) !important; animation: pulseRed 1.5s infinite; }
+    /* ==== NUOVA GRAFICA COLORI UFFICIALI ==== */
+    /* Piattaforme */
+    .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #00224f !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
+    .opt-btn[data-val="Airbnb"].active { background: #FF5A5F !important; color: #fff !important; border-color: #e00007 !important; box-shadow: 0 0 12px rgba(255,90,95,0.5) !important; }
+    .opt-btn[data-val="Expedia"].active { background: #0000A0 !important; color: #facc15 !important; border-color: #00005a !important; box-shadow: 0 0 12px rgba(0,0,160,0.5) !important; }
+    .opt-btn[data-val="Pren. Diretta"].active { background: #8b5cf6 !important; color: #fff !important; border-color: #6d28d9 !important; box-shadow: 0 0 12px rgba(139,92,246,0.5) !important; }
+    
+    /* Stato Pagamento */
+    .opt-btn[data-val="Pagato"].active { background: #22c55e !important; color: #fff !important; border-color: #16a34a !important; box-shadow: 0 0 12px rgba(34,197,94,0.6) !important; }
+    .opt-btn[data-val="Acconto"].active { background: #f59e0b !important; color: #fff !important; border-color: #d97706 !important; box-shadow: 0 0 12px rgba(245,158,11,0.6) !important; }
+    .opt-btn[data-val="Da pagare"].active { background: #ef4444 !important; color: #fff !important; border-color: #b91c1c !important; box-shadow: 0 0 12px rgba(239,68,68,0.6) !important; }
+
+    /* Metodi di Pagamento */
+    .opt-btn[data-val="Paypal Emanuela"].active, .opt-btn[data-val="Paypal Daniel"].active { background: #0070ba !important; color: #fff !important; border-color: #003087 !important; box-shadow: 0 0 12px rgba(0,112,186,0.5) !important; }
+    .opt-btn[data-val="Revolut Daniel"].active { background: #0f172a !important; color: #fff !important; border-color: #000 !important; box-shadow: 0 0 12px rgba(15,23,42,0.5) !important; }
+    .opt-btn[data-val="N26 Daniel"].active { background: #36a18b !important; color: #fff !important; border-color: #1d7362 !important; box-shadow: 0 0 12px rgba(54,161,139,0.5) !important; }
+    .opt-btn[data-val="Carta Emanuela"].active { background: #f97316 !important; color: #fff !important; border-color: #c2410c !important; box-shadow: 0 0 12px rgba(249,115,22,0.5) !important; }
+    .opt-btn[data-val="Bonifico"].active { background: #facc15 !important; color: #080b11 !important; border-color: #ca8a04 !important; box-shadow: 0 0 12px rgba(250,204,21,0.5) !important; }
+    .opt-btn[data-val="Cash in Struttura"].active { background: #10b981 !important; color: #fff !important; border-color: #047857 !important; box-shadow: 0 0 12px rgba(16,185,129,0.5) !important; }
+
+    /* Parcheggi */
+    .opt-btn[data-val="Garage"].active { background: #16a34a !important; color: #fff !important; border-color: #15803d !important; box-shadow: 0 0 12px rgba(22,163,74,0.5) !important; }
+    .opt-btn[data-val="Coperto in Struttura"].active { background: #2563eb !important; color: #fff !important; border-color: #1d4ed8 !important; box-shadow: 0 0 12px rgba(37,99,235,0.5) !important; }
+    .opt-btn[data-val="Parcheggio custodito"].active { background: #0ea5e9 !important; color: #fff !important; border-color: #0284c7 !important; box-shadow: 0 0 12px rgba(14,165,233,0.5) !important; }
+    .opt-btn[data-val="Cortile privato"].active { background: #eab308 !important; color: #000 !important; border-color: #ca8a04 !important; box-shadow: 0 0 12px rgba(234,179,8,0.5) !important; }
+    .opt-btn[data-val="Esterno struttura"].active { background: #ea580c !important; color: #fff !important; border-color: #c2410c !important; box-shadow: 0 0 12px rgba(234,88,12,0.5) !important; }
+    .opt-btn[data-val="In attesa di conferma"].active { background: #ef4444 !important; color: #fff !important; border-color: #b91c1c !important; box-shadow: 0 0 12px rgba(239,68,68,0.8) !important; animation: pulseRed 1.5s infinite; }
+    
     .opt-btn.active { background: var(--yellow); color: #080b11; border-color: #fef08a; box-shadow: 0 0 10px var(--yellow-glow); }
 
     .suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: #1b263b; border: 1px solid var(--yellow); border-radius: 7px; z-index: 150; max-height: 160px; overflow-y: auto; display: none; }
@@ -244,7 +253,15 @@
       </div>
 
       <input type="hidden" id="valMetodo" value="Revolut Daniel">
-      <div class="form-group"><label>Metodo Pagamento</label><div class="btn-select-grid" id="gridMetodo"><button type="button" class="opt-btn active" data-val="Revolut Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel')">Revolut Daniel</button><button type="button" class="opt-btn" data-val="N26 Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'N26 Daniel')">N26 Daniel</button><button type="button" class="opt-btn" data-val="Carta Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Carta Emanuela')">Carta Emanuela</button><button type="button" class="opt-btn" data-val="Paypal Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Emanuela')">Paypal Emanuela</button><button type="button" class="opt-btn" data-val="Paypal Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Daniel')">Paypal Daniel</button><button type="button" class="opt-btn" data-val="Bonifico" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Bonifico')">Bonifico</button><button type="button" class="opt-btn" data-val="Cash in Struttura" style="grid-column: span 2;" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Cash in Struttura')">Cash in Struttura</button></div></div>
+      <div class="form-group"><label>Metodo Pagamento</label><div class="btn-select-grid" id="gridMetodo">
+        <button type="button" class="opt-btn active" data-val="Revolut Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Revolut Daniel')">Revolut Daniel</button>
+        <button type="button" class="opt-btn" data-val="N26 Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'N26 Daniel')">N26 Daniel</button>
+        <button type="button" class="opt-btn" data-val="Carta Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Carta Emanuela')">Carta Emanuela</button>
+        <button type="button" class="opt-btn" data-val="Paypal Emanuela" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Emanuela')">Paypal Emanuela</button>
+        <button type="button" class="opt-btn" data-val="Paypal Daniel" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Paypal Daniel')">Paypal Daniel</button>
+        <button type="button" class="opt-btn" data-val="Bonifico" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Bonifico')">Bonifico</button>
+        <button type="button" class="opt-btn" data-val="Cash in Struttura" style="grid-column: span 2;" onclick="selezionaPulsante('gridMetodo', 'valMetodo', 'Cash in Struttura')">Cash in Struttura</button>
+      </div></div>
 
       <input type="hidden" id="valParcheggio" value="Garage">
       <div class="form-group"><label>Parcheggio Moto</label><div class="btn-select-grid" id="gridParcheggio"><button type="button" class="opt-btn active" data-val="Garage" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Garage')">Garage</button><button type="button" class="opt-btn" data-val="Coperto in Struttura" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Coperto in Struttura')">Coperto Strutt.</button><button type="button" class="opt-btn" data-val="Parcheggio custodito" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Parcheggio custodito')">Custodito</button><button type="button" class="opt-btn" data-val="Cortile privato" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Cortile privato')">Cortile</button><button type="button" class="opt-btn" data-val="Esterno struttura" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'Esterno struttura')">Esterno</button><button type="button" class="opt-btn" data-val="In attesa di conferma" onclick="selezionaPulsante('gridParcheggio', 'valParcheggio', 'In attesa di conferma')">In attesa</button></div></div>
@@ -340,12 +357,11 @@
           
           lbl.innerText = `✅ Caricato (${Math.round(totalKm)}km - Pronto al Cloud)`;
           lbl.style.color = "var(--green)"; lbl.style.borderColor = "var(--green)";
-        } catch (err) { alert("Errore durante l'elaborazione del GPX: " + err.message); lbl.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; }
+        } catch (err) { alert("Errore GPX: " + err.message); lbl.innerText = "🗺️ Importa GPX (Calcolo e Condivisione)"; }
       };
       reader.readAsText(file);
     }
 
-    // ==== DOWNLOAD E APERTURA NATIVA IOS/ANDROID ====
     window._gpxFileCorrente = null;
 
     async function preparaCondivisione(url, btnElement) {
@@ -364,7 +380,7 @@
         const res = await fetch(`${SCRIPT_URL}?action=getGpxText&id=${m[1]}`);
         const testogpx = await res.text();
         
-        if (testogpx === "ERROR") throw new Error("File non trovato su Drive.");
+        if (testogpx === "ERROR") throw new Error("File non trovato.");
 
         window._gpxFileCorrente = new Blob([testogpx], { type: "application/gpx+xml" });
 
@@ -404,7 +420,6 @@
        btnElement.style.boxShadow = "";
     }
 
-    // ==== MOTORE METEO A 45 MINUTI ====
     function getWIcon(code, hour) {
         let isNight = hour < 6 || hour > 20;
         if(code === 0) return isNight ? "🌙" : "☀️";
@@ -685,10 +700,10 @@
             <div id="meteo-box-${i}"></div>
 
             <div class="grid-info">
-              <div><span>Alloggio</span><strong>${t.alloggio || 'Non spec.'} ${t.piattaforma ? '('+t.piattaforma+')' : ''}</strong></div>
+              <div><span>Alloggio</span><strong>${t.alloggio || 'Non spec.'} <span style="color:var(--cyan)">(${t.piattaforma})</span></strong></div>
               <div><span>Parcheggio Moto</span><strong>${t.parcheggio || 'Non spec.'}</strong></div>
-              <div><span>Prezzo Camera</span><strong>${t.spesa ? t.spesa + ' €' : '0 €'} (${t.pagamento})</strong></div>
-              <div><span>Pagato / Residuo</span><strong>${t.pagato || 0} € / <b style="color:${t.daPagare>0?'#f43f5e':'#10b981'}">${t.daPagare>0?t.daPagare+' €':'Saldato'}</b></strong></div>
+              <div><span>Costo Alloggio</span><strong>${t.spesa ? t.spesa + ' €' : '0 €'} <span style="color:${t.pagamento === 'Pagato' ? '#10b981' : (t.pagamento === 'Da pagare' ? '#ef4444' : '#f59e0b')}">(${t.pagamento})</span></strong></div>
+              <div><span>Residuo Da Pagare</span><strong><b style="color:${t.daPagare>0?'#ef4444':'#10b981'}">${t.daPagare>0?t.daPagare+' €':'Tutto Saldato ✅'}</b></strong></div>
               <div style="grid-column: span 2;"><span>Metodo di Pagamento</span><strong>${t.metodoPagamento || 'Non specificato'}</strong></div>
             </div>
             ${t.note ? `<div style="font-size:12px; color:var(--yellow); margin-bottom:12px; background:#182235; padding:8px 10px; border-radius:7px; border-left:3px solid var(--yellow);">📌 ${t.note}</div>` : ''}
@@ -727,33 +742,6 @@
       if (coords.length > 0 && meteoBox) {
           meteoBox.innerHTML = await generaImpiantoMeteo(t, coords, stats);
       }
-    }
-
-    async function geocode(loc) {
-      if (!loc) return null; const k = loc.trim().toLowerCase(); if (GEO_CACHE[k]) return GEO_CACHE[k];
-      try { const r = await fetchWithTimeout(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1&language=it&format=json`, 3500);
-      const d = await r.json(); if (d && d.results && d.results.length > 0) { const c = { lat: d.results[0].latitude, lon: d.results[0].longitude }; GEO_CACHE[k] = c; return c; } } catch(e){} return null;
-    }
-
-    async function getRouteAndElevationHD(coords) {
-      const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";"); if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
-      try {
-        const res = await fetchWithTimeout(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`, 4500); const data = await res.json();
-        let km = 0, maxEle = 0, elevationCurve = [], sampleLats = [], sampleLons = [], fullGeo = [], durationSec = 0;
-        if (data.routes && data.routes.length > 0) {
-          fullGeo = data.routes[0].geometry.coordinates;
-          durationSec = data.routes[0].duration;
-          for (let i = 0; i < 15; i++) {
-            const idx = Math.min(fullGeo.length - 1, Math.floor((i / 14) * (fullGeo.length - 1)));
-            sampleLons.push(fullGeo[idx][0].toFixed(4)); sampleLats.push(fullGeo[idx][1].toFixed(4));
-          }
-        } else { sampleLats = coords.map(p => p.lat); sampleLons = coords.map(p => p.lon); }
-
-        const eleRes = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`, 3500);
-        const eleData = await eleRes.json();
-        if (eleData && eleData.elevation) { elevationCurve = eleData.elevation; maxEle = Math.round(Math.max(...elevationCurve)); }
-        const out = { km, maxEle, elevationCurve, fullGeo, durationSec }; ROUTE_CACHE[coordStr] = out; return out;
-      } catch(e){ return { km: 0, maxEle: 0, elevationCurve: [], fullGeo: [], durationSec: 0 }; }
     }
 
     function apriModaleNuovaTappa() {
