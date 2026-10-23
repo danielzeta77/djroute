@@ -126,7 +126,6 @@
     .btn-select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
     .opt-btn { background: #162032; border: 1px solid #2d3f5e; color: #cbd5e1; padding: 10px 4px; border-radius: 7px; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     
-    /* ==== NUOVA GRAFICA COLORI UFFICIALI ==== */
     /* Piattaforme */
     .opt-btn[data-val="Booking"].active { background: #003b95 !important; color: #fff !important; border-color: #00224f !important; box-shadow: 0 0 12px rgba(0,59,149,0.5) !important; }
     .opt-btn[data-val="Airbnb"].active { background: #FF5A5F !important; color: #fff !important; border-color: #e00007 !important; box-shadow: 0 0 12px rgba(255,90,95,0.5) !important; }
@@ -286,13 +285,24 @@
 
     window.addEventListener("DOMContentLoaded", () => { mostraHome(); });
 
+    // === PARSER DATA A PROVA DI BOMBA ANCHE IN HTML ===
     function parseItalianDateStr(str) {
-      if(!str) return null;
-      let match = str.match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);
-      if(match) return new Date(match[3], match[2]-1, match[1]);
+      if (!str) return null;
+      let s = String(str).trim();
+      s = s.replace(/^[A-Za-z]{3}\s+/, ""); 
+      let match = s.match(/(\d{1,2})[\/\-\.](\d{1,2})(?:[\/\-\.](\d{2,4}))?/);
+      if (match) {
+        let gg = parseInt(match[1]);
+        let mm = parseInt(match[2]) - 1;
+        let aaaa = match[3] ? parseInt(match[3]) : new Date().getFullYear();
+        if (aaaa < 100) aaaa += 2000;
+        return new Date(aaaa, mm, gg);
+      }
       return null;
     }
+    
     function formattaDataConGiorno(d) {
+      if(!d) return "";
       return `${NOMI_GIORNI[d.getDay()]} ${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
     }
 
@@ -420,6 +430,7 @@
        btnElement.style.boxShadow = "";
     }
 
+    // ==== MOTORE METEO A 45 MINUTI ====
     function getWIcon(code, hour) {
         let isNight = hour < 6 || hour > 20;
         if(code === 0) return isNight ? "🌙" : "☀️";
@@ -454,8 +465,9 @@
         let startDate = new Date(d); startDate.setHours(hPartenza, mPartenza, 0);
         
         let targetPoints = [];
-        let totMin = (stats && stats.durationSec) ? stats.durationSec / 60 : ((parseInt((t.oreGuida||"0:00").split(":")[0])||0)*60 + (parseInt((t.oreGuida||"0:00").split(":")[1])||0));
-        if (totMin <= 0) totMin = 60; 
+        let oreGuidaSafe = String(t.oreGuida || "0:00");
+        let totMin = (stats && stats.durationSec) ? stats.durationSec / 60 : ((parseInt(oreGuidaSafe.split(":")[0])||0)*60 + (parseInt(oreGuidaSafe.split(":")[1])||0));
+        if (isNaN(totMin) || totMin <= 0) totMin = 60; 
         
         if (stats && stats.fullGeo && stats.fullGeo.length > 0) {
             targetPoints.push({ lat: stats.fullGeo[0][1], lon: stats.fullGeo[0][0], type: "Partenza", min: 0, name: t.partenza });
@@ -468,12 +480,16 @@
             }
             targetPoints.push({ lat: stats.fullGeo[stats.fullGeo.length-1][1], lon: stats.fullGeo[stats.fullGeo.length-1][0], type: "Arrivo", min: totMin, name: t.arrivo });
         } else {
-            targetPoints = coords.map((c, i) => ({ 
-               lat: c.lat, lon: c.lon, 
-               type: i===0?"Partenza":(i===coords.length-1?"Arrivo":"Passaggio"), 
-               min: (i/(coords.length-1))*totMin,
-               name: c.name || ""
-            }));
+            if (coords.length === 1) {
+                targetPoints = [{ lat: coords[0].lat, lon: coords[0].lon, type: "Sosta", min: 0, name: coords[0].name || "" }];
+            } else {
+                targetPoints = coords.map((c, i) => ({ 
+                   lat: c.lat, lon: c.lon, 
+                   type: i===0?"Partenza":(i===coords.length-1?"Arrivo":"Passaggio"), 
+                   min: (i/(coords.length-1))*totMin,
+                   name: c.name || ""
+                }));
+            }
         }
         
         let htmlCells = "";
@@ -485,7 +501,7 @@
             
             try {
                 let url = `https://api.open-meteo.com/v1/forecast?latitude=${pt.lat}&longitude=${pt.lon}&hourly=temperature_2m,precipitation,weathercode&timezone=auto&start_date=${isoDate}&end_date=${isoDate}`;
-                let r = await fetchWithTimeout(url, 3500);
+                let r = await fetchWithTimeout(url, 4500);
                 let j = await r.json();
                 
                 if (j && j.hourly && j.hourly.temperature_2m) {
@@ -516,7 +532,7 @@
             } catch(e) {}
         }
         
-        if (!htmlCells) return `<div class="weather-box"><div style="text-align:center; font-size:12px; color:var(--red);">Errore API Meteo.</div></div>`;
+        if (!htmlCells) return `<div class="weather-box"><div style="text-align:center; font-size:12px; color:var(--red);">Dati API Meteo momentaneamente non disponibili.</div></div>`;
         
         return `<div class="weather-box">
            <div class="weather-head">METEO LIVE <span class="weather-badge-status status-live">Live</span></div>
@@ -637,7 +653,7 @@
     }
 
     function generaSvgAltimetriaHD(elevationArray, depName, arrName, maxEle) {
-      if (!elevationArray || elevationArray.length < 2) return `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile</div>`;
+      if (!elevationArray || elevationArray.length < 2) return `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria in fase di calcolo o non disponibile (Riprova)</div>`;
       const W = 340, H = 105; const tetto = Math.max(...elevationArray, 150); const stepX = (W - 32) / (elevationArray.length - 1);
       const pts = elevationArray.map((ele, idx) => { return { x: (16 + idx * stepX).toFixed(1), y: (H - 22 - ((Math.max(0, ele) / tetto) * (H - 44))).toFixed(1), ele: Math.round(ele) }; });
       const polyPoints = `${pts[0].x},${H-20} ` + pts.map(p => `${p.x},${p.y}`).join(" ") + ` ${pts[pts.length-1].x},${H-20}`;
@@ -695,7 +711,7 @@
               <div class="tele-item"><div class="tele-label">Temp Medie</div><div class="tele-val temp-mild" id="temp-val-${i}">${tempEsistente}</div></div>
             </div>
             <button class="btn-elevation" onclick="toggleProfiloAltimetrico(${i})">⛰️ Mostra Curva Altimetrica ▾</button>
-            <div class="ele-box" id="ele-box-${i}"><div style="font-size:11px; color:var(--text-muted); text-align:center;">Elaborazione altimetria...</div></div>
+            <div class="ele-box" id="ele-box-${i}"><div style="font-size:11px; color:var(--text-muted); text-align:center;">Elaborazione altimetria in corso...</div></div>
             
             <div id="meteo-box-${i}"></div>
 
@@ -722,7 +738,12 @@
       if (!isSosta) { if (t.passaggio) { t.passaggio.split(",").forEach(p => { if (p.trim()) locNomi.push(p.trim()); }); } if (t.arrivo) locNomi.push(t.arrivo); }
 
       const coords = [];
-      for (const name of locNomi) { try { const c = await geocode(name); if (c) coords.push({ ...c, name: name }); } catch(e){} }
+      for (const name of locNomi) { 
+          try { 
+             const c = await geocode(name); 
+             if (c) coords.push({ ...c, name: name }); 
+          } catch(e){} 
+      }
 
       const eleBox = document.getElementById(`ele-box-${idx}`);
       let stats = null;
@@ -730,11 +751,14 @@
           if (eleBox) eleBox.innerHTML = `<div style="font-size:12px; padding:15px; color:var(--green); text-align:center; font-weight:800;">⛺ Giornata di Sosta a ${t.partenza}</div>`;
       } else if (coords.length >= 2) {
           stats = { km: t.km || 0, maxEle: t.altMax || 0, elevationCurve: [], fullGeo: [], durationSec: 0 };
-          try { stats = await getRouteAndElevationHD(coords); } catch (e) {}
-          if (eleBox && stats.elevationCurve.length > 0) {
+          try { 
+              let fetchedStats = await getRouteAndElevationHD(coords); 
+              if(fetchedStats) stats = fetchedStats;
+          } catch (e) {}
+          if (eleBox && stats.elevationCurve && stats.elevationCurve.length > 0) {
               eleBox.innerHTML = generaSvgAltimetriaHD(stats.elevationCurve, t.partenza, t.arrivo, Math.round(t.altMax > 0 ? t.altMax : stats.maxEle));
           } else if (eleBox) {
-              eleBox.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile</div>`;
+              eleBox.innerHTML = `<div style="font-size:11px; color:var(--text-muted); text-align:center;">Altimetria non disponibile (Riprova)</div>`;
           }
       }
       
@@ -742,6 +766,68 @@
       if (coords.length > 0 && meteoBox) {
           meteoBox.innerHTML = await generaImpiantoMeteo(t, coords, stats);
       }
+    }
+
+    async function geocode(loc) {
+      if (!loc) return null; const k = loc.trim().toLowerCase(); if (GEO_CACHE[k]) return GEO_CACHE[k];
+      
+      try { 
+        const r = await fetchWithTimeout(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(loc)}&count=1&language=it&format=json`, 5000);
+        const d = await r.json(); 
+        if (d && d.results && d.results.length > 0) { 
+          const c = { lat: d.results[0].latitude, lon: d.results[0].longitude }; 
+          GEO_CACHE[k] = c; return c; 
+        } 
+      } catch(e){} 
+      
+      try {
+         const rOsm = await fetchWithTimeout(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(loc)}&limit=1`, 5000);
+         const dOsm = await rOsm.json();
+         if (dOsm && dOsm.length > 0) {
+             const c = { lat: parseFloat(dOsm[0].lat), lon: parseFloat(dOsm[0].lon) };
+             GEO_CACHE[k] = c; return c;
+         }
+      } catch(e) {}
+      
+      return null;
+    }
+
+    async function getRouteAndElevationHD(coords) {
+      const coordStr = coords.map(p => `${p.lon},${p.lat}`).join(";"); 
+      if (ROUTE_CACHE[coordStr]) return ROUTE_CACHE[coordStr];
+      
+      let out = { km: 0, maxEle: 0, elevationCurve: [], fullGeo: [], durationSec: 0 };
+      
+      try {
+        const res = await fetchWithTimeout(`https://router.project-osrm.org/route/v1/driving/${coordStr}?overview=full&geometries=geojson`, 6000); 
+        const data = await res.json();
+        
+        let sampleLats = [], sampleLons = [];
+        if (data.routes && data.routes.length > 0) {
+          out.fullGeo = data.routes[0].geometry.coordinates;
+          out.durationSec = data.routes[0].duration;
+          out.km = data.routes[0].distance / 1000;
+          for (let i = 0; i < 15; i++) {
+            const idx = Math.min(out.fullGeo.length - 1, Math.floor((i / 14) * (out.fullGeo.length - 1)));
+            sampleLons.push(out.fullGeo[idx][0].toFixed(4)); 
+            sampleLats.push(out.fullGeo[idx][1].toFixed(4));
+          }
+        } else { 
+          sampleLats = coords.map(p => p.lat); 
+          sampleLons = coords.map(p => p.lon); 
+        }
+
+        const eleRes = await fetchWithTimeout(`https://api.open-meteo.com/v1/elevation?latitude=${sampleLats.join(",")}&longitude=${sampleLons.join(",")}`, 5000);
+        const eleData = await eleRes.json();
+        if (eleData && eleData.elevation) { 
+           out.elevationCurve = eleData.elevation; 
+           out.maxEle = Math.round(Math.max(...out.elevationCurve)); 
+        }
+      } catch(e) { 
+         console.error("Errore OSRM/Elevation:", e);
+      }
+      ROUTE_CACHE[coordStr] = out; 
+      return out;
     }
 
     function apriModaleNuovaTappa() {
